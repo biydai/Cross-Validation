@@ -1,0 +1,6 @@
+*.log
+*.pdf
+*.aux
+*.blg
+!figures/*.jpeg
+!figures/*.png

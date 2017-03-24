@@ -50,6 +50,7 @@
 
 \usepackage{alltt}
 \usepackage{amssymb,amsmath,natbib,graphicx,enumerate,subcaption,tikz,url,booktabs}
+\usepackage{natbib}
 
 \usepackage[margin=1in]{geometry}
 
@@ -110,7 +111,7 @@ Due to the semi-parametric nature of Cox Regression, conducting cross validation
 \section{Introduction}
 Cox propotional hazard regression is one of the most commonly used statistical model for analyzing data with survival outcomes. Despite its popularity, the cox model has its own limitations due to the semiparametric nature of the model. Since the model only estimates relative risks, it is challenging to evaluate the model's predictive accuracy.
 
-In the Cox model, the hazard function for individual observation is given by \begin{equation}h_{j}(t) = h_{0}(t) exp( X_{j}^{T} \beta),\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{j}^{T} \beta}$ is the relative risk. The estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{n} \frac{exp ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}exp ( X_{k}^{T} \beta)}.\end{equation} As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
+In the Cox model \citep{Cox1972}, the hazard function for individual observation is given by \begin{equation}h_{j}(t) = h_{0}(t) exp( X_{j}^{T} \beta),\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{j}^{T} \beta}$ is the relative risk. The estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{n} \frac{exp ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}exp ( X_{k}^{T} \beta)}.\end{equation} As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
 
 Penalized Cox Regression is an extension of the regular cox regression model. Instead of dealing with the partial likelihood, estimates of the $\beta$ coefficients are obtained by minizing the objective function \begin{equation}  Q(\beta |X, y) = - \frac{1}{n}  \sum_{j=1}^{n} log \left \{\frac{exp ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}exp ( X_{k}^{T} \beta)}) \right \} + P_{\lambda}(\beta). \end{equation} The first part of the objective function is based on the partial likelihood. The second part is a penalty term that depends on tuning parameter $\lambda$. With LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$, the penalized cox regression extends cox regression to deal with variable selections in high dimensional settings, where the number of variable p $\gg$ n, the number of observation. An example of its application would be to study how the overall survival time of a particular cancer is associated with gene expressions.
 
@@ -179,7 +180,7 @@ Since the biggest challenge of conducting cross validation for cox regression is
   
   Survival times were generated from exponential distribution $h(t) = h_{0} exp(X\beta)$, conditioned on covariates. The entries in the covariate matrix $X_{n \times p}$ were independently generated from Normal (0, 1). True coefficients $\beta$  were assumed to have sparsity: $\beta_{p\times 1} = (\beta_{1},\beta_{2}, ..., \beta_{10}, 0, ..., 0)^{T}$.  Censoring status were generated based on binomial distribution.
   
-  Suppose $\hat{\beta}$ is the coefficients estimated by a fitted cox model. We measure the distance between the fitted model and the true model by mean squared error $MSE = E(\hat{\beta} - \beta)^2$. For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$. Then the $\lamda$s that selected by the cross validation or information criteria would be compared to this optimal $\lambda$. If the $\lambda$ chosen by cross validation is smaller than the optimal $\lambda$, then the cross validation method would be considered liberal. If the $\lambda$ chosen by cross validation is larger than the optimal $\lambda$, then the cross validation method would be considered conservative. 
+  Suppose $\hat{\beta}$ is the coefficients estimated by a fitted cox model. We measure the distance between the fitted model and the true model by mean squared error $MSE = E(\hat{\beta} - \beta)^2$. For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$. Then the $\lambda$s that selected by the cross validation or information criteria would be compared to this optimal $\lambda$. If the $\lambda$ chosen by cross validation is smaller than the optimal $\lambda$, then the cross validation method would be considered liberal. If the $\lambda$ chosen by cross validation is larger than the optimal $\lambda$, then the cross validation method would be considered conservative. 
   
   \subsection{Simulation Results}
     
@@ -300,7 +301,7 @@ If we look at the CVE curve for all four of those methods, we still see that blu
 
 \section{Discussion}
 
+\bibliographystyle{ims-nourl}
+\bibliography{articles}
 
 \end{document}
-
-
