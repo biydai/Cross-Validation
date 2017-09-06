@@ -50,7 +50,6 @@
 
 \usepackage{alltt}
 \usepackage{amssymb,amsmath,natbib,graphicx,enumerate,subcaption,tikz,url,booktabs}
-\usepackage{natbib}
 
 \usepackage[margin=1in]{geometry}
 
@@ -100,7 +99,7 @@
 \title{Comparing Cross Validation Methods for Penalized Cox Regression}
 \author{
 }
-\date{March 24, 2017}
+\date{ }
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -109,15 +108,15 @@
 Due to the semi-parametric nature of Cox Regression, conducting cross validation for Cox models has always been a challenge. While cross validation is a commonly used approach for selecting tuning parameters in penalized regression, little research has been done to study cross validation methods for penalized Cox regression. We propose two new cross-validation methods for Cox Regression, and compare them to traditional information criteria as well as a cross-validated partial likelihood approach originally proposed by Verweij et al. Our simulation studies show that, in general, cross-validation tends to be conservative (i.e., select smaller models than the ideal choice of tuning parameters) for penalized Cox regression models. However, our proposed approach of cross-validating the linear predictors generally offers the best balance of stability and performance. We also illustrate these approaches on data from studies of gene expression and progression-free survival in cancer patients.
 
 \section{Introduction}
-Cox propotional hazard regression is one of the most commonly used statistical model for analyzing data with survival outcomes. Despite its popularity, the cox model has its own limitations due to the semiparametric nature of the model. Since the model only estimates relative risks, it is challenging to evaluate the model's predictive accuracy.
+Cox propotional hazard regression is one of the most commonly used statistical model for analyzing data with survival outcomes. Despite its popularity, Cox model is limited by its semiparametric nature: it is challenging to evaluate the model's predictive accuracy.
 
-In the Cox model \citep{Cox1972}, the hazard function for individual observation is given by \begin{equation}h_{j}(t) = h_{0}(t) exp( X_{j}^{T} \beta),\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{j}^{T} \beta}$ is the relative risk. The estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{n} \frac{exp ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}exp ( X_{k}^{T} \beta)}.\end{equation} As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
+In the Cox model \citep{Cox1975}, the hazard function for an individual observation j is given by \begin{equation}h_{j}(t) = h_{0}(t) \text{exp}( X_{j}^{T} \beta)\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{j}^{T} \beta}$ is the relative risk. The estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{n} \frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}\end{equation} As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
 
-Penalized Cox Regression is an extension of the regular cox regression model. Instead of dealing with the partial likelihood, estimates of the $\beta$ coefficients are obtained by minizing the objective function \begin{equation}  Q(\beta |X, y) = - \frac{1}{n}  \sum_{j=1}^{n} log \left \{\frac{exp ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}exp ( X_{k}^{T} \beta)}) \right \} + P_{\lambda}(\beta). \end{equation} The first part of the objective function is based on the partial likelihood. The second part is a penalty term that depends on tuning parameter $\lambda$. With LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$, the penalized cox regression extends cox regression to deal with variable selections in high dimensional settings, where the number of variable p $\gg$ n, the number of observation. An example of its application would be to study how the overall survival time of a particular cancer is associated with gene expressions.
+Penalized Cox Regression is an extension of the regular cox regression model. Estimates of the $\beta$ coefficients are obtained by minimizing the objective function \begin{equation}  Q(\beta |X, y) = - \frac{1}{n}  \sum_{j=1}^{n} \text{log} \left \{\frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}) \right \} + P_{\lambda}(\beta). \end{equation}, instead of optimizing the partial likelihood. The first part of the objective function is based on the partial likelihood. The second part is a penalty term that depends on some regularization parameters. In this paper, only the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$ was considered. The penalized cox regression can be used for analyzing high dimensional data, where the number of covariates p $\gg$ n. A common application would be to predict the overall survival time of a particular cancer by certain gene expressions.
 
-To get LASSO estimations for the $\beta$ coefficients, the choice of the tuning parameter $\lambda$ is crutial. As $\lambda$ increases, more $\beta$ coefficients would be set to 0 and fewer variables will be selected by the model. When $\lambda$ is too small, the model tends to be redundant. And $\lambda$ also should not be set too large. In this case, the model would be too conservative to select any variables.
+Selecting the tuning parameter $\lambda$ is crutial to getting LASSO estimation for the $\beta$s. As $\lambda$ increases, more $\beta$ coefficients would be set to 0 and fewer variables will be selected by the model. When $\lambda$ is too small, the model tends to be redundant. When $\lambda$ is too large, the model would be too conservative to select any variables.
 
-One common approach for selecting the tuning parameter $\lambda$ for linear regression and logitic regression is via cross validation. The idea of K - fold cross validation is illustrated in Figure 1. The data set would be split into K folds. One fold would be treated as the test set and the other K - 1 folds as the training set. The model would first be built on the training set, then fitted to the test set to obtain cross validation error (CVE). To select the most suitable lambda,the CVE would be calculated for each candidate lambda. And the one that has the smallest cross validated error would be selected.
+One common approach for selecting the tuning parameter $\lambda$ for linear regression and logistic regression is via cross validation. The idea of K - fold cross validation is illustrated in Figure 1. The data set would be split into K folds. One fold would be treated as the test set and the other K - 1 folds as the training set. The model would first be built on the training set, then fitted to the test set to obtain cross validation error (CVE).  CVE would be calculated for each candidate $\lambda$, then the one that minimizes cross validated error would be selected.
 
 \begin{figure}
     \centering
@@ -125,20 +124,21 @@ One common approach for selecting the tuning parameter $\lambda$ for linear regr
     \caption{K-fold Cross Validation}
 \end{figure}	
 
-However, for penalized cox regression, there is no natural way to carry out cross validation. Since the partial likelihood of the cox model does not give estimates for the baseline, the outcomes can only be compared within the same framework, in terms of their relative risks. This is against the idea of cross validation, which relies on splitting the data into different folds.
+However, for penalized cox regression, it is challenging to carry out cross validation. Since the partial likelihood of the cox model does not give estimates for the baseline, it is only meaningful to compare the outcomes within the same framework, which can be interpreted as relative risks. This is against the idea of cross validation, which relies on splitting the data into different folds.
 
-\par The most commonly used approach of conducting cross validation in Cox regression is proposed by Verweij elt. (1993). They propose a cross-validated log likelihood as a measure for the model's predictive accuracy.  It is currently implemented in the glmnet package as the "grouped" option. Similarly, the glmnet package also includes the "ungrouped" option where the cross-validated likelihood is calculated only based on the observations from the test set. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the Martingale residual of the Cox model. 
-\par We conducted simulation studies to compare how those methods perform in both low dimensional and high dimensional settings with LASSO penalty. We compared the two proposed methods with the cross-validated partial likelihood approaches and traditional information criteria. We showed that the linear predictor approach outperforms other cross validation approaches in various scenarios. We found out that using cross validation to select tuning parameters for LASSO penalized cox regression tends to be a conservative approach in general. Finally, we apply those methods to two genomic data sets with time-to-event outcomes.
+\par The most commonly used approach of conducting cross validation in Cox regression is proposed by Verweij elt. \citep{Verweij1993}. They proposed a cross-validated log likelihood as a measure for the model's predictive accuracy.  It is currently implemented in the glmnet package with the "grouped" option. Similarly, the glmnet package also includes an "ungrouped" option where the cross-validated likelihood is calculated only based on the observations from the test set. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the Martingale residual of the Cox model. 
+
+\par We conducted simulation studies to compare how those methods perform in both low dimensional and high dimensional settings with LASSO penalty. We compared the two proposed methods with the cross-validated partial likelihood approaches and traditional information criteria. We showed that the linear predictor approach outperforms other cross validation approaches in various scenarios. We found out that using cross validation to select tuning parameters for LASSO penalized cox regression tends to be a conservative approach in general. Finally, we apply those methods to two high dimensional data sets with time-to-event outcomes.
 
 \section{Methods}
 
-  \subsection{Cross Validated Likelihood}
-  
-Suppose a data set of n observations is split into K folds and the ith fold is left out, then a partial likelihood can be built over the K -1 folds and yields maximum likelihood estimates of the coefficients, denoted by $\hat{\beta}_{-i}$. Verweij elt. defined cross-validated log likelihood of leaving the ith fold out to be \begin{equation}cvl = \sum_{i=1}^{K} \{l(\hat{\beta}_{-i}) - l_{-i}(\hat{\beta}_{-i})\}. \end{equation} When the ith fold is left out, $l(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with all k folds of observations. $l_{-i}(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with observations from the other K-1 folds. 
-   
-An alternative way of conducting cross-validation is implemented in the glmnet package. The cross-validated log likelihood is defined as\begin{equation}cvl = \sum_{i=1}^{K} l_{i}(\hat{\beta}_{-i}).\end{equation} Instead of using substraction, $l_{i}(\hat{\beta}_{-i})$ is the partial likelihood evaluated at $\hat{\beta}_{-i}$ with observations from the fold that is left out. 
+  \subsection{Cross Validated Likelihood} 
+Suppose a data set of n observations is split into K folds and the ith fold is left out, then a partial likelihood can be built over the K -1 folds and yields maximum likelihood estimates of the coefficients, denoted by $\hat{\beta}_{-i}$. An intuitive way to carry out cross validation is to use the partial likelihood on the test data as the cross validated error: \begin{equation}cvl = \sum_{i=1}^{K} l_{i}(\hat{\beta}_{-i})\end{equation} This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option. 
 
-We refer to the first definition as grouped cvl and the second definition as ungrouped cvl. Figure 2 illustrates the ideas of the two methods. The grouped cvl uses observations more efficiently then the ungrouped one. Since only the left-out fold would be used, the ungrouped cvl would not very stable if number of observations is too small.
+\par An alternative way to calculate cross-validated log likelihood was proposed by Verweij elt. They defined cross-validated log likelihood of leaving the ith fold out to be \begin{equation}cvl = \sum_{i=1}^{K} \{l(\hat{\beta}_{-i}) - l_{-i}(\hat{\beta}_{-i})\}. \end{equation} When the ith fold is left out, $l(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with all k folds of observations. $l_{-i}(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with observations from the other K-1 folds. 
+  
+\par We refer to the first definition as ungrouped cross-validated partial likelihood (CVL) and the second definition as grouped cross-validated partial likelihood. Figure 2 illustrates the ideas of the two methods. The grouped CVL uses observations more efficiently than the ungrouped CVL. Since only the left-out fold would be used, the ungrouped cvl is unstable in practice when there are only very few observations in some folder.  
+
 
 \begin{figure}
     \centering
@@ -227,8 +227,8 @@ Since the biggest challenge of conducting cross validation for cox regression is
   
   \vspace{20 mm}
     \subsubsection {Comparisons with Information Criteria}
-    We also compared cross-validation with information criteria AIC and BIC. ...
-    
+    \par We also compared cross-validation with information criteria AIC and BIC. Simulation studies were conducted in lower dimension and higher dimension respectively. As is illustrated in Figure 7, in lower dimension, AIC tends to perform more liberal and BIC tends to perform more conservative than the optimal $\lambda$. While the cross-validation methods are also conservative, most of them are less conservative than BIC. In terms of MSE, cross-validation methods yield smaller MSE than the information criteria. In higher dimension, both BIC and AIC tend to be more liberal than the optimal $\lambda$ and yield larger MSE.
+
    \begin{figure}[h]
     \centering
     \begin{minipage}[b]{0.4\textwidth}
@@ -298,10 +298,17 @@ In the lung cancer data set that we applied our methods to, there are 442 patien
 			
 If we look at the CVE curve for all four of those methods, we still see that blue curve has more curvature near its lowest point. But in general, there are more signal in this lung cancer data set compared to the ovarian cancer data set.
 
-
 \section{Discussion}
 
-\bibliographystyle{ims-nourl}
+\begin{itemize}
+	\item Explanation for Martingale Residuals
+\end{itemize}
+
+
+
+
+\bibliographystyle{abbrvnat}
+\setcitestyle{round} 
 \bibliography{articles}
 
 \end{document}
