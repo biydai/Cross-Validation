@@ -126,7 +126,7 @@ One common approach for selecting the tuning parameter $\lambda$ for linear regr
 
 However, for penalized cox regression, it is challenging to carry out cross validation. Since the partial likelihood of the cox model does not give estimates for the baseline, it is only meaningful to compare the outcomes within the same framework, which can be interpreted as relative risks. This is against the idea of cross validation, which relies on splitting the data into different folds.
 
-\par The most commonly used approach of conducting cross validation in Cox regression is proposed by Verweij elt. \citep{Verweij1993}. They proposed a cross-validated log likelihood as a measure for the model's predictive accuracy.  It is currently implemented in the glmnet package with the "grouped" option. Similarly, the glmnet package also includes an "ungrouped" option where the cross-validated likelihood is calculated only based on the observations from the test set. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the Martingale residual of the Cox model. 
+\par The most commonly used approach of conducting cross validation in Cox regression is proposed by Verweij elt. \citep{Verweij1993}. They proposed a cross-validated log likelihood as a measure for the model's predictive accuracy.  It is currently implemented in the glmnet package with the "grouped" option. Similarly, the glmnet package also includes an "ungrouped" option where the cross-validated likelihood is calculated only based on the observations from the test set. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the deviance residual \citep{Therneau1990}of the Cox model. 
 
 \par We conducted simulation studies to compare how those methods perform in both low dimensional and high dimensional settings with LASSO penalty. We compared the two proposed methods with the cross-validated partial likelihood approaches and traditional information criteria. We showed that the linear predictor approach outperforms other cross validation approaches in various scenarios. We found out that using cross validation to select tuning parameters for LASSO penalized cox regression tends to be a conservative approach in general. Finally, we apply those methods to two high dimensional data sets with time-to-event outcomes.
 
@@ -163,14 +163,21 @@ Cross validated error is defined as the log of $L(\hat{\eta}_{-})$. This idea of
      \begin{minipage}[b]{0.5\textwidth}
       \centering
 		  \includegraphics[height= 3.9cm ]{./figures/04.png}
-      \caption{Cross Validated Martingale Residuals}
+      \caption{Cross Validated Deviance Residuals}
       \end{minipage}	
    \end{figure}	
     
-  \subsection{Cross Validated Martingale Residuals}
+  \subsection{Cross Validated Deviance Residuals}
   
-Since the biggest challenge of conducting cross validation for cox regression is due to the missingness of baseline hazard, we propose a second approach which involves estimating the actual baseline hazard $\hat{\Lambda}_{0}$. Based on the observations in the training set, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method. Then for each observation j in the test set, the Martingale Residual can be calculated: \begin{equation}\hat{M_{j}} = d_{j} -\hat{\Lambda}_{0}(t_{j})e^{\hat{\eta}_{j}},\end{equation} where $d_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. After repeating this procedure for all K folds, we would obtain a set of matingale residuals for all observations. They are be pulled together by sum of squares as the cross validated error:
-\begin{equation}CVE = \sum_{j}\hat{M}_{j}^2\end{equation}
+Since the biggest challenge of conducting cross validation for cox regression is due to the missingness of baseline hazard, we propose a second approach which involves estimating the actual baseline hazard $\hat{\Lambda}_{0}$. As is mentioned in Therneau et al.'s original paper on Martingale Residuals \citep{Therneau1990}, the baseline hazard can be used to compute the Martingale residuals and deviance residuals, which are commonly used for Cox regression model diagnostics. 
+
+\par The original idea of calcualting the Martingale and Deviance residuals were integrated into cross validation. Based on the observations in the training set, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}. Then for each observation j in the test set, the Martingale Residual can be calculated: \begin{equation}\hat{M_{j}} = d_{j} -\hat{\Lambda}_{0}(t_{j})e^{\hat{\eta}_{j}},\end{equation} where $d_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. The deviance residual can be calcualted from the Martingale Residuals: \begin{equation} d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}\end{equation}
+
+
+After repeating this procedure for all K folds, we would obtain a set of deviance residuals for all observations. They are be pulled together by sum of squares as the cross validated error:
+\begin{equation}CVE = \sum_{j}\hat{d}_{j}^2\end{equation}.
+
+One advantage of using deviance residual is that it is symmetric while Martingale Residual is not. However, there does exist a numeric challenge when incorporating deviance residuals for cross validation. Since the baseline hazard function $\hat{\Lambda}_{0}$ is a step function from 0, the cumulative hazard at the first time point from 0 is always 0. Since deviance residual contains a term $log(\delta_{i} - \hat{M}_{i})$, where $\delta_{i} - \hat{M}_{i} = \hat{\Lambda}_{0}$, this term would be negative infinity for the first time point and lead to a numeric issue for whichever fold that contains the first time point. Our solution is to smooth out the step function at the beginning.
 
 \section{Simulation Studies}
 
@@ -202,7 +209,7 @@ Since the biggest challenge of conducting cross validation for cox regression is
       \end{minipage}	
    \end{figure}	
    
-    $\lambda$s chosen by different cross-validation methods are compared in Figure 5. All values are from taking the mean of 200 replications. The black line represents the optimal $\lambda$. All four cross validation methods consistently select $\lambda$s larger than the optimal one. Since larger $\lambda$ leads larger penalties and fewer variables are selected, all four cross validation methods seem to be conservative in terms of selecting variables. Ungrouped cross-validated log likelihood and the cross-validated linear predictor seem to be more liberal than the other two methods. The cross-validated martingale residual is the most conservative one and its performance is quite off from the other three methods.
+    $\lambda$s chosen by different cross-validation methods are compared in Figure 5. All values are from taking the mean of 200 replications. The black line represents the optimal $\lambda$. All four cross validation methods consistently select $\lambda$s larger than the optimal one. Since larger $\lambda$ leads larger penalties and fewer variables are selected, all four cross validation methods seem to be conservative in terms of selecting variables. Ungrouped cross-validated log likelihood and the cross-validated linear predictor seem to be more liberal than the other two methods. The cross-validated Deviance residual is the most conservative one and its performance is quite off from the other three methods.
 
    Mean squared errors are compared in Figure 6. The MSEs of the cross-validation selected models are compared with the MSE of the model given by the optimal $\lambda$. The y-axis represents the ratio of the two. The ungrouped method and the linear predictor approach are outperforming the other methods and are closest to the minimal MSE.
 
@@ -265,7 +272,7 @@ There are 460 patients and 236 events for the ovarian cancer data set. About 40$
 \end{table}
 
 
-In Figure 9, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, it has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. If we look at the curve for the cross-validated Martingale Residual, there's almost no signal there.
+In Figure 9, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, it has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. If we look at the curve for the cross-validated Deviance Residual, there's almost no signal there.
 
    \begin{figure}[h]
    \centering
@@ -299,10 +306,6 @@ In the lung cancer data set that we applied our methods to, there are 442 patien
 If we look at the CVE curve for all four of those methods, we still see that blue curve has more curvature near its lowest point. But in general, there are more signal in this lung cancer data set compared to the ovarian cancer data set.
 
 \section{Discussion}
-
-\begin{itemize}
-	\item Explanation for Martingale Residuals
-\end{itemize}
 
 
 
