@@ -179,6 +179,8 @@ After repeating this procedure for all K folds, we would obtain a set of devianc
 
 One advantage of using deviance residual is that it is symmetric while Martingale Residual is not. However, there does exist a numeric challenge when incorporating deviance residuals for cross validation. Since the baseline hazard function $\hat{\Lambda}_{0}$ is a step function from 0, the cumulative hazard at the first time point from 0 is always 0. Since deviance residual contains a term $log(\delta_{i} - \hat{M}_{i})$, where $\delta_{i} - \hat{M}_{i} = \hat{\Lambda}_{0}$, this term would be negative infinity for the first time point and lead to a numeric issue for whichever fold that contains the first time point. Our solution is to smooth out the step function at the beginning.
 
+When invented, both Martingale residuals and Deviance residuals were calculated only for observations that construct the baseline hazard, not for out-of-sample predictions. However, in the cross-validation context, residuals are calculated for observations that are not used to construct the baseline hazard. It is common to run into situations where some events in the test set occurred after the last event occured in the baseline, where the survival function dropped to 0. For those events, they would be treated as censored.
+
 \section{Simulation Studies}
 
   \subsection{Simulation Settings}
