@@ -110,13 +110,15 @@ Due to the semi-parametric nature of Cox Regression, conducting cross validation
 \section{Introduction}
 Cox propotional hazard regression is one of the most commonly used statistical model for analyzing data with survival outcomes. Despite its popularity, Cox model is limited by its semiparametric nature: it is challenging to evaluate the model's predictive accuracy.
 
-In the Cox model \citep{Cox1975}, the hazard function for an individual observation i is given by \begin{equation}h_{i}(t) = h_{0}(t) \text{exp}( X_{i}^{T} \beta)\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{i}^{T} \beta}$ is the relative risk. Suppose there are n individual observations and m observed failure times, the estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{m} \frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}\end{equation}, where j indexes the observed failure times and $R(t_{j})$ denotes the set of observations at risk at time $t_{j}$. As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
+In the Cox model \citep{Cox1975}, the hazard function for an observation i is given by \begin{equation}h_{i}(t) = h_{0}(t) \text{exp}( X_{i}^{T} \beta)\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{i}^{T} \beta}$ is the relative risk. Suppose there are n observations and m observed failure times, the estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{m} \frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}\end{equation}, where j indexes the observed failure times and $R(t_{j})$ denotes the set of observations at risk at time $t_{j}$. As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
 
 Penalized Cox Regression is an extension of the regular cox regression model. Estimates of the $\beta$ coefficients are obtained by minimizing the objective function \begin{equation}  Q(\beta |X, y) = - \frac{1}{n}  \sum_{j=1}^{m} \text{log} \left \{\frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}) \right \} + P_{\lambda}(\beta). \end{equation} \citep{Simon2011}. The first part of the objective function is based on the partial likelihood. The second part is a penalty term that depends on some regularization parameters. In this paper, only the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$ was considered. The penalized cox regression can be used for analyzing high dimensional data, where the number of covariates p $\gg$ n. A common application would be to predict the overall survival time of a particular cancer by certain gene expressions.
 
-Selecting the tuning parameter $\lambda$ is crutial to getting LASSO estimation for the $\beta$s. As $\lambda$ increases, more $\beta$ coefficients would be set to 0 and fewer variables will be selected by the model. When $\lambda$ is too small, the model tends to be redundant. When $\lambda$ is too large, the model would be too conservative to select any variables.
+Selecting the tuning parameter $\lambda$ is crutial to getting LASSO estimations for $\beta$. As $\lambda$ increases, more coefficients would be set to 0 and fewer variables will be selected by the model. When $\lambda$ is too small, the model tends to be redundant. When $\lambda$ is too large, the model would be too conservative to select any variables.
 
 One common approach for selecting the tuning parameter $\lambda$ for linear regression and logistic regression is via cross validation. The idea of K - fold cross validation is illustrated in Figure 1. The data set would be split into K folds. One fold would be treated as the test set and the other K - 1 folds as the training set. The model would first be built on the training set, then fitted to the test set to obtain cross validation error (CVE).  CVE would be calculated for each candidate $\lambda$, then the one that minimizes cross validated error would be selected.
+
+However, for penalized cox regression, it is challenging to carry out cross validation. Since the partial likelihood of the cox model does not give estimates for the baseline, it is not meaningful to compare the coefficients if they are not estimated from different models and different observations. Only if the baseline is the same, then the coefficients can be interpreted as relative risks. This is against the idea of cross validation, which splits the data and builds models on different subsets.
 
 \begin{figure}
     \centering
@@ -124,9 +126,8 @@ One common approach for selecting the tuning parameter $\lambda$ for linear regr
     \caption{K-fold Cross Validation}
 \end{figure}	
 
-However, for penalized cox regression, it is challenging to carry out cross validation. Since the partial likelihood of the cox model does not give estimates for the baseline, it is only meaningful to compare the outcomes within the same framework, which can be interpreted as relative risks. This is against the idea of cross validation, which relies on splitting the data into different folds.
-
-\par The most commonly used approach of conducting cross validation in Cox regression is proposed by Verweij elt. \citep{Verweij1993}. They proposed a cross-validated log likelihood as a measure for the model's predictive accuracy.  It is currently implemented in the glmnet package with the "grouped" option. Similarly, the glmnet package also includes an "ungrouped" option where the cross-validated likelihood is calculated only based on the observations from the test set. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the deviance residual \citep{Therneau1990}of the Cox model. 
+%ZZZZZZZZZZZZZ
+\par The most intuitive approach to conduct cross validation in Cox regression is i) fit the model to training set then ii) calculate cross-validated partial likelihood based on the observations from the test set as a measure for the model's predictive accuracy. As will be discussed in Section 3, this approach is unstable when number of events gets small. Verweij elt. \citep{Verweij1993} proposed a stablized version of cross-validated log likehood, which has been widely used and implemented in R packages such as $\tt{glmnet}$. In this paper, we proposed two alternative ways to carry out cross validation. Instead of cross-validating over partial likelihood, we propose to cross validate over the linear predictors of the regression model and cross validate over the deviance residual \citep{Therneau1990}of the Cox model. 
 
 \par We conducted simulation studies to compare how those methods perform in both low dimensional and high dimensional settings with LASSO penalty. We compared the two proposed methods with the cross-validated partial likelihood approaches and traditional information criteria. We showed that the linear predictor approach outperforms other cross validation approaches in various scenarios. We found out that using cross validation to select tuning parameters for LASSO penalized cox regression tends to be a conservative approach in general. Finally, we apply those methods to two high dimensional data sets with time-to-event outcomes.
 
@@ -155,33 +156,33 @@ Cross validated error is defined as the log of $L(\hat{\eta}_{-})$. This idea of
 
    \begin{figure}[h]
     \centering
-    \begin{minipage}[b]{0.5\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
       \centering
-		  \includegraphics[height= 3.5cm ]{./figures/03.png}
-      \caption{Cross Validated Linear Predictors}
+		  \includegraphics[height= 3.9cm ]{./figures/03.png}
+      \caption{CV Linear Predictors}
      \end{minipage}
-     \begin{minipage}[b]{0.5\textwidth}
+     \begin{minipage}[b]{0.45\textwidth}
       \centering
-		  \includegraphics[height= 3.9cm ]{./figures/04.png}
-      \caption{Cross Validated Deviance Residuals}
+		  \includegraphics[height= 4.1cm ]{./figures/04_2.png}
+      \caption{CV Deviance Residuals}
       \end{minipage}	
    \end{figure}	
     
   \subsection{Cross Validated Deviance Residuals}
-  
-Since the biggest challenge of conducting cross validation for cox regression is due to the missingness of baseline hazard, we propose a second approach which involves estimating the actual baseline hazard $\hat{\Lambda}_{0}$. As is mentioned in Therneau et al.'s original paper on Martingale Residuals \citep{Therneau1990}, the baseline hazard can be used to compute the Martingale residuals and deviance residuals, which are commonly used for Cox regression model diagnostics. 
+  %Need to update this section with the new baseline estimation method%
+Since the biggest challenge of conducting cross validation for cox regression is due to the missingness of baseline hazard, we propose a second approach which involves estimating the actual baseline hazard $\hat{\Lambda}_{0}$. The sum of squares of Martingale residuals is a natural candicate for evaluating the model performance using baseline hazard. Martingale residuals and its normalized form, deviance residuals, were first proposed by \citep{Therneau1990} for Cox regression model diagnostics. 
 
-\par The original idea of calcualting the Martingale and Deviance residuals were integrated into cross validation. Based on the observations in the training set, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}. Then for each observation in the test set, the Martingale Residual can be calculated: \begin{equation}\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}},\end{equation} where $\delta_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. The deviance residual can be calcualted from the Martingale Residuals: \begin{equation} d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}\end{equation}
+To estimate the baseline hazard, a set of linear predictors $\hat{\eta}_{-} = ( \hat{\eta}_{-1},  \hat{\eta}_{-2} , ...  \hat{\eta}_{-K})$ would be obtained in the same way as the cross validated linear predictor approach. $\hat{\eta}_{-i}$ is computed based on $\hat{\beta}_{-i}$s estimated from the training set and observations from the ith test set. With $\hat{\eta}_{-}$, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}. Then for each observations, the Martingale Residual can be calculated: \begin{equation}\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}},\end{equation} where $\delta_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. The deviance residual can be calcualted from the Martingale Residuals: \begin{equation} d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}\end{equation} The sum of squares of the deviance residuals, $\sum_{i}\hat{d}_{i}^2$, would be used as the cross validated error.
 
+As an alternative, the baseline hazard can also be estimated only based on the training set, leaving the test set as out-of-sample observations for calculating the residuals. There are two major issues with this approach. First, it would be common to run into situations where events in the test set occurred after the last event occured in the baseline, where the survival function dropped to 0. Unless those observations are treated as censored, this approach would not work. Second, there would be an extra numeric challenge for deviance residuals. Since the baseline hazard function $\hat{\Lambda}_{0}$ is a step function from 0, the cumulative hazard at the first time point from 0 is always 0. Since deviance residual contains a term $log(\delta_{i} - \hat{M}_{i})$, where $\delta_{i} - \hat{M}_{i} = \hat{\Lambda}_{0}$, this term would be negative infinity for the first time point and lead to a numeric issue for whichever fold that contains the first time point. Hence extra smoothing for the step function would be needed for this approach to work.
 
-After repeating this procedure for all K folds, we would obtain a set of deviance residuals for all observations. They are be pulled together by sum of squares as the cross validated error:
-\begin{equation}CVE = \sum_{i}\hat{d}_{i}^2\end{equation}.
-
-One advantage of using deviance residual is that it is symmetric while Martingale Residual is not. However, there does exist a numeric challenge when incorporating deviance residuals for cross validation. Since the baseline hazard function $\hat{\Lambda}_{0}$ is a step function from 0, the cumulative hazard at the first time point from 0 is always 0. Since deviance residual contains a term $log(\delta_{i} - \hat{M}_{i})$, where $\delta_{i} - \hat{M}_{i} = \hat{\Lambda}_{0}$, this term would be negative infinity for the first time point and lead to a numeric issue for whichever fold that contains the first time point. Our solution is to smooth out the step function at the beginning.
-
-When invented, both Martingale residuals and Deviance residuals were calculated only for observations that construct the baseline hazard, not for out-of-sample predictions. However, in the cross-validation context, residuals are calculated for observations that are not used to construct the baseline hazard. It is common to run into situations where some events in the test set occurred after the last event occured in the baseline, where the survival function dropped to 0. For those events, they would be treated as censored.
 
 \section{Simulation Studies}
+%reformulate this section with%
+%3.1 comparison between the three methods
+%3.2 discussion about stability issue for ungrouped methods
+%3.3 comparison with AIC
+%3.4 explaining why deviance residuals do not work well
 
   \subsection{Simulation Settings}
   
@@ -205,7 +206,7 @@ When invented, both Martingale residuals and Deviance residuals were calculated 
     
     \subsubsection {Simulations in Low Dimensional Settings}
     
-   The simulation experiments were first conducted under lower dimension settings. Number of observations n is set to be 100. Dimension of the data p is set to be 100. 200 replications were used. Censoring percentage, number of folds used in cross-validation, number of non-zero $\beta$s and the magnitude of the $\beta$s were varied in several different simulation scenarios. Patterns and results shown in various simulation scenarios are consistent with one another. Figure 5 and Figure 6 illustrates one simulation scenario, where about 10$\%$ of which were set to be censored and 10 of the $\beta$s were set to be non-zero and 10 folds were used for cross validation. The x - axis of the plots are the magnitude of the non-zero $\beta$ coefficients. 
+   The simulation experiments were first conducted under lower dimension settings. Number of observations n is set to be 100. Dimension of the data p is set to be 100. 200 replications were used. Censoring percentage, number of folds used in cross-validation, number of non-zero $\beta$s and the magnitude of the $\beta$000000000s were varied in several different simulation scenarios. Patterns and results shown in various simulation scenarios are consistent with one another. Figure 5 and Figure 6 illustrates one simulation scenario, where about 10$\%$ of which were set to be censored and 10 of the $\beta$s were set to be non-zero and 10 folds were used for cross validation. The x - axis of the plots are the magnitude of the non-zero $\beta$ coefficients. 
    
    \begin{figure}[h]
    \centering
