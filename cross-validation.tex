@@ -178,35 +178,16 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 
 
 \section{Simulation Studies}
-%reformulate this section with%
-%3.1 comparison between the three methods
-%3.2 discussion about stability issue for ungrouped methods
-%3.3 comparison with AIC
-%3.4 explaining why deviance residuals do not work well
 
-  \subsection{Simulation Settings}
-  
   Simulation studies were conducted to compare how those methods behave relative to each other. We generate data with pre-specified baseline hazard, covariate matrix X, coefficient $\beta$ and censoring mechanism. Both low dimensional and high dimentional scenarios were examined. All cross-validation methods mentioned in Section 2 were applied to the data to select the tuning parameter $\lambda$ and produce $\hat{\beta}$ estimates. Cross-validation were also compared to model selection criteria AIC and BIC.
   
   Survival times were generated from exponential distribution $h(t) = h_{0} exp(X\beta)$, conditioned on covariates. The entries in the covariate matrix $X_{n \times p}$ were independently generated from Normal (0, 1). True coefficients $\beta$  were assumed to have sparsity: $\beta_{p\times 1} = (\beta_{1},\beta_{2}, ..., \beta_{10}, 0, ..., 0)^{T}$.  Censoring status were generated based on binomial distribution.
   
   Suppose $\hat{\beta}$ is the coefficients estimated by a fitted cox model. We measure the distance between the fitted model and the true model by mean squared error $MSE = E(\hat{\beta} - \beta)^2$. For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$. Then the $\lambda$s that selected by the cross validation or information criteria would be compared to this optimal $\lambda$. If the $\lambda$ chosen by cross validation is smaller than the optimal $\lambda$, then the cross validation method would be considered liberal. If the $\lambda$ chosen by cross validation is larger than the optimal $\lambda$, then the cross validation method would be considered conservative. 
-  
-  \subsection{Simulation Results}
-	
-    \subsubsection {Stability}
-   While the ungrouped cross-validated likelihood is an intuitive way to carry out cross-validation, it is quite unstable when it runs into cases where the number of observed events in some fold is really small. As is illustrated in Figure 5, cases of undefined cross-validation error would increase when censoring increases or when number of folds increases. 
-
-\begin{figure}
-    \centering
-		\includegraphics[height= 8cm ]{./figures/stability2.png}
-    \caption{Comparing Stability}
-\end{figure}	
-    
-    
-    \subsubsection {Simulations in Low Dimensional Settings}
-    
-   The simulation experiments were first conducted under lower dimension settings. Number of observations n is set to be 100. Dimension of the data p is set to be 100. 200 replications were used. Censoring percentage, number of folds used in cross-validation, number of non-zero $\beta$s and the magnitude of the $\beta$000000000s were varied in several different simulation scenarios. Patterns and results shown in various simulation scenarios are consistent with one another. Figure 5 and Figure 6 illustrates one simulation scenario, where about 10$\%$ of which were set to be censored and 10 of the $\beta$s were set to be non-zero and 10 folds were used for cross validation. The x - axis of the plots are the magnitude of the non-zero $\beta$ coefficients. 
+     
+    \subsection {Simulations Comparing Cross-validation Approaches}
+  %need to change figures to include the new cross-validated deviance residuals
+   The simulation experiments were first conducted under lower dimension settings. Number of observations n is set to be 100. Dimension of the data p is set to be 100. 200 replications were used. Censoring percentage, number of folds used in cross-validation, number of non-zero $\beta$s and the magnitude of the $\beta$s were varied in several different simulation scenarios. Patterns and results shown in various simulation scenarios are consistent with one another. Figure 5 and Figure 6 illustrates one simulation scenario, where about 10$\%$ of which were set to be censored and 10 of the $\beta$s were set to be non-zero and 10 folds were used for cross validation. The x - axis of the plots are the magnitude of the non-zero $\beta$ coefficients. 
    
    \begin{figure}[h]
    \centering
@@ -226,8 +207,6 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 
    Mean squared errors are compared in Figure 6. The MSEs of the cross-validation selected models are compared with the MSE of the model given by the optimal $\lambda$. The y-axis represents the ratio of the two. The ungrouped method and the linear predictor approach are outperforming the other methods and are closest to the minimal MSE.
 
-    \subsubsection {Simulations in High Dimensional Setting}
-
    Simulation studies were also conducted in high dimension scenarios, where the number of observations and dimension of the covariate matrix is more similar to real genetics research. The results are shown in Table 1. Conclusions are close to what is shown in the low dimensional setting. The M- residual approach performs most conservatively. Linear predictor approach and ungrouped approach are relatively more liberal than the other approaches but still slightly more conservative than the optimal $\lambda$.
   
   \begin{table}[h]
@@ -244,9 +223,18 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 			\caption{Simulation Results in High Dimensional Setting}
 	\end{table}
   
-  
-  \vspace{20 mm}
-    \subsubsection {Comparisons with Information Criteria}
+ \subsection {Stability}
+   While the ungrouped cross-validated likelihood is an intuitive way to carry out cross-validation, it is quite unstable when it runs into cases where the number of observed events in some fold is really small. As is illustrated in Figure 5, cases of undefined cross-validation error would increase when censoring increases or when number of folds increases. 
+
+\begin{figure}
+    \centering
+		\includegraphics[height= 8cm ]{./figures/stability2.png}
+    \caption{Comparing Stability}
+\end{figure}	
+
+
+    \subsection {Comparisons with Information Criteria}
+	%need to change the figures to have fewer lines
     \par We also compared cross-validation with information criteria AIC and BIC. Simulation studies were conducted in lower dimension and higher dimension respectively. As is illustrated in Figure 7, in lower dimension, AIC tends to perform more liberal and BIC tends to perform more conservative than the optimal $\lambda$. While the cross-validation methods are also conservative, most of them are less conservative than BIC. In terms of MSE, cross-validation methods yield smaller MSE than the information criteria. In higher dimension, both BIC and AIC tend to be more liberal than the optimal $\lambda$ and yield larger MSE.
 
    \begin{figure}[h]
@@ -262,6 +250,8 @@ As an alternative, the baseline hazard can also be estimated only based on the t
       \caption{Comparison to Information Criteria in Higher Dimension}
       \end{minipage}	
    \end{figure}	
+
+ \subsection {Issues with Deviance Residual}
     
   
 \section{Application to Real Data}
