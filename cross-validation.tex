@@ -193,12 +193,12 @@ As an alternative, the baseline hazard can also be estimated only based on the t
    \centering
     \begin{minipage}[b]{0.4\textwidth}
       \centering
-		  \includegraphics[height= 6cm ]{./figures/05.jpeg}
+		  \includegraphics[height= 6cm ]{./figures/05.png}
       \caption{ }
      \end{minipage}
      \begin{minipage}[b]{0.4\textwidth}
       \centering
-		  \includegraphics[height= 6cm ]{./figures/06.jpeg}
+		  \includegraphics[height= 6cm ]{./figures/06.png}
       \caption{ }
       \end{minipage}	
    \end{figure}	
@@ -209,20 +209,40 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 
    Simulation studies were also conducted in high dimension scenarios, where the number of observations and dimension of the covariate matrix is more similar to real genetics research. The results are shown in Table 1. Conclusions are close to what is shown in the low dimensional setting. The M- residual approach performs most conservatively. Linear predictor approach and ungrouped approach are relatively more liberal than the other approaches but still slightly more conservative than the optimal $\lambda$.
   
-  \begin{table}[h]
-    \centering
-			\begin{tabular}{ c | c | c | c}
-				CV Methods & $\lambda$ (SD) & MSE Ratio \\
-				\hline \hline
-				Optimal  & 0.0606 ( 0.0019 )&  / & \\ 
-				Grouped  &  0.0895  ( 0.0043 )& 1.598  \\
-				Ungrouped & 0.0754 ( 0.0060 )& 1.225 \\
-				Linear Pred & 0.0759 ( 0.0058 )& 1.234 \\
-				M Residual &0.1283 ( 0.0047 ) & 2.959
-			\end{tabular}
-			\caption{Simulation Results in High Dimensional Setting}
-	\end{table}
-  
+ % \begin{table}[h]
+   % \centering
+%			\begin{tabular}{ c | c | c | c}
+%				CV Methods & $\lambda$ (SD) & MSE Ratio \\
+%				\hline \hline
+%				Optimal  & 0.0606 ( 0.0019 )&  / & \\ 
+%				Grouped  &  0.0895  ( 0.0043 )& 1.598  \\
+%				Ungrouped & 0.0754 ( 0.0060 )& 1.225 \\
+%				Linear Pred & 0.0759 ( 0.0058 )& 1.234 \\
+%				M Residual &0.1283 ( 0.0047 ) & 2.959
+%			\end{tabular}
+%			\caption{Simulation Results in High Dimensional Setting}
+%	\end{table}
+ 
+\begin{table}[h]
+\small
+\centering
+\caption{Simulation Results, Varying n and p}
+\label{my-label}
+\begin{tabular}{llllllllllllllll}
+\hline
+       & \multicolumn{3}{l}{n = 100, p = 20} &  & \multicolumn{3}{l}{n = 100, p = 100} &  & \multicolumn{3}{l}{n = 200, p = 1000} &  & \multicolumn{3}{l}{n = 500, p = 10000} \\
+       & \multicolumn{3}{l}{$\#$of non-zero = 10} &  & \multicolumn{3}{l}{$\#$of non-zero = 10} &  & \multicolumn{3}{l}{$\#$of non-zero = 10} &  & \multicolumn{3}{l}{$\#$of non-zero = 20} \\ \cline{2-4} \cline{6-8} \cline{10-12} \cline{14-16} 
+       &     &        &MSE       &  &   &       & MSE     &    &    &        & MSE      &  &     &        & MSE      \\
+       & $\lambda$(SD)     & &Ratio       &  & $\lambda$(SD)         & & Ratio     & &$\lambda$(SD)         & & Ratio      & & $\lambda$(SD)         & & Ratio      \\ \cline{2-2} \cline{4-4} \cline{6-6} \cline{8-8} \cline{10-10} \cline{12-12} \cline{14-14} \cline{16-16} 
+Optimal &           &        &          &  &           &       &          &  &           &        &          &  &           &        &          \\
+Grouped &           &        &          &  &           &       &          &  &           &        &          &  &           &        &          \\
+Ungrouped &           &        &          &  &           &       &          &  &           &        &          &  &           &        &          \\
+Linear Pred &           &        &          &  &           &       &          &  &           &        &          &  &           &        &          \\
+Deviance &           &        &          &  &           &       &          &  &           &        &          &  &           &        &          \\ \hline
+\end{tabular}
+\end{table}
+
+
  \subsection {Stability}
    While the ungrouped cross-validated likelihood is an intuitive way to carry out cross-validation, it is quite unstable when it runs into cases where the number of observed events in some fold is really small. As is illustrated in Figure 5, cases of undefined cross-validation error would increase when censoring increases or when number of folds increases. 
 

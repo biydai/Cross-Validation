@@ -138,10 +138,10 @@ colnames(mse_ratio) <- c
 rownames(mse_ratio) <- c("grouped","ungrouped","ncvreg","deviance")
 
 #plot lambda
-length(c)
+png(filename= "sim_1_2_lambda.png")
 maintitle <- expression(paste(lambda," vs the magnitude of non-zero ", beta, "s", sep = ""))
 xlab <- expression(paste("the magnitude of non-zero ", beta, "s", sep = ""))
-plot(x = c, y = com_result1[1,],ylim = c(0.01, 0.3), type = "l",lwd = 2,main = maintitle,
+plot(x = c, y = com_result1[1,],ylim = c(0, 0.4), type = "l",lwd = 2,main = maintitle,
      ylab = expression(lambda),xlab = xlab, axes = FALSE)
 axis(side = 1, at = c,labels = c)
 axis(side = 2,las = 1)
@@ -150,12 +150,13 @@ lines(x = c, y = com_result1[3,],lty = 1,col = 3,lwd = 2)
 lines(x = c, y = com_result1[4,],lty = 1,col = 4,lwd = 2)
 lines(x = c, y = com_result1[5,],lty = 1,col = 6,lwd = 2)
 legend("topright",legend = c("Optimal","Grouped","Ungrouped","Linear Pred","Deviance"),lty =1,col = c("black",2:4,6))
+dev.off()
 
 #plot MSE ratio
-length(c)
+png(filename= "sim_1_2_mse.png")
 maintitle <- expression(paste("MSE Ratio"," vs the magnitude of non-zero ", beta, "s", sep = ""))
 xlab <- expression(paste("the magnitude of non-zero ", beta, "s", sep = ""))
-plot(x = c, y = mse_ratio[1,],ylim = c(1, 5), type = "l",lwd = 2,main = maintitle,
+plot(x = c, y = mse_ratio[1,],ylim = c(0, 25), type = "l",lwd = 2,main = maintitle,
      ylab = "MSE Ratio",xlab = xlab, axes = FALSE,col = 2)
 axis(side = 1, at = c,labels = c)
 axis(side = 2,las = 1)
@@ -163,6 +164,6 @@ lines(x = c, y = mse_ratio[2,],lty = 1,col = 3,lwd = 2)
 lines(x = c, y = mse_ratio[3,],lty = 1,col = 4,lwd = 2)
 lines(x = c, y = mse_ratio[4,],lty = 1,col = 6,lwd = 2)
 legend("topleft",legend = c("Grouped","Ungrouped","Linear Pred","Deviance"),lty =1,col = c(2:4,6))
-
+dev.off()
 
 

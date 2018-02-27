@@ -30,7 +30,7 @@ n <- 100
 p <- 100
 cpct <- seq(0,0.5,by = 0.1)
 beta <- generatebeta(p,nbeta = 10 ,c = 1)
-N <- 2
+N <- 200
 # initiation
 true.lambda.cen<- matrix(NA,nrow = N ,ncol = length(cpct))
 gp.lambda.cen <- matrix(NA,nrow = N ,ncol = length(cpct))
@@ -221,18 +221,21 @@ fold <- rbind(
 )
 fold <- (200-fold)/200
 
-par(mfrow = c(1,2))
+#par(mfrow = c(1,2))
+png(filename= "sim_3_1.png")
 cpct <-seq(0,0.5,by = 0.1)
 plot(x = cpct, y = cen[1,], type = "l", ylim = c(0.5,1), lwd = 2,
      ylab = "Probability of Defined CVE", xlab = "Censored Portion")
 lines(x = cpct, y = cen[2,], col = 1, lwd = 2)
 lines(x = cpct, y = cen[3,], col = 2, lwd = 2)
 legend("bottomleft",legend = c("Linear Predictor","Grouped","Ungrouped"), col = c(1,1,2), lwd = 2)
+dev.off()
 
+png(filename= "sim_3_2.png")
 nfold <- c(5,10,15,20)
 plot(x = nfold, y = fold[1,], type = "l", ylim = c(0.5,1), lwd = 2,
      ylab = "Convergence %", xlab = "Number of Folds")
 lines(x = nfold, y = fold[2,], col = 1, lwd = 2)
 lines(x = nfold, y = fold[3,], col = 2, lwd = 2)
-
+dev.off()
 

@@ -15,6 +15,11 @@ compare four cross validation methods:
 ungrouped, grouped, linear predictor, deviance residuals
 varying magnitude of betas at low dimension (n = 100, p = 100, nonzero = 10)
 
+# Scenario 1.4 (plots the lambda selection and MSE ratio)
+compare four cross validation methods: 
+ungrouped, grouped, linear predictor, deviance residuals
+varying magnitude of betas at low dimension (n = 100, p = 1000, nonzero = 10)
+
 # Scenario 2.1 (put in tables with lambda(SE), MSE)
 compare four cross validation methods
 at low dimension (n = 100, p = 20, nonzero = 10)
