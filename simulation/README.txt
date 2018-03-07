@@ -15,9 +15,14 @@ compare four cross validation methods:
 ungrouped, grouped, linear predictor, deviance residuals
 varying magnitude of betas at low dimension (n = 100, p = 100, nonzero = 10)
 
-# Scenario 1.4 (plots the lambda selection and MSE ratio)
+# Scenario 1.4 (plots the lambda selection and MSE ratio, grouped method works as bad as deviance)
 compare four cross validation methods: 
 ungrouped, grouped, linear predictor, deviance residuals
+varying magnitude of betas at low dimension (n = 100, p = 1000, nonzero = 10)
+
+# Scenario 1.5 (plots the lambda selection and MSE ratio)
+compare the impact LOOCV vs 10-fold cross validation methods: 
+grouped, linear predictor, deviance residuals (this is not available for ungrouped)
 varying magnitude of betas at low dimension (n = 100, p = 1000, nonzero = 10)
 
 # Scenario 2.1 (put in tables with lambda(SE), MSE)
@@ -45,8 +50,10 @@ compare four cross validation methods in terms of stability
 varying number of folds
 
 # Scenario 4.1
-compare four cross validation methods with AIC, BIC, EBIC?, GCV?
-varying censored portion
+compare cross validation methods with AIC, BIC, GCV at low dimension
+
+# Scenario 4.1
+compare cross validation methods with AIC, BIC, GCV at high dimension
 
 # Scenario 5
 Change the penalty to MCP, just to see what has happened
