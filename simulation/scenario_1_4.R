@@ -81,11 +81,11 @@ for(i in 1:N){
 #apply(na.omit(ncv.lambda),2,mean)
 #apply(na.omit(dvr.lambda),2,mean)
 
-save(true.lambda,gp.lambda,ug.lambda,ncv.lambda,dvr.lambda,
-     gp.mse,ug.mse,ncv.mse,dvr.mse,true.mse,
-     file = "sim_1_4.RData")
+#save(true.lambda,gp.lambda,ug.lambda,ncv.lambda,dvr.lambda,
+#     gp.mse,ug.mse,ncv.mse,dvr.mse,true.mse,
+#     file = "sim_1_4.RData")
 
-#load(file = "sim_1_4.RData")
+load(file = "sim_1_4.RData")
 # lambda
 com_result1 <- matrix(NA,nrow = 5,ncol = length(c))
 com_result1[1,] <- apply(true.lambda,2,mean)
@@ -140,7 +140,7 @@ rownames(mse_ratio) <- c("grouped","ungrouped","ncvreg","deviance")
 png(filename= "sim_1_4_lambda.png")
 maintitle <- expression(paste(lambda," vs the magnitude of non-zero ", beta, "s", sep = ""))
 xlab <- expression(paste("the magnitude of non-zero ", beta, "s", sep = ""))
-plot(x = c, y = com_result1[1,],ylim = c(0, 0.40), type = "l",lwd = 2,main = maintitle,
+plot(x = c, y = com_result1[1,],ylim = c(0, 0.30), type = "l",lwd = 2,main = maintitle,
      ylab = expression(lambda),xlab = xlab, axes = FALSE,cex = 2)
 axis(side = 1, at = c,labels = c)
 axis(side = 2,las = 1)
