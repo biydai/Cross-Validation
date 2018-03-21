@@ -4,3 +4,4 @@
 *.blg
 !figures/*.jpeg
 !figures/*.png
+.Rproj.user
