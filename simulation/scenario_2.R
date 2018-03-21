@@ -152,7 +152,7 @@ mean(dvr.lambda.2)
 # scenario 2_3 : n = 100, p = 1000, nbeta = 10, censoring = 10% , nfold = 10
 #############################################################################
 # change the magnitude of betas
-n <- 200
+n <- 100
 p <- 1000
 #cpct <- seq(0,0.3,by = 0.1)
 cpct <- 0.1

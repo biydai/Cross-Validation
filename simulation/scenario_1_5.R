@@ -129,13 +129,13 @@ apply(na.omit(ncv.lambda.10),2,mean)
 apply(na.omit(dvr.lambda.10),2,mean)
 
 
-save(true.lambda,gp.lambda,ncv.lambda,dvr.lambda,
-     gp.lambda.10,ug.lambda.10,ncv.lambda.10,dvr.lambda.10,
-     gp.mse,ncv.mse,dvr.mse,true.mse,
-     gp.mse.10,ug.mse.10,ncv.mse.10,dvr.mse.10,
-     file = "sim_1_5.RData")
+#save(true.lambda,gp.lambda,ncv.lambda,dvr.lambda,
+#     gp.lambda.10,ug.lambda.10,ncv.lambda.10,dvr.lambda.10,
+#     gp.mse,ncv.mse,dvr.mse,true.mse,
+#     gp.mse.10,ug.mse.10,ncv.mse.10,dvr.mse.10,
+#     file = "sim_1_5.RData")
 
-#load(file = "sim_1_5.RData")
+load(file = "sim_1_5.RData")
 # lambda
 com_result1 <- matrix(NA,nrow = 8,ncol = length(c))
 com_result1[1,] <- apply(true.lambda,2,mean)
