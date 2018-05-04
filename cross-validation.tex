@@ -48,24 +48,25 @@
 \newcommand{\abSet}{\{\alpha_{k_\ell},\bbeta_{k_\ell}\}_{\ell=1}^K}
 \newcommand{\bZ}{{\bf Z}}
 
+\providecommand{\note}[1]{\textcolor{red}{#1}}
 
-
-
-\title{Comparing Cross Validation Methods for Penalized Cox Regression}
-\author{
-}
-\date{ }
+\title{Cross Validation Approaches for Penalized Cox Regression}
+\author{Biyue Dai\\Department of Biostatistics\\University of Iowa
+  \and
+  Patrick Breheny\\Department of Biostatistics\\University of Iowa}
+\date{\today}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 
 \section*{Abstract}
-While cross validation is commonly used for selecting tuning parameters in penalized regression, little research has been conducted to study cross validation methods for penalized Cox regression. Due to its semi-parametric nature, conducting cross validation for Cox models has always been a challenge. We propose two new cross-validation methods for Cox Regression, and compare them to traditional information criteria as well as a cross-validated partial likelihood approach originally proposed by Verweij et al. Our simulation studies show that, in general, cross-validation tends to be conservative (i.e., select smaller models than the ideal choice of tuning parameters) for penalized Cox regression models. However, our proposed approach of cross-validating the linear predictors generally offers the best balance of stability and performance. We also illustrate these approaches on data from studies of gene expression and overall survival in cancer patients.
-
+Cross validation is commonly used for selecting tuning parameters in penalized regression, but little research has been conducted to study the performance of cross validation in penalized Cox regression. Due to its partial likelihood construction, carrying out cross validation for Cox models is not straightforward, and there are several ways one could imagine applying it. Here, we propose two new cross-validation methods for Cox regression and compare them to approaches that have been proposed elsewhere.
+\note{as well as to information criteria such as AIC and BIC -- I DON'T THINK THIS IS CURRENTLY IN THE PAPER ANYMORE?}
+Our simulation studies show that in general, all cross-validation approaches tend to be conservative (i.e., select smaller models than the optimal choice of tuning parameters) for penalized Cox regression models. However, our proposed approach of cross-validating the linear predictors seems to offer an attractive balance of performance and numerical stability. We illustrate these advantages using simulated data as well as real data from two genome-wide studies of survival in cancer patients.
 \input{main}
 
 \bibliographystyle{abbrvnat}
-\setcitestyle{round} 
+%\setcitestyle{round} 
 \bibliography{articles}
 
 \end{document}
