@@ -1,7 +1,13 @@
 \section{Introduction}
 Cox propotional hazard regression is one of the most commonly used statistical model for analyzing data with survival outcomes. Despite its popularity, Cox model is limited by its semiparametric nature: it is challenging to evaluate the model's predictive accuracy.
 
-In the Cox model \citep{Cox1975}, the hazard function for an observation i is given by \begin{equation}h_{i}(t) = h_{0}(t) \text{exp}( X_{i}^{T} \beta)\end{equation} where $h_{0}$ is the baseline hazard and $e^{X_{i}^{T} \beta}$ is the relative risk. Suppose there are n observations and m observed failure times, the estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood \begin{equation}L(\beta) = \prod_{j=1}^{m} \frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}\end{equation}, where j indexes the observed failure times and $R(t_{j})$ denotes the set of observations at risk at time $t_{j}$. As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
+Suppose there are n subjects and m observed failure events. Use i for indexing observations, j for indexing events sorted by their failure time. For the ith subject, its covarites will be denoted by $X_{i}$; $\delta_{i}$ denotes whether the event is observed or not for this subject. $t_{j}$ denotes the failure time for the j th event; $t_{i}$ denotes the time observed for ith subject.  In the Cox model \citep{Cox1975}, the hazard function for an observation i is given by 
+\begin{equation}h_{i}(t) = h_{0}(t) \text{exp}( X_{i}^{T} \beta)\end{equation} 
+where $h_{0}$ is the baseline hazard and $e^{X_{i}^{T} \beta}$ is the relative risk. The estimation of the coefficients $\beta$s are obtained by maximizing the partial likelihood. For each individual subject, its contribution to the partial likelihood is 
+\begin{equation} l_{i}(\beta) = \left \{\frac{\text{exp} ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\text{exp} ( X_{k}^{T} \beta)}\right \}^{\delta_{i}} \end{equation} \note{introduce notation $l_{i}$} , where $R(t_{i})$ denotes the set of observations at risk at time $t_{i}$.
+
+For all n subjects, the partial likelihood is 
+\begin{equation} L(\beta) =\prod_{i = 1}^{n} l_{i}(\beta) = \prod_{j=1}^{m} \frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}\end{equation}. As a semi-parametric model, Cox regression only gives estimations of the $\beta$ coefficients, without estimating the baseline hazard. Hence the interpretation of the Cox model is only valid in a relative sense.
 
 Penalized Cox Regression is an extension of the regular cox regression model. Estimates of the $\beta$ coefficients are obtained by minimizing the objective function \begin{equation}  Q(\beta |X, y) = - \frac{1}{n}  \sum_{j=1}^{m} \text{log} \left \{\frac{\text{exp} ( X_{j}^{T} \beta)}{\sum_{ k \in R(t_{j})}\text{exp} ( X_{k}^{T} \beta)}) \right \} + P_{\lambda}(\beta). \end{equation} \citep{Simon2011}. The first part of the objective function is based on the partial likelihood. The second part is a penalty term that depends on some regularization parameters. In this paper, only the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$ was considered. The LASSO cox regression can be used to build prediction models for survival outcome based on high dimensional data, where the number of covariates p $\gg$ n. An example of its application would be to make predictions of cancer patients' the overall survival time with their certain gene expressions.
 
@@ -65,6 +71,8 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 		%\includegraphics[height= 4cm ]{./figures/02_2.png}
     \caption{Illustration of K-fold Cross Validation Methods for Cox Regression}
 \end{figure}	
+
+\note{tranpose sign in figure 1 is corrected}
 
 \section{Simulation Studies}
 

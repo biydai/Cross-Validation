@@ -143,7 +143,7 @@ for(j in 1:length(nfold)){
   #foldid <- sample(1:nfold[j],size=n,replace=TRUE)
   for (i in 1:N){
     set.seed(666 + i)
-    data <- genSurvData(n=100 , beta = beta, cpct = 0.2)
+    data <- genSurvData(n=100 , beta = beta, cpct = 0.3) # changed from 0.2 to 0.3
     f <- try(survncvreg(data$x,data$y,data$beta))
     cv.gp <- try(cv.glmnet(x = data$x,y = data$y,nfolds = nfold[j],lambda = f$lambda,family = "cox"))#foldid=foldid,
     cv.ug <- try(cv.glmnet(data$x,data$y,nfolds = nfold[j],lambda = f$lambda,grouped = FALSE,family = "cox"))#foldid=foldid
@@ -151,7 +151,7 @@ for(j in 1:length(nfold)){
     cv.dvr <- try(cv.ncvsurv.KP(X = data$x,y = data$y,nfolds = nfold[j],lambda = f$lambda,penalty = "lasso"))#foldid = foldid
     # true
     true.lambda.fold[i,j] <- f$lambda_t
-    true.mse.cen[i,j] <- min(f$norm)
+    true.mse.fold[i,j] <- min(f$norm)
     
     # gp
     if (typeof(cv.gp) == "character"){
