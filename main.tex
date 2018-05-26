@@ -21,30 +21,41 @@ In this paper, we propose two alternative ways to carry out cross validation for
 \section{Methods}
 
 In the Cox model, the hazard function for subject $i$ is given by 
-\begin{equation}
+\begin{equation*}
   h_{i}(t) = h_{0}(t) \exp( X_{i}^{T} \beta),
-\end{equation} 
+\end{equation*} 
 where $h_{0}$ is the baseline hazard and $e^{X_i^{T} \beta}$ is the risk for a subject with covariates $X_i$ relative to that baseline.  The estimation of the coefficients is obtained by maximizing a partial likelihood.  Letting $t_i$ denote the time on study for subject $i$ and $\delta_{i}$ indicate whether or not an event is observed for subject $i$, each subject's individual contribution to that partial likelihood is
-\begin{equation}
-  l_{i}(\beta) = \left \{\frac{\exp ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\exp ( X_{k}^{T} \beta)}\right \}^{\delta_{i}},
-\end{equation}
+\begin{equation*}
+  L_{i}(\beta) = \left \{\frac{\exp ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\exp ( X_{k}^{T} \beta)}\right \}^{\delta_{i}},
+\end{equation*}
 where $R(t_{i})$ denotes the set of subjects at risk at time $t_{i}$.  The partial likelihood for the entire sample of $n$ subjects is then given by:
-\begin{equation}
-  L(\beta) =\prod_{i = 1}^{n} l_{i}(\beta).
-\end{equation}
+\begin{equation*}
+  L(\beta) =\prod_{i = 1}^{n} L_{i}(\beta).
+\end{equation*}
 
 Cox regression can be extended by introducing a penalty into the partial likelihood.  In penalized Cox regression, $\beta$ coefficient estimates are obtained by minimizing the objective function
 \begin{equation}
+  \label{eq:obj}
   Q(\beta) = - \frac{1}{n} \log L(\beta) + P_{\lambda}(\beta),
 \end{equation}
 where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$. In this paper, we focus upon the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$, although the methods we propose can be used with any penalty (indeed, can also be used for model selection in unpenalized Cox regression).  LASSO cox regression is particularly useful for high dimensional data where the number of covariates p $\gg$ n; for example, in the prediction of cancer patients' overall survival based on genome-wide expression measurements.
 
 Selecting $\lambda$ is critical to LASSO estimation. LASSO estimates are sparse, in the sense that some coefficients are estimated to be exactly zero, thereby carrying out automatic variable selection along the solution path. At large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected into the model. If $\lam$ is too large or too small, the model's predictive accuracy suffers.
 
-\subsection{Cross Validated Likelihood} 
+\subsection{Cross validated partial likelihood} 
 \label{Sec:cox-cv-existing}
 
-Suppose a data set of n observations is split into K folds and the ith fold is left out, then a partial likelihood can be built over the K -1 folds and yields maximum likelihood estimates of the coefficients, denoted by $\hat{\beta}_{-i}$. An intuitive way to carry out cross validation is to use the partial likelihood on the test data as the cross validated error: \begin{equation}cvl = \sum_{i=1}^{K} l_{i}(\hat{\beta}_{-i})\end{equation} This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option. We refer to this definition as standard cross-validated partial likelihood.
+Suppose a data set of n observations is split into $K$ folds and the $\ith$ fold is left out.  A partial likelihood can then be built over the remaining $K-1$ folds and used in \eqref{eq:obj} to obtain penalized likelihood estimates, which we denote $\hat{\beta}_{-i}$.
+This manuscript is concerned with the question: how should one use the $\ith$ fold to measure predictive accuracy?
+
+A straightforward approach, which we refer to as \emph{standard cross-validated partial likelihood}, is to use the partial likelihood on the test data as the cross validated error (CVE):
+\note{This section here needs work.  The equation below is wrong.  In it, i is used to represent the folds (1 through K) even though $l_i$ has already been defined to represent individuals -- in general, each fold has multiple individuals; only for LOOCV would these be the same.  We need to introduce new notation here, or a double sum, or something.}
+\begin{equation}
+  \CVE = \sum_{i=1}^{K} l_{i}(\hat{\beta}_{-i}),
+\end{equation}
+where $l_i = \log L_i$.
+This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option.
+\note{Also, I think we should write everything in terms of CVE, not CVL}.
 
 An alternative way to calculate cross-validated log likelihood was proposed by Verweij and Van Houwelingen. They defined cross-validated log likelihood of leaving the ith fold out to be \begin{equation}cvl = \sum_{i=1}^{K} \{l(\hat{\beta}_{-i}) - l_{-i}(\hat{\beta}_{-i})\}. \end{equation} When the ith fold is left out, $l(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with all k folds of observations. $l_{-i}(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with observations from the other K-1 folds. We refer to this definition as Verweij and Van Houwelingen's cross-validated partial likelihood. This is implemented in the $\tt{glmnet}$ package as the default $\tt{grouped}$ option.
 
