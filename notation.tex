@@ -1,0 +1,110 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,natbib,graphicx,enumerate,subcaption,tikz,url,booktabs}
+
+\usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
+
+\newcommand{\ith}{i^\textrm{th}}
+\newcommand{\CVE}{\textrm{CVE}}
+\newcommand{\logit}{\mbox{logit}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\indic}[1]{\boldsymbol{1}_{\{ #1 \}}}
+\newcommand{\mvec}{\mbox{vec}}
+\newcommand{\cov}{\mbox{Cov}}
+\newcommand{\eqdist}{\overset{{\cal D}}{=}}
+\newcommand{\const}{\mbox{const}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\diag}{\mbox{{\bf diag}}}
+\newcommand{\Diag}{\mbox{Diag}}
+
+\newcommand{\lam}{\lambda}
+\newcommand{\bmu}{\boldsymbol\mu}
+\newcommand{\balpha}{\boldsymbol\alpha}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\beps}{\boldsymbol\epsilon}
+
+\newcommand{\cX}{{\cal X}}
+\newcommand{\cA}{{\cal A}}
+\newcommand{\cAmin}{{\cal A}^{\mathsmaller{-}}}
+
+\newcommand{\vm}[1]{\mbox{vec}^\mathsmaller{-}\hspace{-0.25pc}\left(#1\right)}
+\newcommand{\Imin}{I^\mathsmaller{-}}
+\newcommand{\Itri}{{I^\mathsmaller{\triangle}}}
+
+\newcommand{\deriv}[1]{\noindent {\it Derivation:} #1 $\hfill\square$}
+\newcommand{\pbe}[1]{{\cal P}_{\epsilon,#1}}
+\newcommand{\be}{{\cal B}_{\epsilon}}
+
+\newcommand{\adjSet}{\{A_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\abSet}{\{\alpha_{k_\ell},\bbeta_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\bZ}{{\bf Z}}
+
+\providecommand{\note}[1]{\textcolor{red}{#1}}
+
+\title{Tentative Notations for Section 2}
+
+\date{\today}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+
+\begin{itemize}
+\item Partial Likelihood for individual i in subgroup G : $$L_{i}^G(\beta) = \left\{ \frac{exp(X_{i}^{T}\beta)}{\sum_{r\in R(t_{i})}exp(X_{r}^T\beta)}\right\}^{\delta_{i}} $$
+
+\item Partial Likelihood for all subjects in subgroup G: $$ L^{G}(\beta) = \prod_{i = 1}^n L^{G}_{i}(\beta)$$
+
+\item Log Partial Likelihood for subgroup G: $$l^{G}(\beta) = \sum_{i = 1}^n l_{i}^{G}(\beta) $$, $$l_{i}^G = log(L_{i}^G)$$
+
+\item Define $\kappa: \left \{1, ... , n \right \} \rightarrow  \left \{1, ... , K \right \}$ as an indexing function that indicates the fold to which each observation i is assigned. (borrowed from The Elements of Statistical Learning)
+
+\par For example: 
+\par $\kappa(i)$ is the fold number of observation i; 
+\par $\kappa^{-1}(k)$ is the set of observations in the kth fold.
+
+\item Define: $\hat{\beta}^{-k}$: fitted $\beta$  without observations in the kth fold
+
+\par then $\hat{\beta}^{-\kappa(i)}$: fitted $\beta$  without observations in the $\kappa(i)$ fold
+
+\item Standard Method: 
+\par Sum in terms of folds:
+$$ CVE = \sum_{k = 1}^K l^{k}(\hat{\beta}^{- k}) = \sum_{k = 1}^K \left\{ \sum_{i \in \kappa^{-1}(k)} l_{i}^{k}(\hat{\beta}^{- k}) \right\}$$
+
+\par Sum in terms of subjects:
+$$ CVE = \sum_{i = 1}^n l^{\kappa(i)}(\hat{\beta}^{- \kappa(i)}) = \sum_{i = 1}^n \left\{ \sum_{j \in \kappa^{-1}(\kappa(i))} l_{j}^{\kappa(i)}(\hat{\beta}^{- \kappa(i)}) \right\}$$
+
+
+\item V $\&$ VH:  
+\par Sum in terms of folds:
+$$ CVE = \sum_{k = 1}^K \left\{ l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k}) \right\}  =  \sum_{k = 1}^K \left\{ \sum_{i = 1}^n l_{i}(\hat{\beta}^{- k})  - \sum_{i \notin \kappa^{-1}(k)} l_{i}^{-k}(\hat{\beta}^{- k}) \right\} $$
+
+\par Sum in terms of subjects:
+$$ CVE = \sum_{i = 1}^n \left\{ l(\hat{\beta}^{- \kappa(i)})  - l^{-\kappa(i)}(\hat{\beta}^{- \kappa(i)}) \right\}  =  \sum_{i = 1}^n \left\{ \sum_{j = 1}^n l_{j}(\hat{\beta}^{- \kappa(i)})  - \sum_{j \notin \kappa^{-1}(\kappa(i))} l_{j}^{-\kappa(i)}(\hat{\beta}^{- \kappa(i)}) \right\} $$
+
+\item Linear Predictors
+\par Define \par $\hat{\eta}^{-}_{i} = X_{i}\hat{\beta}^{-\kappa(i)}$, $\hat{\eta}^{-} = \left\{\eta_{1}^{-}, \eta_{2}^{-},..., \eta_{n}^{-} \right\}$
+
+\par Sum in terms of subjects
+$$ CVE = l(\hat{\eta}^{-}) = \sum_{i = 1}^n l_{i}(\hat{\eta}^{-}) = \sum_{i = 1}^n \delta_{i} log \left\{ \frac{\hat{\eta}_{i}^{-}}{\sum_{r \in R(t_{i})}\hat{\eta}_{r}^{-}} \right\}$$ 
+
+
+\item Deviance Residuals
+$$CVE = \sum_{i = 1}^{n}d_{i}^2 $$
+$$d_{i} = dev(\hat{M}_{i})$$
+$$\hat{M}_{i} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}^{-}}$$
+$\hat{\Lambda}_{0}$ was built on $\beta^{-k}$ and $\hat{\eta}^{-}$
+
+
+\end{itemize}
+
+\end{document}
