@@ -18,54 +18,93 @@ To overcome this drawback, an alternative approach was proposed by \citet{Verwei
 
 In this paper, we propose two alternative ways to carry out cross validation for Cox regression. Instead of cross-validating over partial likelihood, we propose cross validation over either the linear predictors of the regression model or over the deviance residuals \citep{Therneau1990}. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for LASSO penalized Cox regression in both low- and high-dimensional settings.  We find that all cross validation approaches tend to be conservative, but that the linear predictor approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to two high dimensional data sets from real studies with time-to-event outcomes.
 
+%%%%%%%%%%%%%
+%%%%%%%%%%%%%
 \section{Methods}
+%%%%%%%%%%%%%
+%%%%%%%%%%%%%
 
 In the Cox model, the hazard function for subject $i$ is given by 
 \begin{equation*}
   h_{i}(t) = h_{0}(t) \exp( X_{i}^{T} \beta),
 \end{equation*} 
 where $h_{0}$ is the baseline hazard and $e^{X_i^{T} \beta}$ is the risk for a subject with covariates $X_i$ relative to that baseline.  The estimation of the coefficients is obtained by maximizing a partial likelihood.  Letting $t_i$ denote the time on study for subject $i$ and $\delta_{i}$ indicate whether or not an event is observed for subject $i$, each subject's individual contribution to that partial likelihood is
+
 \begin{equation*}
   L_{i}(\beta) = \left \{\frac{\exp ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\exp ( X_{k}^{T} \beta)}\right \}^{\delta_{i}},
 \end{equation*}
+
 where $R(t_{i})$ denotes the set of subjects at risk at time $t_{i}$.  The partial likelihood for the entire sample of $n$ subjects is then given by:
+
 \begin{equation*}
   L(\beta) =\prod_{i = 1}^{n} L_{i}(\beta).
 \end{equation*}
 
+%%%%%%%%%%%%%%%%%%%%%%%
+\note{I'm introducing the subgroup notation here, so that we can directly use the subgroup superscript in 2.1}
+
+Since cross-validation methods in general involve partitioning the entire sample into subgroups, superscript G can be used to denote the partial likelihood built for sujects from group G, which is a subset of the entire sample:
+
+\begin{equation*}
+  L^{G}(\beta) =\prod_{i \in G} L^{G}_{i}(\beta).
+\end{equation*}
+
 Cox regression can be extended by introducing a penalty into the partial likelihood.  In penalized Cox regression, $\beta$ coefficient estimates are obtained by minimizing the objective function
+
 \begin{equation}
   \label{eq:obj}
   Q(\beta) = - \frac{1}{n} \log L(\beta) + P_{\lambda}(\beta),
 \end{equation}
+
 where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$. In this paper, we focus upon the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$, although the methods we propose can be used with any penalty (indeed, can also be used for model selection in unpenalized Cox regression).  LASSO cox regression is particularly useful for high dimensional data where the number of covariates p $\gg$ n; for example, in the prediction of cancer patients' overall survival based on genome-wide expression measurements.
 
 Selecting $\lambda$ is critical to LASSO estimation. LASSO estimates are sparse, in the sense that some coefficients are estimated to be exactly zero, thereby carrying out automatic variable selection along the solution path. At large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected into the model. If $\lam$ is too large or too small, the model's predictive accuracy suffers.
 
+%%%%%%%%%%%%%%%%%%%%
 \subsection{Cross validated partial likelihood} 
 \label{Sec:cox-cv-existing}
+%%%%%%%%%%%%%%%%%%%%
 
-Suppose a data set of n observations is split into $K$ folds and the $\ith$ fold is left out.  A partial likelihood can then be built over the remaining $K-1$ folds and used in \eqref{eq:obj} to obtain penalized likelihood estimates, which we denote $\hat{\beta}_{-i}$.
-This manuscript is concerned with the question: how should one use the $\ith$ fold to measure predictive accuracy?
+Suppose a data set of n observations is split into $K$ folds and the $kth$ fold is left out.  A partial likelihood $L^{-k}(\beta)$ can then be built over the remaining $K-1$ folds and used in \eqref{eq:obj} to obtain penalized likelihood estimates, which we denote $\hat{\beta}^{-k}$.
+This manuscript is concerned with the question: how should one use the $kth$ fold to measure predictive accuracy?
 
-A straightforward approach, which we refer to as \emph{standard cross-validated partial likelihood}, is to use the partial likelihood on the test data as the cross validated error (CVE):
-\note{This section here needs work.  The equation below is wrong.  In it, i is used to represent the folds (1 through K) even though $l_i$ has already been defined to represent individuals -- in general, each fold has multiple individuals; only for LOOCV would these be the same.  We need to introduce new notation here, or a double sum, or something.}
+A straightforward approach, which we refer to as \emph{standard cross-validated partial likelihood}, is to use negative of the partial likelihood evaluated at $\hat{\beta}^{-k}$ on the test data as the cross validated error (CVE):
+
+%\note{This section here needs work.  The equation below is wrong.  In it, i is used to represent the folds (1 through K) even though $l_i$ has already been defined to represent individuals -- in general, each fold has multiple individuals; only for LOOCV would these be the same.  We need to introduce new notation here, or a double sum, or something.}
+
 \begin{equation}
-  \CVE = \sum_{i=1}^{K} l_{i}(\hat{\beta}_{-i}),
+  \CVE = - \sum_{k=1}^{K} l^{k}(\hat{\beta}^{-k}),
 \end{equation}
-where $l_i = \log L_i$.
-This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option.
-\note{Also, I think we should write everything in terms of CVE, not CVL}.
+where $l^{k}(\hat{\beta}^{-k}) = \log L^{k}(\hat{\beta}^{-k}) = \sum \limits_{i \in fold k} log L^{k}_{i}(\hat{\beta}^{-k})$ . Greater likelihood usually represents a better fit and better predictive accuracy. Hence, the negative value of the partial likelihood can be used as the cross-validated error that should be minimized. Models that have better predictive accuracy should have a lower CVE. This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option.
 
-An alternative way to calculate cross-validated log likelihood was proposed by Verweij and Van Houwelingen. They defined cross-validated log likelihood of leaving the ith fold out to be \begin{equation}cvl = \sum_{i=1}^{K} \{l(\hat{\beta}_{-i}) - l_{-i}(\hat{\beta}_{-i})\}. \end{equation} When the ith fold is left out, $l(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with all k folds of observations. $l_{-i}(\hat{\beta}_{-i})$ is the log partial likelihood evaluated at $\hat{\beta}_{-i}$ with observations from the other K-1 folds. We refer to this definition as Verweij and Van Houwelingen's cross-validated partial likelihood. This is implemented in the $\tt{glmnet}$ package as the default $\tt{grouped}$ option.
+%\note{Also, I think we should write everything in terms of CVE, not CVL}.
 
+An alternative way to calculate cross-validated error was proposed by Verweij and Van Houwelingen. They defined cross-validated error of leaving the $kth$ fold out to be 
+\begin{equation}
+	CVE = -\sum_{k = 1}^K \left\{ l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k}) \right\}. 
+\end{equation}
+When the $kth$ fold is left out, $l(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ on the entire sample. $l^{-k}(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ on samples from the other K-1 folds. We refer to this definition as Verweij and Van Houwelingen's cross-validated error. As is explained in the original paper from Verweij and Van Houwelingen, $l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k})$ measures the contribution from the $kth$ fold to the likelihood. It measures how well observations from the $kth$ fold can be predicted from other observations. This is implemented in the $\tt{glmnet}$ package as the default $\tt{grouped}$ option.
+
+\note {The following paragraph will need to be changed}
 \par The upper panels in Figure 2 illustrates the ideas of the two methods. Through substraction, Verweij and Van Houwelingen's approach allows measuring individual observation's contribution to the partial likelihood, so that leave-one-out cross-validation is feasible. Since only the left-out fold would be used to construct the partial likelihood, the standard CVL is unstable in practice when there are only very few observations in some folder. 
 
+%%%%%%%%%%%%%%%%%%%%
   \subsection{Cross Validated Linear Predictors}
+%%%%%%%%%%%%%%%%%%%%
 
-Besides cross validating over the partial likelihood, an alternative approach is to cross validate over the linear predictors. In the first step, the ith fold would be left out and the other K-1 folds would be used as the training set to get the estimates $\hat{\beta}_{-i}$. Then, the cross-validated linear predictors would be calculated based on the observations in the test set:  \begin{equation}\hat{\eta}_{-i} = X_{i}\hat{\beta}_{-i}.\end{equation} After repeating this for all K folds, a whole set of linear predictors  $\hat{\eta}_{-} = ( \hat{\eta}_{-1},  \hat{\eta}_{-2} , ...  \hat{\eta}_{-K})$ can be obtained. A partial likelihood can be built over this set of linear predictors: \begin{equation} L(\hat{\eta}_{-}) = \prod_{j=1}^{m} \frac{exp (\hat{\eta}_{-j})}{\sum_{ k \in R(t_{j})}exp (\hat{\eta}_{-k})}\end{equation}.
+Besides cross validating over the partial likelihood, an alternative approach is to cross validate over the linear predictors. Similar to the two approaches introduced in previous section, the $kth$ fold would be left out and the other K-1 folds would be used as the training set to get fit $\hat{\beta}^{-k}$. Then, a cross-validated linear predictor can be calculated for each observation i from the test set fold k:  
+	\begin{equation}
+		\hat{\eta}^{-}_{i} = X_{i}\hat{\beta}^{-k} 
+	\end{equation} 
+After repeating this for all K folds, a set of linear predictors  $\hat{\eta}^{-} = ( \hat{\eta}^{-}_{1},  \hat{\eta}^{-}_{2} , ...  \hat{\eta}^{-}_{n})$ can be obtained for the whole sample. A partial likelihood can be built over this set of linear predictors: 
+	\begin{equation} 
+	L(\hat{\eta}^{-}) = \prod_{i=1}^{n} \frac{exp (\hat{\eta}^{-}_{i})}{\sum_{ j \in R(t_{i})}exp (\hat{\eta}^{-}_{j})}
+	\end{equation}.
 
-Cross-validated error is defined as the log of $L(\hat{\eta}_{-})$. This idea of cross validating over linear predictors is implemented in the package \texttt{ncvreg} \citep{ncvreg}. For all the approaches introduced so far, they are all equivalent to each other in linear regressions. But since they are building over different baselines, they are different in cox regression.
+Cross-validated error is defined as $$ CVE = - log L(\hat{\eta}_{-})$$. 
+This idea of cross validating over linear predictors is implemented in the package \texttt{ncvreg} \citep{ncvreg}. For all the approaches introduced so far, they are all equivalent to each other in linear regressions. But since they are building over different baselines, they are different in cox regression.
+
+\par \note {I saw a similar idea of using cross-validated linear predictor in a 2011 paper written by Richard Simon "Using cross-validation to evaluate predictive accuracy of survival risk classifiers based on high-dimensional data". The authors were using the same idea to compute time-dependent AUC. Shall we cite that paper here? -Biyue}
 
   % \begin{figure}[h]
     %\centering
@@ -81,11 +120,18 @@ Cross-validated error is defined as the log of $L(\hat{\eta}_{-})$. This idea of
      % \end{minipage}	
   % \end{figure}	
     
+%%%%%%%%%%%%%%%%%%%%
   \subsection{Cross Validated Deviance Residuals}
+%%%%%%%%%%%%%%%%%%%%
+
   %Need to update this section with the new baseline estimation method%
 The fundamental challenge of conducting cross validation for cox regression is that the baseline hazard is not estimated from the model. Hence we proposed our second approach which involves estimating the actual baseline hazard $\hat{\Lambda}_{0}$. The sum of squares of Martingale residuals is a natural candidate for evaluating the model performance using baseline hazard. Martingale residuals and its normalized form, deviance residuals, were first proposed by \citep{Therneau1990} for Cox regression model diagnostics. 
 
-To estimate the baseline hazard, a set of linear predictors $\hat{\eta}_{-} = ( \hat{\eta}_{-1},  \hat{\eta}_{-2} , ...  \hat{\eta}_{-K})$ would be obtained in the same way as the cross validated linear predictor approach. $\hat{\eta}_{-i}$ is computed based on $\hat{\beta}_{-i}$s estimated from the training set and observations from the ith test set. With $\hat{\eta}_{-}$, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}. Then for each observations, the Martingale Residual can be calculated: \begin{equation}\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}},\end{equation} where $\delta_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. The deviance residual can be calcualted from the Martingale Residuals: \begin{equation} d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}\end{equation} The sum of squares of the deviance residuals, $\sum_{i}\hat{d}_{i}^2$, would be used as the cross validated error. An illustration of this method is drawn in the bottom right panel of Figure 1.
+To estimate the baseline hazard, a set of linear predictors $\hat{\eta}^{-} = ( \hat{\eta}^{-}_{1},  \hat{\eta}^{-}_{2} , ...  \hat{\eta}^{-}_{n})$ would be obtained in the same way as the cross validated linear predictor approach. With $\hat{\eta}^{-}$, a baseline hazard $\hat{\Lambda}_{0}$ can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}. Then for each observations, the Martingale Residual can be calculated: 
+	\begin{equation}
+	\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}^{-}_{i}},
+	\end{equation} 
+where $\delta_{j}$ is the status of the jth observation and $t_{j}$ is the time component of the jth observation. The deviance residual can be calcualted from the Martingale Residuals: \begin{equation} d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}\end{equation} The sum of squares of the deviance residuals, $\sum_{i}\hat{d}_{i}^2$, would be used as the cross validated error. An illustration of this method is drawn in the bottom right panel of Figure 1.
 
 As an alternative, the baseline hazard can also be estimated only based on the training set, leaving the test set as out-of-sample observations for calculating the residuals. There are two major issues with this approach. First, it would be common to run into situations where events in the test set occurred after the last event occurred in the baseline, where the survival function dropped to 0. Unless those observations are treated as censored, this approach would not work. Second, there would be an extra numeric challenge for deviance residuals. Since the baseline hazard function $\hat{\Lambda}_{0}$ is a step function from 0, the cumulative hazard at the first time point from 0 is always 0. Since deviance residual contains a term $log(\delta_{i} - \hat{M}_{i})$, where $\delta_{i} - \hat{M}_{i} = \hat{\Lambda}_{0}$, this term would be negative infinity for the first time point and lead to a numeric issue for whichever fold that contains the first time point. Hence extra smoothing for the step function would be needed for this approach to work.
 
@@ -98,16 +144,25 @@ As an alternative, the baseline hazard can also be estimated only based on the t
 
 \note{tranpose sign in figure 1 is corrected}
 
+
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \section{Simulation Studies}
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+
 
   Simulation studies were conducted to compare how those methods behave relative to each other. We generated data with pre-specified baseline hazard, covariate matrix X, coefficient $\beta$ and censoring mechanism. Both low dimensional and high dimensional scenarios were examined. All cross-validation methods mentioned in Section 2 were applied to the data to select the tuning parameter $\lambda$ and produce $\hat{\beta}$ estimates. %Cross-validation were also compared to model selection criteria AIC and BIC.
   
  The entries in the covariate matrix $X_{n \times p}$ were independently generated from $Normal(0, 1)$. True coefficients $\beta$ were assumed to have sparsity: $\beta_{p\times 1} = (\beta_{1},\beta_{2}, ..., \beta_{j}, 0, ..., 0)^{T}$. The covariate matrix $X_{n \times p}$ was centered before it was used to generate outcomes. Survival times were generated from exponential distribution $h(t) = h_{0} exp(X\beta)$, conditioned on covariates. Censoring status were generated based on binomial distribution. All simulations were implemented in R \citep{R}.
   
   Suppose $\hat{\beta}$ is the coefficients estimated by a fitted cox model. We quantify the predictive accuracy by measuring the distance between the fitted model and the true model by mean squared error MSE $= E(\hat{\beta} - \beta)^2$. For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$. Then the $\lambda$s that selected by the cross validation or information criteria would be compared to this optimal $\lambda$. If the $\lambda$ chosen by cross validation is smaller than the optimal $\lambda$, then the cross validation method would be considered liberal. If the $\lambda$ chosen by cross validation is larger than the optimal $\lambda$, then the cross validation method would be considered conservative. 
-     
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \subsection {Simulations Comparing Cross-validation Approaches}
-  %need to change figures to include the new cross-validated deviance residuals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ %need to change figures to include the new cross-validated deviance residuals
    The simulation experiments were first conducted when the signal in the data was varied. In each simulated data set, there are n = 100 observations and p = 1000 covariates. 10$\%$ of the observations were censored. 10-fold cross-validation was implemented for all four methods. Number of non-zero $\beta$s was 20. The signal in the data set was varied by varying the magnitude of the $\beta$s from 0.50 to 1.50. For each scenario, 200 replications were used.
    
 \begin{figure}[h]
