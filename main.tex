@@ -29,36 +29,40 @@ This semiparametric flexibility, however, comes at a cost. The Cox regression ap
   h_{i}(t) = h_{0}(t) \exp( X_{i}^{T} \beta),
 \end{equation*} 
 where $h_{0}$ is the baseline hazard and $e^{X_i^{T} \beta}$ is the risk for a subject with covariates $X_i$ relative to that baseline.  The estimation of the coefficients is obtained by maximizing a partial likelihood.  Letting $t_i$ denote the time on study for subject $i$ and $\delta_{i}$ indicate whether or not an event is observed for subject $i$, each subject's individual contribution to that partial likelihood is
-\begin{equation*}
+\begin{equation}
+  \label{eq:cox-pl-subj}
   L_{i}(\beta) = \left \{\frac{\exp ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\exp ( X_{k}^{T} \beta)}\right \}^{\delta_{i}},
-\end{equation*}
+\end{equation}
 where $R(t_{i})$ denotes the set of subjects at risk at time $t_{i}$.  The partial likelihood for the entire sample of $n$ subjects is then given by:
-\begin{equation*}
+\begin{equation}
+  \label{eq:cox-pl-sum}
   L(\beta) =\prod_{i = 1}^{n} L_{i}(\beta).
-\end{equation*}
+\end{equation}
 Cox regression can be extended by introducing a penalty into the partial likelihood.  In penalized Cox regression, $\beta$ coefficient estimates are obtained by minimizing the objective function
 \begin{equation}
   \label{eq:obj}
   Q(\beta) = - \frac{1}{n} \log L(\beta) + P_{\lambda}(\beta),
 \end{equation}
-where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$. 
+where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$.
 
-\par In this paper, we focus upon the LASSO penalty $P_{\lambda}(\beta) = \lambda (\sum_{j} |\beta_{j}|)$, although the methods we propose can be used with any penalty (indeed, can also be used for model selection in unpenalized Cox regression). LASSO cox regression is particularly useful for high dimensional data where the number of covariates p $\gg$ n; for example, in the prediction of cancer patients' overall survival based on genome-wide expression measurements. LASSO estimates yield a sparse model where some coefficients are estimated to be exactly zero, thereby carrying out automatic variable selection along the solution path. At large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected into the model. Hence selecting $\lambda$ is critical to LASSO estimation in the sense that the model's accuracy suffers if $\lam$ is either too large or too small.
+\par In this paper, we focus upon the LASSO penalty $P_{\lambda}(\beta) = \lambda \sum_{j} |\beta_{j}|$, although the methods we analyze can be used with any penalty as well as with model selection in unpenalized Cox regression (best subset selection). LASSO-penalized cox regression is particularly useful for high dimensional data where the number of covariates $p > n$; for example, in the prediction of overall survival in cancer patients based on genome-wide expression measurements. LASSO estimates yield a sparse model where some coefficients are estimated to be exactly zero. This sparsity pattern changes as we vary $\lam$: at large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected. Selecting $\lambda$ is critical to LASSO estimation in the sense that the model's accuracy suffers if $\lam$ is either too large or too small.
 
-\par Cross-validation is one of the most common methods used to select the appropriate $\lambda$ for penalized regression models. Suppose a data set $D$ of n observations is partitioned into $K$ folds: $D_{1}, D_{2}, ... D_{K}$. For a given $k \in \left\{1,2, ... , K\right\}$, set $T_{k} = D - D_{k}$. Then, we consider $T_{k}$ as the training set and $D_{k}$ as the test set. This manuscript is concerned with the question: how should one use the $kth$ fold $D_{k}$ to measure predictive accuracy based on partial likelihood? In the following sections, we use $L^{-k}$ to denote the partial likelihood that is built over data in $T_k$; use $L^{k}$ for partial likelihood built over data in $D_k$; and $L$ for partial likelihood built over the entire data set $D$.  The log partial likelihood is denoted by lower case $l$. Individual subject's contribution to the likelihood is denoted by $L_i$, where $i$ denotes the individual. Particularly of our interest, if $L^{-k}(\beta)$ is used in \eqref{eq:obj} to obtain penalized likelihood estimates using data in $T_k$, we use $\hat{\beta}^{-k}$ to denote the penalized estimates that are obtained. 
+\par Cross-validation is one of the most common methods used to select the appropriate $\lambda$ for penalized regression models. Suppose a data set $D$ of n observations is partitioned into $K$ folds: $D_{1}, D_{2}, \ldots, D_{K}$. For a given $k \in \left\{1,2,\ldots, K\right\}$, let $T_{k} = D - D_{k}$ denote the training set. This manuscript is concerned with the question: how should one use the $kth$ fold $D_{k}$ to measure predictive accuracy based on partial likelihood? In particular, the partial likelihood \eqref{eq:cox-pl-subj} involves a risk set -- which observations should be used to form that risk set?  In the following sections, let $L^{-k}$ denote the partial likelihood built over data in $T_k$, let $L^{k}$ denote the partial likelihood built over data in $D_k$, and $L$ denote the partial likelihood built over the entire data set $D$.  The log partial likelihood is denoted by $\ell$, with $\ell^k$ and $\ell^{-k}$ defined similarly. Finally, let $\hat{\beta}^{-k}$ denote the penalized estimates that are obtained by using $L^{-k}(\beta)$ in \eqref{eq:obj}.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsection{Cross validated partial likelihood} 
 \label{Sec:cox-cv-existing}
 %%%%%%%%%%%%%%%%%%%%
-\par A straightforward approach to measure a model's predictive accuracy in $D_k$ is to evaluate the log partial likelihood at $\hat{\beta}^{-k}$ directly upon data in $D_k$. Greater likelihood usually represents a better fit and better predictive accuracy. Hence, the negative value of the partial likelihood can be used as the cross-validated error. We define the cross validated error (CVE) by pooling the negative log-likelihood from all K folds together:
+
+\par A direct approach to measure a model's predictive accuracy in $D_k$ is to evaluate the log partial likelihood at $\hat{\beta}^{-k}$ using the data in $D_k$. Typically, cross-validation error (CVE) is measured by the total deviance across all $K$ folds, which (up to a constant) is given by:
 \begin{equation}
   \label{eq:standard}
-  \CVE = - \sum_{k=1}^{K} l^{k}(\hat{\beta}^{-k}),
+  \CVE = -2 \sum_{k=1}^{K} \ell^{k}(\hat{\beta}^{-k}).
 \end{equation}
-where $l^{k}(\hat{\beta}^{-k}) = \sum \limits_{i \in D_{k}} log L^{k}_{i}(\hat{\beta}^{-k})$. We refer this approach as \emph{standard cross-validated partial likelihood}. This is implemented in the $\tt{glmnet}$ package as the $\tt{ungrouped}$ option.
+%where $\ell^{k}(\hat{\beta}^{-k}) = \sum \limits_{i \in D_{k}} \log L^{k}_{i}(\hat{\beta}^{-k})$.
+We refer this approach as \emph{standard cross-validated partial likelihood}. This is implemented in the $\tt{glmnet}$ package as the \verb|"ungrouped"| option. \note{I added a -2 here so that CVE corresponds to deviance; this is what's done in glmnet/ncvreg}.
 
-\par The standard approach is the same trick that is used to conduct cross-validation for linear regression or logistic regression. One pitfall of this approach is that there may not be sufficient observations in $D_k$ to build up the risk set for partial likelihood. An alternative trick that arises to address this issue was proposed by Verweij and Van Houwelingen. They defined cross-validated error to be 
+\par The standard approach is by far the most common way of conducting cross-validation for models such as linear regression and logistic regression. However, the standard approach can be problematic for Cox regression in the sense that that there may not be sufficient observations in $D_k$ to build up the risk set for partial likelihood. An alternative trick that arises to address this issue was proposed by Verweij and Van Houwelingen. They defined cross-validated error to be 
 \begin{equation}
 \label{eq:VVH}
 	CVE = -\sum_{k = 1}^K \left\{ l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k}) \right\}. 
