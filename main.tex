@@ -252,37 +252,39 @@ The simulation experiments were first conducted when the signal in the data was 
     \caption{Cross-Validated AUC}
 \end{figure}	
 
+\begin{figure}[h]
+    \centering
+		\includegraphics[height= 15cm ]{./figures/figure_auc_extended.png}
+    \caption{Cross-Validated AUC}
+\end{figure}	
+
 \section{Application to Real Data}
 
-\par In this section, we compared the performances of those cross validation methods when they are applied to data from real studies. The first data set is collected from a study on ovariance cancer from The Cancer Genome Atlas. The second dataset is a study on lung cancer \citep{shedden2008gene}. The outcomes of both data sets are patients' overall survival time.
+\par In this section, we compared the performances of those cross validation methods when they are applied to data from real lung cancer study. \cite{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients, They performed gene expression profiling of \textit{442} non-small-cell lung cancer (NSCLC) patients. The data set contains gene expression measures from \textit{22,283} genes and basic clinical variables such as stage, age and gender. 236 death events were observed and about 50$\%$ of the patients are censored. The clinical variables stage, age and gender were known to have a larger prognostic impact, thus they were fitted in the model without penalization. Cross-validation was again used for the selection of the penalty term, which selects the gene expressions that are associated with patients' overall survival. The results of the analysis are also listed in Table 3.
 
-\par In the ovarian cancer data set, there are 460 patients and 236 events . About 40$\%$ of the observations are censored. The covariate matrix records whether or not there is mutation at certain gene location and has dimension of 12376. Three clinical variables, age, gender and residuals, which were known to have large impact on survival were adjusted in the analysis. That is to say, the clinical covariates were first fitted into regular cox regression and only linear predictors were kept so that the selection for the penalty term would not affect the estimation of those clinical variables. Cross-validation was used for the selection of the penalty term, which affects the selection of gene mutations. The results are illustrated in Table 3. 
+\par How the CV methods perform on real data reflects what is shown in simulation studies. The standard CVE is the most liberal approach. Deviance Residual and Verweij and Van Houwelingen's CVE approaches were both really conversative, while the standard approach was the second liberal to standard CVE. In Figure 5, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. For Verweij and Van Houwelingen's cross-validated partial likelihood, there's almost no signal there.
 
-\par In the lung cancer data set , researchers collected gene expression data for 22283 genes. 236 death events were observed for 442 patients. About 50$\%$ of the patients are censored. Again clinical variables, age, gender, status of getting adjuvant chemotherapy were adjusted before the LASSO cox regression was fitted. Cross-validation was again used for the selection of the penalty term, which selects the gene expressions that are associated with patients' overall survival. The results of the analysis are also listed in Table 3.
+\begin{figure}[h]
+    \centering
+		\includegraphics[height= 8cm ]{./figures/shedden.jpg}
+    \caption{Comparing Cross-Validated Error for Different Methods on Real Data Sets}
+\end{figure}	
 
 \begin{table}[h]
 \centering
 \caption{Application to Real Data Sets}
 \label{my-label}
-\begin{tabular}{llllll}
-\hline
-\\[-0.75em]
- & Ovarian & & & Shedden&  \\
-& $\lambda$ & log($\lambda$) &  &$\lambda$  &  log($\lambda$)   \\ \cline{2-3} \cline{5-6} 
-V $\&$ VH &0.1226 & -2.0985 && 0.1215 & -2.1079\\
-standard & 0.0803 & -2.5222 && 0.0983 & -2.3197\\
-Linear Pred &0.0828 & -2.4919 && 0.1013 & -2.2894\\
-Dev Resid & 0.0992 & -2.3104 && 0.1110 & -2.1987\\ \hline
+\begin{tabular}{lccccc}
+\toprule
+						& $\lambda$ & log($\lambda$) & CV AUC & Brier Score \\ 
+						\cline{2-5} \\ 
+						V $\&$ VH& 0.123 & -2.097 & 0.640 & 0.246\\
+						standard & 0.102 & -2.278 & 0.643& 0.239\\
+						Linear Pred &0.085 & -2.460 & 0.651&  0.227\\
+						Dev Resid & 0.127& -2.066 & 0.639& 0.246\\ 
+						\bottomrule
 \end{tabular}
 \end{table}
-
-\begin{figure}[h]
-    \centering
-		\includegraphics[height= 8cm ]{./figures/figure_5.png}
-    \caption{Comparing Cross-Validated Error for Different Methods on Real Data Sets}
-\end{figure}	
-
-\par How the CV methods perform on real data reflects what is shown in simulation studies. The standard CVE is the most liberal approach. Deviance Residual and Verweij and Van Houwelingen's CVE approaches were both really conversative, while the standard approach was the second liberal to standard CVE. In Figure 5, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. For Verweij and Van Houwelingen's cross-validated partial likelihood, there's almost no signal there.
 
 \section{Discussion}
 
