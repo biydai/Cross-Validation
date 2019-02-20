@@ -62,29 +62,32 @@ where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularizatio
 %where $\ell^{k}(\hat{\beta}^{-k}) = \sum \limits_{i \in D_{k}} \log L^{k}_{i}(\hat{\beta}^{-k})$.
 We refer this approach as \emph{standard cross-validated partial likelihood}. This is implemented in the $\tt{glmnet}$ package as the \verb|"ungrouped"| option. \note{I added a -2 here so that CVE corresponds to deviance; this is what's done in glmnet/ncvreg}.
 
-\par The standard approach is by far the most common way of conducting cross-validation for models such as linear regression and logistic regression. However, the standard approach can be problematic for Cox regression in the sense that that there may not be sufficient observations in $D_k$ to build up the risk set for partial likelihood. An alternative trick that arises to address this issue was proposed by Verweij and Van Houwelingen. They defined cross-validated error to be 
+\par The standard approach is by far the most common way of conducting cross-validation for models such as linear regression and logistic regression. However, the standard approach can be problematic for Cox regression in the sense that that there may not be enough observations in $D_k$ to build up the risk set for partial likelihood. For example, the standard approach cannot work with leave-one-out cross-validation, since $\ell_k$ would either be zero or undefined for all folds.
+
+To address this issue, \citet{Verweij1993} proposed an alternative method for cross-validation in Cox models:
 \begin{equation}
 \label{eq:VVH}
-	CVE = -\sum_{k = 1}^K \left\{ l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k}) \right\}. 
+	\CVE = -\sum_{k = 1}^K \left\{ l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k}) \right\}. 
 \end{equation}
-$l(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ on the entire data $D$ and $l^{-k}(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ on the training set$T_k$. There should be enough observations in $T_k$ to build up the risk set as long as the entire data has a reasonable sample size. 
-
-\par We refer to this definition as \emph{Verweij and Van Houwelingen's cross-validated partial likelihood}. It was originally proposed to as a trick to conduct Leave One Out Cross-Validation for partial likelihood, which is impossible with the standard approach. The standard approach and Verweij and Van Houwelingen's approach both try to measure the contributions from $D_k$ to the partial likelihood. For many other likelihoods, say logistic regression or linear regression, these two quantities, $l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k})$ and  $l^{k}(\hat{\beta}^{-k})$, are in fact equivalent to each other. Since its original proposal, Verweij and Van Houwelingen's cross-validated error has been widely implemented as a tool to select tuning parameters for predictive models, especially regression-based models. It is implemented in the $\tt{glmnet}$ package as the default $\tt{grouped}$ option for penalized Cox regression. Other R packages that used this trick include but not limited to $\tt{CoxRidge}$, $\tt{fastcox}$, $\tt{SGL}$, $\tt{CoxBoost}$, and $\tt{mboost}$. \note{not sure whether we should mention these packages here. citations will be added later}
+Here, $l(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ using the entire data set $D$ and $l^{-k}(\hat{\beta}^{-k})$ is the log partial likelihood evaluated at $\hat{\beta}^{-k}$ on \note{FIX! the training set $T_k$. There should be enough observations in $T_k$ to build up the risk set as long as the entire data has a reasonable sample size.}  We refer to this cross-validation method as the Verweij and Van Houwelingen (V\&VH) approach. For many models, such as logistic regression or linear regression, these quantities $l(\hat{\beta}^{- k})  - l^{-k}(\hat{\beta}^{- k})$ and  $l^{k}(\hat{\beta}^{-k})$ are equivalent to each other -- in other words, the standard and V\&VH approaches agree.  However, Verweij and Van Houwelingen's approach is more stable for Cox regression as there is always a large number of observations in the risk sets its calculations are based on.  Since its proposal, the V\&VH approach has been widely implemented as a tool for cross-validation is Cox models.  For example, it is used by the R packages {\tt CoxRidge}, {\tt fastcox}, {\tt SGL}, {\tt CoxBoost}, {\tt mboost}, and {\tt glmnet} packages.  In {\tt glmnet}, it is the default choice for penalized Cox regression and is referred to as the {\tt grouped} option in the package's syntax.\note{PB: I like the mention of these packages, but they need citations.}
 
 %%%%%%%%%%%%%%%%%%%%
   \subsection{Cross Validated Linear Predictors}
 %%%%%%%%%%%%%%%%%%%%
 
-\par Instead of directly using partial likelihood to measure model's predictive accuracy over $D_k$, an alternative method is to obtain linear predictors for observations in $D_k$. We refer to this approach as \emph{cross-validated linear predictors}. To be more specific, we would first obtain $\hat{\beta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
-	\begin{equation}
-		\hat{\eta}^{cv}_{i} = X_{i}\hat{\beta}^{-k} 
-	\end{equation} 
+\par Both of the methods in Section~\ref{Sec:cox-cv-existing} consist of adding together partial likelihood measures from each fold.  An alternative method is to obtain linear predictors for each fold, then combine these linear predictors to calculate a partial likelihood. We refer to this method as the \emph{cross-validated linear predictors} approach. To be more specific, we would first obtain $\hat{\beta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
+\begin{equation}
+  \label{eq:cv-lp}
+  \hat{\eta}^{cv}_{i} = X_{i}\hat{\beta}^{-k}
+\end{equation} 
 After repeating this for all K folds, a complete set of cross-validated linear predictors $\hat{\eta}^{cv} = ( \hat{\eta}^{cv}_{1},  \hat{\eta}^{cv}_{2} , ...  \hat{\eta}^{cv}_{n})$ for the whole sample is obtained. A partial likelihood can then be built over this set of linear predictors to evaluate the predictive accuracy of the model: 
 	\begin{equation} 
-	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \frac{exp (\hat{\eta}^{cv}_{i})}{\sum_{ j \in R(t_{i})}exp (\hat{\eta}^{cv}_{j})}
-	\end{equation}.
-We define the cross-validated error evaluated with cross-validated linear preditors to be $$ CVE = - log L(\hat{\eta}^{cv}).$$ 
-\par This idea of obtaining linear predictors over test sets, then constructing the partial likelihood after pooling all linear predictors together is implemented in R package \texttt{ncvreg} \citep{ncvreg}. Before being applied to calculating partial likelihood, such approach also appeared in literatures that aimed to conduct cross-validation for statistics that can hardly be subsetted, such as AUC for both logistic regression and Cox regression \citep{Parker2007}\citep{Simon2011a}\citep{Subramanian2011}.
+	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \frac{exp (\hat{\eta}^{cv}_{i})}{\sum_{ j \in R(t_{i})}exp (\hat{\eta}^{cv}_{j})}.
+	\end{equation}
+\note{BIYUE: Throughout, use $\log$ instead of $log$, $\exp$ instead of $exp$, and $\ell$ instead of $l$.}
+We define the cross-validation error evaluated with cross-validated linear predictors to be $$\CVE = - log L(\hat{\eta}^{cv}).$$
+  
+\par This idea of obtaining linear predictors over test sets, then constructing the partial likelihood after pooling all linear predictors together is implemented in R package \texttt{ncvreg} \citep{ncvreg}. This idea has also appeared in the cross-validation literature for quantities that cannot be evaluated on only a subset of the data, such as AUC in logistic and Cox regression models \citep{Parker2007,Simon2011a,Subramanian2011}.
 
   % \begin{figure}[h]
     %\centering
@@ -104,20 +107,19 @@ We define the cross-validated error evaluated with cross-validated linear predit
   \subsection{Cross Validated Deviance Residuals}
 %%%%%%%%%%%%%%%%%%%%
 
-  %Need to update this section with the new baseline estimation method%
-The fundamental challenge of conducting cross validation for cox regression is that the baseline hazard is not estimated from the model. Hence we proposed our next approach based on getting the baseline hazard $\hat{\Lambda}_{0}$. We would first obtain cross-validated linear predictors $\hat{\eta}^{cv}$ in the same way as the previous approach. With $\hat{\eta}^{cv}$,  a cross-validated version of baseline hazard $\hat{\Lambda}^{cv}_{0}$ that uses all observations can be estimated via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}.
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another alternative approach to cross-validation would be to obtain an estimate $\hat{\Lambda}_{0}$ for the baseline hazard and use this in cross-validation.  There are several potential approaches to estimating $\Lambda_0$; in this manuscript, we chose to obtain the cross-validated linear predictors $\hat{\eta}^{cv}$ as in \eqref{eq:cv-lp}, then estimate $\Lambda_0$ via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}, treating these linear predictors as fixed inputs.\note{Maybe this isn't critical, but I still think we could just use $\hat{\Lambda}_0$ from the full data fit \ldots that estimator just makes more sense to me}
 
-As an analogue to the residual sum of squaires in linear regression, we considered using the sum of squared deviance residuals, the normalized form of Martingale residuals, to measure the model's predictive accuracy \citep{Therneau1990}. First proposed for model diagnosis, deviance residuals have also been used as a predictive accuracy measure in survival tree models \citep{Therneau2018}. Given that the baseline hazard and linear predictors are obtained via cross-validation, we can first obtain the cross-validated Martingale residual: 
+As an analogue to the residual sum of squares in linear regression, we considered using the sum of squared deviance residuals, the normalized form of Martingale residuals, to measure the model's predictive accuracy \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure in recursive partitioning models for survival data \citep{Therneau2018}. Given that the baseline hazard and linear predictors are obtained via cross-validation, we can first obtain the cross-validated Martingale residual: 
 	\begin{equation}
 	\hat{M^{cv}_{i}} = \delta_{i} -\hat{\Lambda}^{cv}_{0}(t_{i})e^{\hat{\eta}^{cv}_{i}},
 	\end{equation} 
-where $\delta_{i}$ is the status of the $ith$ observation and $t_{i}$ is the time component of the $ith$ observation. The cross-validated deviance residuals can then be derived from the Martingale residuals: 
+The cross-validated deviance residuals can then be derived from the Martingale residuals: 
 	\begin{equation} 
-	d_{i} = sgn(\hat{M}^{cv}_{i})(-2(\hat{M}^{cv}_{i} + \delta_{i}log(\delta_{i} - \hat{M}^{cv}_{i})))^{1/2}.
+	d_{i} = sgn(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}log(\delta_{i} - \hat{M}^{cv}_{i}))}.
 	\end{equation}
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ are used as the cross validated error. We refer this approach as the \emph{cross-validated deviance residuals}.
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ are used as the cross validated error. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
-A more straightforward way to compute the cross-validated deviance residuals is to estimate the baseline hazard using $T_k$, leaving $D_k$ as out-of-sample observations to calculate the residuals. There are two major issues with this approach. First, it is possible that some events in $D_k$ occurred after the last event in $T_k$. In this case, the survival function would drop to 0. Secondly, there is a numeric challenge for computing the term $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ in deviance residuals. Since the baseline hazard function is a step function from 0, the cumulative hazard $\hat{\Lambda}_{0}$ at the first time point from 0 is always 0. For whichever $D_k$ that contains the first time point, $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ would be negative infinity for that observation and lead to a numeric issue. To solve the first issue, events that occur later than the last event in $T_k$ should be censored. To solve the second issue, the step function of the baseline hazard needs to be smoothed. Both issues do not exist when the baseline hazard is built over the cross-validated linear predictors using all samples. \note{this paragraph may be optional, and can also be moved to discussion}
+%A more straightforward way to compute the cross-validated deviance residuals is to estimate the baseline hazard using $T_k$, leaving $D_k$ as out-of-sample observations to calculate the residuals. There are two major issues with this approach. First, it is possible that some events in $D_k$ occurred after the last event in $T_k$. In this case, the survival function would drop to 0. Secondly, there is a numeric challenge for computing the term $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ in deviance residuals. Since the baseline hazard function is a step function from 0, the cumulative hazard $\hat{\Lambda}_{0}$ at the first time point from 0 is always 0. For whichever $D_k$ that contains the first time point, $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ would be negative infinity for that observation and lead to a numeric issue. To solve the first issue, events that occur later than the last event in $T_k$ should be censored. To solve the second issue, the step function of the baseline hazard needs to be smoothed. Both issues do not exist when the baseline hazard is built over the cross-validated linear predictors using all samples. \note{this paragraph may be optional, and can also be moved to discussion}
 
 \begin{figure}
   \centering
