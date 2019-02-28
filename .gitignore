@@ -2,6 +2,7 @@
 *.pdf
 *.aux
 *.blg
+*.bbl
 !figures/*.jpeg
 !figures/*.png
 .Rproj.user
