@@ -1,7 +1,7 @@
 \section{Introduction}
 \par Since its original proposal \citep{Cox1972}, Cox proportional hazards regression has become the most common regression approach for analyzing survival data.  Cox regression utilizes a partial likelihood construction under an assumption of proportional hazards to estimate the regression coefficients without having to specify the underlying baseline hazard.  The ability to avoid choosing a specific parametric distribution for the survival time is very attractive, as time-to-event data are often poorly described by fully parametric models.
 
-\note{What's with all the \textbackslash par commands?  They don't seem to do anything.}
+%\note{What's with all the \textbackslash par commands?  They don't seem to do anything.}
 
 This semiparametric flexibility, however, comes at a cost. The Cox regression approach can estimate relative risks, but without estimating the baseline hazard, it does not make any predictions concerning the absolute failure time for any given individual.  This poses a challenge to assessing the predictive accuracy of a given Cox regression model.  The challenge is particularly relevant for penalized Cox regression \citep{Tibshirani1997,Fan2002}, as the assessment of predictive accuracy via cross-validation is the standard method for selecting the regularization parameter and deciding upon a model.
 
@@ -18,7 +18,8 @@ This semiparametric flexibility, however, comes at a cost. The Cox regression ap
 
 \par To overcome this drawback, an alternative approach was proposed by \citet{Verweij1993}.  Their approach, which we describe in detail in Section~\ref{Sec:cox-cv-existing}, stabilizes the cross-validated log likelihood, enabling its use even when the number of subjects in each fold is small.  This approach has been widely used and is implemented in R packages such as {\tt glmnet} \citep{glmnet}.  Although this approach fixes the stability issue, we demonstrate here that in practice, it tends to behave conservatively in terms of model selection.
 
-\par In this paper, we propose two alternative ways to carry out cross validation for Cox regression. Instead of applying cross-validation to the partial likelihood directly, we propose applying cross validation to either the linear predictors of the regression model or to the deviance residuals \citep{Therneau1990}. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for LASSO penalized Cox regression in both low- and high-dimensional settings.  \note{STILL TRUE?? We find that all cross validation approaches tend to be conservative,} \bnote{We should discuss this and the sentence in abstract at our next meeting. They are conservative only in terms of selecting the model that has the best preditive performance; they do not miss selecting variables in the true support}but that the linear predictor approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to two high dimensional data sets from real studies with time-to-event outcomes.
+\par In this paper, we propose two alternative ways to carry out cross validation for Cox regression. Instead of applying cross-validation to the partial likelihood directly, we propose applying cross validation to either the linear predictors of the regression model or to the deviance residuals \citep{Therneau1990}. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for LASSO penalized Cox regression in both low- and high-dimensional settings.  %\note{STILL TRUE?? We find that all cross validation approaches tend to be conservative,} \bnote{We should discuss this and the sentence in abstract at our next meeting. They are conservative only in terms of selecting the model that has the best preditive performance; they do not miss selecting variables in the true support}
+The linear predictor approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to two high dimensional data sets from real studies with time-to-event outcomes.
 
 %%%%%%%%%%%%%
 %%%%%%%%%%%%%
@@ -96,7 +97,7 @@ We define the cross-validation error evaluated with cross-validated linear predi
 \subsection{Cross Validated Deviance Residuals}
 %%%%%%%%%%%%%%%%%%%%
 
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another alternative approach to cross-validation would be to obtain an estimate $\hat{\Lambda}_{0}$ for the baseline hazard and use this in cross-validation.  There are several potential approaches to estimating $\Lambda_0$; in this manuscript, we chose to obtain the cross-validated linear predictors $\hat{\eta}^{cv}$ as in \eqref{eq:cv-lp}, then estimate $\Lambda_0$ via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}, treating these linear predictors as fixed inputs.\note{Maybe this isn't critical, but I still think we could just use $\hat{\Lambda}_0$ from the full data fit \ldots that estimator just makes more sense to me}\bnote{Biyue is taking a look at the baseline now. Discuss this at next meeting}
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another alternative approach to cross-validation would be to obtain an estimate $\hat{\Lambda}_{0}$ for the baseline hazard and use this in cross-validation.  There are several potential approaches to estimating $\Lambda_0$; in this manuscript, we chose to obtain the cross-validated linear predictors $\hat{\eta}^{cv}$ as in \eqref{eq:cv-lp}, then estimate $\Lambda_0$ via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}, treating these linear predictors as fixed inputs.\note{Maybe this isn't critical, but I still think we could just use $\hat{\Lambda}_0$ from the full data fit \ldots that estimator just makes more sense to me}\bnote{They do act a bit different in simulations. The baseline built from the full data performed worse. Discuss this next meeting}
 
 As an analogue to the residual sum of squares in linear regression, we considered using the sum of squared deviance residuals, the normalized form of Martingale residuals, to measure the model's predictive accuracy \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure in recursive partitioning models for survival data \citep{Therneau2018}. Given that the baseline hazard and linear predictors are obtained via cross-validation, we can first obtain the cross-validated Martingale residual: 
 	\begin{equation}
@@ -122,7 +123,7 @@ The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ a
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 
-Simulation studies were conducted to compare how those methods behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. Survival times were generated from exponential distribution $h(t) = h_{0} \exp(X\beta)$, where $h_{0}$ is the prespecified baseline\note{huh?  so what is $h_0$?}; the covariate matrix $X$ with $n$ observations and $p$ covariates is generated from independent $\text{Normal}(0, 1)$ samples; and the coefficient vector $\beta$ is sparse, with most entries equal to zero. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation.
+Simulation studies were conducted to compare how those methods behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. Survival times were generated from exponential distribution $h(t) = h_{0} \exp(X\beta)$, where $h_{0}$ is the prespecified baseline\note{huh?  so what is $h_0$?} \bnote{$h_0$ is 1 in all simulations. Basically, I first generated $X$, then the linear predictor $X\beta$; Then I compute the rate parameter from $h_0exp(X\beta)$ and inserted this to the \texttt{rexp} function to generate the survival times}; the covariate matrix $X$ with $n$ observations and $p$ covariates is generated from independent $\text{Normal}(0, 1)$ samples; and the coefficient vector $\beta$ is sparse, with most entries equal to zero. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation.
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection {Simulations Comparing Predictive Accuracy}
@@ -131,9 +132,11 @@ Simulation studies were conducted to compare how those methods behave relative t
 Our first simulation study concerns the accuracy of the cross-validation approaches introduces in Section~\ref{Sec:methods}.  Accuracy was assesed via several criteria.
 
 Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). Suppose $\hat{\beta}(\lambda)$ is the set of coefficients estimated by a cox model with LASSO penalty at $\lambda$. Mean squared error $MSE$ is defined to be 
+\bnote{
 \begin{equation}
-E(\hat{\beta}(\lambda) - \beta)^2.
+E\| \hat{\beta}(\lambda) - \beta \| ^2.
 \end{equation}
+}
 \note{this is the equation for a scalar MSE, not a vector}
 
 Throughout, we communicate the estimation accuracy in terms of relative MSE, as compared to the oracle model.  For each generated data set, an oracle model was fit using Cox regression only including the variables with non-zero coefficients. Letting $\hat{\beta}^{oracle}$ denote the resulting estimates, the relative MSE, on the log scale, is given by
@@ -205,7 +208,7 @@ For each simulated data set, there were $n = 120$ observations, $p = 1000$ covar
 
 Table~\ref{Tab:sim} displays the results of additional simulations carried out as we varied the dimension of the data set along with the signal strength.  Specifically, we examined the following settings: low dimension (p = 50) with weak signal, low dimension with strong signal, high dimension (p = 10000) with weak signal, and high dimension with strong signal. In all settings, the censoring rate was 30\%.
 
-As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches outperform the deviance residual and $V\&VH$ approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and $V\&VH$ approaches perform poorly relative to standard CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and selecting fewer variables. \note{if we're going to say something about ``selecting fewer variables'', should Table 1 include the average model size?}
+As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches outperform the deviance residual and $V\&VH$ approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and $V\&VH$ approaches perform poorly relative to standard CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and selecting fewer variables. \note{if we're going to say something about ``selecting fewer variables'', should Table 1 include the average model size?} \bnote{I'm afraid that the average model size would be confusing to the readers. The most conversative model would have the smallest model size, and would be closest to the true model size}
 
 \subsection {Stability}
   
@@ -243,11 +246,11 @@ As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches
     \caption{Cross-Validated AUC}
 \end{figure}	
 
-\begin{figure}[h]
-    \centering
-		\includegraphics[height= 15cm ]{./figures/figure_auc_extended.png}
-    \caption{Cross-Validated AUC}
-\end{figure}	
+%\begin{figure}[h]
+%    \centering
+%		\includegraphics[height= 15cm ]{./figures/figure_auc_extended.png}
+%    \caption{Cross-Validated AUC}
+%\end{figure}	
 
 \section{Application to Real Data}
 
