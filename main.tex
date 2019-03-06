@@ -127,6 +127,7 @@ Simulation studies were conducted to compare how those methods behave relative t
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection {Simulations Comparing Predictive Accuracy}
+\label{Sec:accuracy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Our first simulation study concerns the accuracy of the cross-validation approaches introduces in Section~\ref{Sec:methods}.  Accuracy was assesed via several criteria.
@@ -211,31 +212,41 @@ Table~\ref{Tab:sim} displays the results of additional simulations carried out a
 As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches outperform the deviance residual and $V\&VH$ approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and $V\&VH$ approaches perform poorly relative to standard CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and selecting fewer variables. \note{if we're going to say something about ``selecting fewer variables'', should Table 1 include the average model size?} \bnote{I'm afraid that the average model size would be confusing to the readers. The most conversative model would have the smallest model size, and would be closest to the true model size}
 
 \subsection {Stability}
+\label{Sec:stability}
   
-\par In this section, simulation studies were conducted to address the stability issue of the standard cross-validated likelihood. The standard approach is the most straighforward among all four methods that are presented in this paper. It also has the best predictive accuracy based on the simulation results in the previous section. However, this approach is much less widely used due to its unstability. When number of observed events in $D_k$ is really small, there would be insufficient number of events to construct the risk set for the partial likelihood. We thus conducted a simulation study varying the number of folds and censoring to see when the method would start to have convergence issue. In both studies, we set the number of observations to be n = 100. When we varied the censoring percentage, we fixed the number of folds K = 10; when we varied the number of folds, we fixed the censoring to be 10$\%$. N = 200 replications were used to estimate the convergence probability.
-\par As is illustrated in Figure 3,  the standard approach start to have converge issue fairly quickly when censoring increases or when the number of folds increases. While the linear predictor approach performs as well as the standard approach in terms of prediction accuracy, the linear predictor approach is also as stable as the Verweij and Van Houwelingen's approach.
+\par In this section, we present a small simulation study to illustrate the numerical stability issues faced by standard cross-validation in the partial likelihood setting.  The standard approach is both straightforward and enjoys very good predictive accuracy, as seen in Section~\ref{Sec:accuracy}. The main drawback to its widespread use is that the number of uncensored observations in the test set may be insufficient to construct a well-defined partial likelihood, leaving the overall estimate of cross-validation error undefined as well.
+
+To illustrate how common this problem is, and what factors it depends on, we conducted a simulation study varying the number of folds and censoring rate. Throughout we fixed the number of observations at $n = 100$. When varying the censoring rate, we fixed the number of folds at $K = 10$; when varying the number of folds, we fixed the censoring rate at 10\%. We generated 200 independent data sets according to the mechanism described in Section~\ref{Sec:accuracy} and recorded whether or not standard cross-validation was able to be carried out (i.e., whether the partial likelihood was well-defined for all folds).
+
+\note{did we make an effort to balance censoring across folds here?  we should comment on this}
+
+\note{also, hmm, censoring rate isn't actually fixed at, say, 30\%...eh, maybe it's OK}
+
+\par As illustrated in Figure~\ref{Fig:stability}, at $n=100$ the standard approach can be problematic even at fairly modest censoring rates.  For example, standard CV cannot be used with over 25\% of data sets when half of all observations are censored.  Furthermore, even if the censoring rate is just 10\%, standard CV strongly limits the number of folds that can be included in the cross-validation process, becoming very unstable when the number of folds exceeds 10.
 
 \begin{figure}[h]
-    \centering
-		\includegraphics[height= 7cm ]{./figures/figure_3_new.png}
-    \caption{Comparing Stability}
+  \centering
+  \includegraphics[height= 7cm ]{./figures/figure_3_new.png}
+  \caption{\label{Fig:stability}Comparing Stability \note{This plot needs better y axis labels and caption; also, these are not percents.}}
 \end{figure}	
 
-    \subsection {Leave-One-Out Cross Validation}
-	\par In this section, we compared Leave-One-Out Cross Validation (LOOCV) with 10-fold cross validation. When first introduced, Verweij and Van Houwelingen's cross-validated partial likelihood was proposed so that LOOCV for Cox regression became feasible. While Verweij and Van Houwelingen's cross-validated partial likelihood solves the stability issue by aggregating more observations together, it does not seem to be an efficient way to evaluate the model fit based on results in Section 3.1. It tends to be conservative in variable selections and selects fewer variables in various scenarios. We further examined Verweij and Van Houwelingen's cross-validated partial likelihood under Leave-One-Out Cross Validation. In the following simulation studies, we used 10 fold cross-validated standard approach as our baseline for comparison. Then we conducted both 10-fold CV and LOOCV for Verweij and Van Houwelingen's approach, linear predictor approach and deviance residual approach.
-	\par Results of the simulation experiment is illustrated in Figure 4.For all three methods, LOOCV selected models that have smaller MSE than 10-fold CV for all three CV approaches. As is shown in left and middle panels, LOOCV based on deviance residuals and Verweij and Van Houwelingen's cross-validated partial likelihood still perform more conservatively than the standard approach. Even if Verweij and Van Houwelingen's approach was proposed to allow LOOCV, the LOOCV based on Verweij and Van Houwelingen's approach does not surpass the 10-fold standard approach.
+\subsection {Leave-One-Out Cross Validation}
+\label{Sec:loocv}
 
-    %\par We also compared cross-validation with information criteria AIC and BIC. Simulation studies were conducted in lower dimension and higher dimension respectively. As is illustrated in Figure 7, in lower dimension, AIC tends to perform more liberal and BIC tends to perform more conservative than the optimal $\lambda$. While the cross-validation methods are also conservative, most of them are less conservative than BIC. In terms of MSE, cross-validation methods yield smaller MSE than the information criteria. In higher dimension, both BIC and AIC tend to be more liberal than the optimal $\lambda$ and yield larger MSE.
+As discussed earlier, standard cross-validation cannot be used to carry out leave-one-out cross validation (LOOCV) for Cox regression models.  The three other approaches (V\&VH, linear predictor, and deviance residual), however, are not subject to the stability issues described in Section~\ref{Sec:stability}, and can be used to implement LOOCV.  Here, we compare these three approaches for carrying out LOOCV, and also compare LOOCV to 10-fold CV.
+
+For this study, we conducted both 10-fold CV and LOOCV for the V\&VH, linear predictor, and deviance residual approach, with standard 10-fold cross-validation used as a baseline for comparison.  These results are shown in Figure~\ref{Fig:loocv}. \note{FYI, never write \texttt{Figure 4}; always use \texttt{\textbackslash ref}} For all three methods, LOOCV selected models with a smaller MSE than 10-fold CV. For the V\&VH and deviance residual approaches, however, LOOCV was still was inferior to standard 10-fold CV.  As described in Section~\ref{Sec:stability}, these approaches tend to be conservative, selecting a larger-than-optimal value of the regularization parameter; LOOCV helps with this problem, but does not alleviate it entirely.
+
+For the linear predictor approach, on the other hand, \ldots \note{we need to talk about the linear predictor approach too!}
 
 \begin{figure}[h]
-    \centering
-		\includegraphics[height= 8cm ]{./figures/figure_4.png}
-    \caption{LOOCV}
+  \centering
+  \includegraphics[height= 8cm ]{./figures/figure_4.png}
+  \caption{\label{Fig:loocv}LOOCV\note{Needs a better caption; also, should y-axis be log mse ratio?}}
 \end{figure}	
 
-  %\subsection {Simulations on Deviance Residuals and Baseline Hazard Estimations}
+\subsection {Cross-Validated C Index \note{Are we removing this section?}}
 
- \subsection {Cross-Validated C Index}
 \par In this section, we conducted simulation experiments to compare likelihood-based cross validation against AUC-based cross validation. While the focus of this manuscript is to study valid cross-validation methods for partial-likelihood-based models such as penalized Cox rgression, the methods proposed in this paper are not applicable to some other survival machine learning models that do not involve constructing a partial likelihood. In those cases, the cross-validated C Index, also called cross-validated AUC, is one of the most popular options \citep{Subramanian2011} \citep{Simon2011a}. As is proposed by Simon et al., cross-validated AUC is computed also based on cross-validated linear predictors or some other types of prognostic factors. Thus, it is of our curiosity to see which one has a better performance when those two approaches, likelihood-based and AUC-based, are both available after we obtain the cross-validated linear predictors.
 
 \par We conducted simulations at both low dimension (p = 50) and high dimension (p = 1000), varying the signal in the data. Results of the simulations are illustrated in Figure 5. In general, the likelihood-based approach is more stable than the AUC-based cross validation approach. For MSE ratio and Brier Score, the likelihood approach tends to select more predictive models than the AUC-based approach. For the actual $\lambda$, it is interesting that the AUC-based approach is quite liberal and selected smaller $\lambda$s, which would yield models that contain more variables. 
