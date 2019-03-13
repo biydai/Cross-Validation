@@ -97,18 +97,31 @@ We define the cross-validation error evaluated with cross-validated linear predi
 %%%%%%%%%%%%%%%%%%%%
 \subsection{Cross Validated Deviance Residuals}
 %%%%%%%%%%%%%%%%%%%%
+\bnote{I rewrote this section}
 
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another alternative approach to cross-validation would be to obtain an estimate $\hat{\Lambda}_{0}$ for the baseline hazard and use this in cross-validation.  There are several potential approaches to estimating $\Lambda_0$; in this manuscript, we chose to obtain the cross-validated linear predictors $\hat{\eta}^{cv}$ as in \eqref{eq:cv-lp}, then estimate $\Lambda_0$ via Kalbfleisch and Prentice's method \citep{Kalbfleisch2011}, treating these linear predictors as fixed inputs.\note{Maybe this isn't critical, but I still think we could just use $\hat{\Lambda}_0$ from the full data fit \ldots that estimator just makes more sense to me}\bnote{They do act a bit different in simulations. The baseline built from the full data performed worse. Discuss this next meeting}
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another alternative approach to cross-validation would be to obtain an estimate $\hat{\Lambda}_{0}$ for the cumulative baseline hazard and use it to quantify the cross-validation error. The simplest way to estimate $\Lambda_0$ is via the Nelson-Aalen Estimator \citep{aalen1978} \citep{nelson1969}:
+$$
+	 \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk at time }t^{-}_j}
+$$.
+Based on $\hat{\Lambda}_{0}(t)$, we can obtain a cumulative hazard for each individual by including their covariates: $$  \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\hat\beta)$$. To incorporate the cross-validation procedure, we would first obtain $\hat{\beta}^{-k}$ from the training set $T_k$. For each $i \in D_k$, 
 
-As an analogue to the residual sum of squares in linear regression, we considered using the sum of squared deviance residuals, the normalized form of Martingale residuals, to measure the model's predictive accuracy \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure in recursive partitioning models for survival data \citep{Therneau2018}. Given that the baseline hazard and linear predictors are obtained via cross-validation, we can first obtain the cross-validated Martingale residual: 
+\begin{equation}
+ \label{eq:cv-bhz}
+  \hat{\Lambda}^{cv}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\hat\beta^{-k})
+\end{equation}
+, where the original $\hat{\beta}$ from the full fit is now replaced by $\hat{\beta}^{-k}$.
+
+A natural candidate that incorporates the cumulative hazard into a form of a loss function is via the deviance residual, which is the normalized form of the Martingale residual \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure in recursive partitioning models for survival data \citep{Therneau2018}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
 	\begin{equation}
-	\hat{M^{cv}_{i}} = \delta_{i} -\hat{\Lambda}^{cv}_{0}(t_{i})e^{\hat{\eta}^{cv}_{i}},
+	\hat{M^{cv}_{i}} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\hat\beta^{-k}),
 	\end{equation} 
 The cross-validated deviance residuals can then be derived from the Martingale residuals: 
 	\begin{equation} 
 	d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}.
 	\end{equation}
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ are used as the cross validated error. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ are used as the cross validated error as an analogy to the residual sums of square for linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+
+Our baseline estimation in the \emph{cross-validated deviance residuals} slightly deviates from the baseline estimation used in the original version of the Martingale and Deviance residuals \citep{Therneau1990}. Instead of using the Nelson-Aalen Estimator, the baseline cumulative hazard in the original Martingale and Deviance residuals is estimated via the Breslow's Estimator \citep{breslow1972}, which adjusts covariates of the fitted model in the baseline estimation. Here we provide a heuristic justification for our modification. The deviance residual measures the difference between the fitted model against the saturated model, which is considered as a perfect fit to the data. In the Cox Regression context, the baseline cumulative hazard is part of the saturated model. With the Breslow's Estimator or other estimators that involve the covariates, this saturated model would change everytime when a new model is fitted. This is not an issue when these two residuals are used in the model diagnositics context. However, in the model selection context, the sum of squared deviance residuals would have difficulty to tell which model is the best fit for the data if the Breslow's Esimator is used. \bnote{(This is not the case for Brier Score and Kullback Leibler Score. We should still use the covariate adjusted survival function for these two, because hey are comparing the predicted probability of survival against the observed probability of survival)}
 
 %A more straightforward way to compute the cross-validated deviance residuals is to estimate the baseline hazard using $T_k$, leaving $D_k$ as out-of-sample observations to calculate the residuals. There are two major issues with this approach. First, it is possible that some events in $D_k$ occurred after the last event in $T_k$. In this case, the survival function would drop to 0. Secondly, there is a numeric challenge for computing the term $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ in deviance residuals. Since the baseline hazard function is a step function from 0, the cumulative hazard $\hat{\Lambda}_{0}$ at the first time point from 0 is always 0. For whichever $D_k$ that contains the first time point, $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ would be negative infinity for that observation and lead to a numeric issue. To solve the first issue, events that occur later than the last event in $T_k$ should be censored. To solve the second issue, the step function of the baseline hazard needs to be smoothed. Both issues do not exist when the baseline hazard is built over the cross-validated linear predictors using all samples. \note{this paragraph may be optional, and can also be moved to discussion}
 
@@ -124,7 +137,7 @@ The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ a
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 
-Simulation studies were conducted to compare how those methods behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. Survival times were generated from exponential distribution $h(t) = h_{0} \exp(X\beta)$, where $h_{0}$ is the prespecified baseline\note{huh?  so what is $h_0$?} \bnote{$h_0$ is 1 in all simulations. Basically, I first generated $X$, then the linear predictor $X\beta$; Then I compute the rate parameter from $h_0exp(X\beta)$ and inserted this to the \texttt{rexp} function to generate the survival times}; the covariate matrix $X$ with $n$ observations and $p$ covariates is generated from independent $\text{Normal}(0, 1)$ samples; and the coefficient vector $\beta$ is sparse, with most entries equal to zero. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation.
+Simulation studies were conducted to compare how those methods behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. \bnote{Covariate matrix $X$ with $n$ observations and $p$ covariates is generated from independent $\text{Normal}(0, 1)$ samples; and coefficient vector $\beta$ is sparse, with most entries equal to zero. Given $X$ and $\beta$, survival times were generated from exponential distribution with rate parameter set to be $\exp(X\beta)$.} Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation.
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection {Simulations Comparing Predictive Accuracy}
@@ -134,18 +147,18 @@ Simulation studies were conducted to compare how those methods behave relative t
 Our first simulation study concerns the accuracy of the cross-validation approaches introduces in Section~\ref{Sec:methods}.  Accuracy was assesed via several criteria.
 
 Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). Suppose $\hat{\beta}(\lambda)$ is the set of coefficients estimated by a cox model with LASSO penalty at $\lambda$. Mean squared error $MSE$ is defined to be 
-\bnote{
+%\bnote{
 \begin{equation}
 E\| \hat{\beta}(\lambda) - \beta \| ^2.
 \end{equation}
-}
-\note{this is the equation for a scalar MSE, not a vector}
+%}
+%\note{this is the equation for a scalar MSE, not a vector}
 
 Throughout, we communicate the estimation accuracy in terms of relative MSE, as compared to the oracle model.  For each generated data set, an oracle model was fit using Cox regression only including the variables with non-zero coefficients. Letting $\hat{\beta}^{oracle}$ denote the resulting estimates, the relative MSE, on the log scale, is given by
 \begin{equation}
 \log\left\{ \frac{\MSE(\hat{\beta}(\lambda^{\text{cv}}))}{\MSE(\hat{\beta}^{\text{oracle}})} \right\},
 \end{equation}
-where $\lambda^{cv}$ denotes the value of $\lambda$ selected by cross-validation.   These results are then averaged over N replications; the $\log$ of the ratio is taken to correct for skewness.
+where $\lambda^{cv}$ denotes the value of $\lambda$ selected by cross-validation.   These results are then averaged over N replications; the $\log$ of the ratio is taken to correct for skewness. \bnote{clarification: MSE is estimated by avevaring across N replications respectively for $\hat{\beta}(\lambda^{cv})$ and $\hat{\beta}^{oracle}$. The ratio and $\log$ were taken afterwards }
 
 %For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$, which we denote by $\lambda^{opt}$. Then the models selected by the cross validation methods with $\lambda^{cv}$ would be compared to the model that corresponds to $\lambda^{opt}$. We would take the ratio between $MSE$ of $\hat{\beta}(\lambda^{cv})$ and $MSE$ of $\hat{\beta}(\lambda^{optimal})$ for each cross-validation selected $\lambda^{cv}$ in each generated data set. The results would be averaged over N replications. 
 
@@ -163,12 +176,12 @@ As for the Brier score, KL scores were computed for all CV approaches at the med
 
 \par The final metric we included in our study was Harrell's C Index \citep{HarrellJr1984}. The C Index is a rank-based statistic that measures the concordance between the linear predictor of the selected model and the observed outcome. Suppose we arbitrarily select two individuals; if the individual with the higher predicted risk also died first, then this would be considered as a concordant pair. The C Index considers all possible such pairs and estimates of proportion of those pairs that are concordant. A C Index of 0.5 means the prediction is no better than flipping a coin and C Index of 1 means perfect concordance. We computed Harrell's C Index using the independent test set of 1000 individuals described above.
 
-For each simulated data set, there were $n = 120$ observations, $p = 1000$ covariates. and 10\% of the observations were censored. For each of the four methods described in Section~\ref{Sec:methods}, 10-fold cross-validation was implemented. Number of non-zero $\beta$s was 10. The signal in the data set was varied by varying the magnitude of the $\beta$s from 0.4 to 0.9. \note{Would it be better here to descibe the $\beta$ values explicitly, with an equation?} For each scenario, 200 replications were used. 
-   
+\bnote{I rewrote this paragraph} For each simulated data set, the covariate matrix has $n = 120$ observations and $p = 1000$ covariates. The covariate vector $\beta$ is assumed to have sparsity, where $\beta_j = 0$ for $j \in \{11,12,..,1000\}$. Then for $j \in \{1,2, ..., 10 \}$, $\beta_j = s$, where $s$ is a prespecified constant that finetunes the signal strength in the simulated data set. In the first simulation study, we varied $s$ from 0.4 to 0.9. The survival outcomes have 10$\%$ expected censoring. For each of the four methods described in Section~\ref{Sec:methods}, 10-fold cross-validation was implemented. $N = 200$ replications were used for each scenario.
+
 \begin{figure}[ht]
   \centering
-  \includegraphics[height= 7cm ]{./figures/figure_2_new.png}
-  \caption{\label{Fig:mse-brier-c} Simulation comparing 4 CV methods in terms of $\lambda$ and MSE ratio (relative to the oracle model) \note{UPDATE CAPTION}. n = 150, p = 1000, 10$\%$ censoring.}
+  \includegraphics[height= 7cm ]{./manuscript_figure/figure_2_new.png}
+  \caption{\label{Fig:mse-brier-c} Simulation comparing 4 CV methods. The horizontal axis in all three plots is $s$, which represents the signal strength in the data. The value of $s$ is varied from 0.4 to 0.9.  $\log(\text{MSE ratio})$, relative to the oracle modle is plotted in the left panel. Out-of-sample Brier Scores is plotted in the middle. Out-of-sample Harrell's C Index is plotted in the right panel. For each simulated data set, n = 120, p = 1000. Expected censoring percentage is 10$\%$. \bnote{behavior of the deviance residual approach has slightly changed}} 
 \end{figure}	
 
 %The left panel compares the $\lambda$ selected by different methods. Verweij and Van Houwelingen's cross-validated partial likelihood approach, which is currently most widely used approach, consistently selects $\lambda$s that are greater than the optimal one.  Greater $\lambda$ leads to greater penalties and fewer non-zero variables, hence Verweij and Van Houwelingen's approach is conservative in terms of selecting variables. While the proposed cross-validated Deviance residual has very close performance as Verweij and Van Houwelingen's approach, the standard cross-validated log likelihood and the cross-validated linear predictor were more liberal than the other two methods. In general, all four methods tends to act conservatively and selects smaller models. 
@@ -210,7 +223,7 @@ For each simulated data set, there were $n = 120$ observations, $p = 1000$ covar
 
 Table~\ref{Tab:sim} displays the results of additional simulations carried out as we varied the dimension of the data set along with the signal strength.  Specifically, we examined the following settings: low dimension (p = 50) with weak signal, low dimension with strong signal, high dimension (p = 10000) with weak signal, and high dimension with strong signal. In all settings, the censoring rate was 30\%.
 
-As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches outperform the deviance residual and V\&VH approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and V\&VH approaches perform poorly relative to standard CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and selecting fewer variables. \note{if we're going to say something about ``selecting fewer variables'', should Table 1 include the average model size?} \bnote{I'm afraid that the average model size would be confusing to the readers. The most conversative model would have the smallest model size, and would be closest to the true model size}
+As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches outperform the deviance residual and V\&VH approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and V\&VH approaches perform poorly relative to standard CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and selecting fewer variables. %\note{if we're going to say something about ``selecting fewer variables'', should Table 1 include the average model size?} \bnote{I'm afraid that the average model size would be confusing to the readers. The most conversative model would have the smallest model size, and would be closest to the true model size}
 
 \subsection {Stability}
 \label{Sec:stability}
@@ -231,7 +244,7 @@ To illustrate how common this problem is, and what factors it depends on, we con
   \caption{\label{Fig:stability}Comparing Stability \note{This plot needs better y axis labels and caption; also, these are not percents.}}
 \end{figure}	
 
-\subsection {Leave-One-Out Cross Validation}
+\subsection {Leave-One-Out Cross Validation \bnote{Updating Simulation}}
 \label{Sec:loocv}
 
 As discussed earlier, standard cross-validation cannot be used to carry out leave-one-out cross validation (LOOCV) for Cox regression models.  The three other approaches (V\&VH, linear predictor, and deviance residual), however, are not subject to the stability issues described in Section~\ref{Sec:stability}, and can be used to implement LOOCV.  Here, we compare these three approaches for carrying out LOOCV, and also compare LOOCV to 10-fold CV.
@@ -254,8 +267,8 @@ For the linear predictor approach, on the other hand, \ldots \note{we need to ta
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height= 15cm ]{./figures/figure_auc.png}
-  \caption{Cross-Validated AUC \note{Needs a more complete caption}}
+  \includegraphics[height= 15cm ]{./manuscript_figure/figure_auc.png}
+  \caption{\bnote{caption edited}Comparing Partial Likelihood and C Index both built from Cross-validated Linear Predictors. The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter$\lambda$. The mid row plots the $\log(\text{SE Ratio})$ \bnote{(it just occured to me, this may not exactly be the log of MSE ratio. because to get MSE, we need to take average over all replications. But this figure is plotting each replication...)}, relative to the oracle model. The bottom row plots the Brier Scores. }
 \end{figure}
 
 Several observations can be drawn from Figure~\ref{5}.  First, likelihood-based CV tends to select more accurate models, as judged by both mean squared error and Brier score.  Second, likelihood-based CV is also more stable than the AUC-based CV, in the sense that it tends to select a narrower range of models, with more consistent performance, than CV-AUC.  Lastly, CV-AUC is consistently more liberal than likelihood-based CV, selecting models with smaller values of the regularization parameter $\lam$, and therefore preferring models with larger coefficient values and more nonzero coefficients.
