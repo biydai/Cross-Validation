@@ -270,7 +270,7 @@ df_combined$Type <- factor(df_combined$Type,levels = c("lambda","log(MSE Ratio)"
 auc_plot <- ggplot(df_combined, aes(Coef, Value,fill=Method)) + 
   geom_boxplot() + 
   facet_grid(Type ~ dim,scales = "free") +
-  labs(x = expression(paste("Magnitude of Non-Zero ", beta, "s", sep = ""))) +
+  labs(x = "signal strength (s)") +
   theme_grey()
 
 auc_plot

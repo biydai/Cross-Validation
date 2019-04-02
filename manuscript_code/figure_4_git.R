@@ -263,7 +263,7 @@ p <- ggplot(df, aes(x=coef, y=mse_ratio, colour = methods)) +
   geom_line(aes(color = type), stat="identity",size = 1.2)+
   geom_point(aes(color = type), stat="identity",size = 3)+
   facet_grid(.~methods)+
-  labs(x = "s",
+  labs(x = "signal strength (s)",
          #expression(paste("Magnitude of Non-Zero ", beta, "s", sep = ""))
        y = "log(MSE Ratio)")+
   theme_gray()+

@@ -100,9 +100,9 @@ We define the cross-validation error evaluated with cross-validated linear predi
 
 The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another approach to cross-validation would be to include an extra step of estimating the baseline hazard and using it to quantify the cross-validation error. The cumulative baseline hazard $\Lambda_0$ is typically estimated via the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
 \begin{equation}
-  \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk at time }t^{-}_j}.
+  \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
 \end{equation}
-\note{need to define $t^{-}_j$.}
+\bnote{I write out the $t^{-}_j$ definition directly into the fomula so that we don't need to define $t^{-}_j$ separately.}
 The Cox model implies the following relationship between the baseline cumulative hazard and the cumulative hazard for individual $i$:
 \begin{equation}
   \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\hat\beta).
@@ -115,7 +115,7 @@ The baseline hazard could be incorporated into cross-validation in a variety of 
 \end{equation}
 Note that this uses an estimate of the baseline hazard coming from the full data under the null model, but cross-validation has been applied to the estimation of the regression coefficients $\hat{\beta}$; we will discuss the rationale for this estimator shortly.
 
-A natural candidate for incorporating the cumulative hazard into a loss function is the deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been occasionally been used as a predictive accuracy measure \citep{Therneau2018}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
+A natural candidate for incorporating the cumulative hazard into a loss function is the deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been occasionally used as a predictive accuracy measure \citep{Therneau2018}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
 \begin{equation}
   \hat{M^{cv}_{i}} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\hat\beta^{-k}).
 \end{equation}
@@ -125,13 +125,13 @@ The cross-validated deviance residuals can then be derived from the Martingale r
 \end{equation}
 The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$ are used as the cross validated error as an analogy to the residual sums of square for linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
-The baseline hazard estimate we describe here differs from the one typically used in constructing deviance residuals \citep{Therneau1990}. Instead of the Nelson-Aalen estimator, deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model such as the one described in \citet{breslow1972}. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, we consider it important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other approaches \note{supplement? otherwise, this sentence is a little tricky}.  Note that this is not the case for the Brier Score or Kullback Leibler Score (described in Section~\ref{Sec:accuracy}), which involve absolute loss functions, not comparisons with a saturated model.
+The baseline hazard estimate we describe here differs from the one typically used in constructing deviance residuals \citep{Therneau1990}. Instead of the Nelson-Aalen estimator, deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model such as the one described in \citet{breslow1972}. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, we consider it important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other approaches \note{supplement? otherwise, this sentence is a little tricky}\bnote{sure}.  Note that this is not the case for the Brier Score or Kullback Leibler Score (described in Section~\ref{Sec:accuracy}), which involve absolute loss functions, not comparisons with a saturated model.
 
 %A more straightforward way to compute the cross-validated deviance residuals is to estimate the baseline hazard using $T_k$, leaving $D_k$ as out-of-sample observations to calculate the residuals. There are two major issues with this approach. First, it is possible that some events in $D_k$ occurred after the last event in $T_k$. In this case, the survival function would drop to 0. Secondly, there is a numeric challenge for computing the term $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ in deviance residuals. Since the baseline hazard function is a step function from 0, the cumulative hazard $\hat{\Lambda}_{0}$ at the first time point from 0 is always 0. For whichever $D_k$ that contains the first time point, $log(\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}_{i}})$ would be negative infinity for that observation and lead to a numeric issue. To solve the first issue, events that occur later than the last event in $T_k$ should be censored. To solve the second issue, the step function of the baseline hazard needs to be smoothed. Both issues do not exist when the baseline hazard is built over the cross-validated linear predictors using all samples. \note{this paragraph may be optional, and can also be moved to discussion}
 
 \begin{figure}
   \centering
-  \includegraphics[height= 12cm ]{./figures/figure_1_new.png}
+  \includegraphics[height= 12cm ]{./manuscript_figure/figure_1_new.png}
   \caption{Illustration of K-fold Cross Validation Methods for Cox Regression}
 \end{figure}	
 
@@ -162,9 +162,7 @@ Throughout, we communicate the estimation accuracy in terms of relative MSE, as 
 \begin{equation}
 \log\left\{ \frac{\MSE(\hat{\beta}(\lambda^{\text{cv}}))}{\MSE(\hat{\beta}^{\text{oracle}})} \right\},
 \end{equation}
-where $\lambda^{cv}$ denotes the value of $\lambda$ selected by cross-validation.   These results are then averaged over N replications; the $\log$ of the ratio is taken to correct for skewness. \bnote{clarification: MSE is estimated by avevaring across N replications respectively for $\hat{\beta}(\lambda^{cv})$ and $\hat{\beta}^{oracle}$. The ratio and $\log$ were taken afterwards } \note{I'm not sure why this is a note; shouldn't you rewrite the sentence?}
-
-%For each generated data set, the $\lambda$ that has the minimal MSE is chosen as the optimal $\lambda$, which we denote by $\lambda^{opt}$. Then the models selected by the cross validation methods with $\lambda^{cv}$ would be compared to the model that corresponds to $\lambda^{opt}$. We would take the ratio between $MSE$ of $\hat{\beta}(\lambda^{cv})$ and $MSE$ of $\hat{\beta}(\lambda^{optimal})$ for each cross-validation selected $\lambda^{cv}$ in each generated data set. The results would be averaged over N replications. 
+where $\lambda^{cv}$ denotes the value of $\lambda$ selected by cross-validation. MSE is estimated by avevaring over N replications respectively for $\hat{\beta}(\lambda^{cv})$ and $\hat{\beta}^{oracle}$. The ratio is taken afterwards. The $\log$ is taken to correct for skewness. %\note{I'm not sure why this is a note; shouldn't you rewrite the sentence?}
 
 \par We also measure the predictive accuracy via the mean squared prediction error, or Brier score \citep{VanHouwelingen2011}. Let $\hat{S}(t_0|\lambda,x)$ denote the predicted probability for an individual with covariates $x$ to survive beyond time $t_0$, and let $y = \mathbb{1}\left\{ t > t_{0}\right\}$ indicate whether the individual actually survived beyond time $t_0$. Then the Brier score is defined to be
 \begin{equation}
@@ -180,7 +178,7 @@ As for the Brier score, KL scores were computed for all CV approaches at the med
 
 \par The final metric we included in our study was Harrell's C Index \citep{HarrellJr1984}. The C Index is a rank-based statistic that measures the concordance between the linear predictor of the selected model and the observed outcome. Suppose we arbitrarily select two individuals; if the individual with the higher predicted risk also died first, then this would be considered as a concordant pair. The C Index considers all possible such pairs and estimates of proportion of those pairs that are concordant. A C Index of 0.5 means the prediction is no better than flipping a coin and C Index of 1 means perfect concordance. We computed Harrell's C Index using the independent test set of 1000 individuals described above.
 
-\bnote{I rewrote this paragraph} For each simulated data set, the covariate matrix has $n = 120$ observations and $p = 1000$ covariates. The covariate vector $\beta$ is assumed to be sparse, with $\beta_j = 0$ for $j \in \{11,12,..,1000\}$ and $\beta_j = s$ for $j \in \{1,2, ..., 10 \}$, where $s$ is a prespecified constant that parameterizes the signal strength in the simulated data set. In the first simulation study, we varied $s$ from 0.4 to 0.9. The survival outcomes have 10$\%$ expected censoring. For each of the four methods described in Section~\ref{Sec:methods}, 10-fold cross-validation was implemented. $N = 200$ replications were used for each scenario.
+ For each simulated data set, the covariate matrix has $n = 120$ observations and $p = 1000$ covariates. The covariate vector $\beta$ is assumed to be sparse, with $\beta_j = 0$ for $j \in \{11,12,..,1000\}$ and $\beta_j = s$ for $j \in \{1,2, ..., 10 \}$, where $s$ is a prespecified constant that parameterizes the signal strength in the simulated data set. In the first simulation study, we varied $s$ from 0.4 to 0.9. The survival outcomes have 10$\%$ expected censoring. For each of the four methods described in Section~\ref{Sec:methods}, 10-fold cross-validation was implemented. $N = 200$ replications were used for each scenario.
 
 \begin{figure}[ht]
   \centering

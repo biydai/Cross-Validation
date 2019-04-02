@@ -257,7 +257,7 @@ df$method <- factor(df$method,levels = c("V & VH","Standard","LinearPred","DevRe
 lambda_p <- ggplot(data = df, aes(x = coef,y = lambda,group = method))+
   geom_line(aes(color=method),size=1.2,stat = 'identity')+
   geom_point(aes(color=method),size=3)+ theme_gray()+
-  labs(x = "s", 
+  labs(x = "signal strength (s)", 
        y = expression(lambda))+
   theme(legend.position = "none")
 mse_p <- ggplot(data = df, aes(x = coef,y = mse,group = method))+
@@ -265,7 +265,7 @@ mse_p <- ggplot(data = df, aes(x = coef,y = mse,group = method))+
   geom_point(aes(color=method),size=3)+
   theme_gray()+
   scale_colour_discrete(drop=TRUE,limits = levels(df$method))+
-  labs(x = "s", 
+  labs(x = "signal strength (s)", 
        y = "log(MSE Ratio)") +
   theme(legend.position = "none")
 Brier_p <- ggplot(data = df, aes(x = coef,y = Brier,group = method))+
@@ -273,7 +273,7 @@ Brier_p <- ggplot(data = df, aes(x = coef,y = Brier,group = method))+
   geom_point(aes(color=method),size=3)+
   theme_gray()+
   scale_colour_discrete(drop=TRUE,limits = levels(df$method))+
-  labs(x = "s", 
+  labs(x = "signal strength (s)", 
        y = "Brier Score") +
   theme(legend.position = "none")
 KL_p <- ggplot(data = df, aes(x = coef,y = KL,group = method))+
@@ -281,7 +281,7 @@ KL_p <- ggplot(data = df, aes(x = coef,y = KL,group = method))+
   geom_point(aes(color=method),size=3)+
   theme_gray()+
   scale_colour_discrete(drop=TRUE,limits = levels(df$method))+
-  labs(x = "s", 
+  labs(x = "signal strength (s)", 
        y = "Kullback Leibler")+
   theme(legend.position = "none")
 CIndex <- ggplot(data = df, aes(x = coef,y = CIndex,group = method))+
@@ -289,7 +289,7 @@ CIndex <- ggplot(data = df, aes(x = coef,y = CIndex,group = method))+
   geom_point(aes(color=method),size=3)+
   theme_gray()+
   scale_colour_discrete(drop=TRUE,limits = levels(df$method))+
-  labs(x = "s" , 
+  labs(x = "signal strength (s)" , 
        y = "Harrell's C Index") +
   theme(legend.position = "right")
 
