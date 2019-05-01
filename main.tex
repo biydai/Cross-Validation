@@ -293,24 +293,26 @@ Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood
 
 \section{Application to Real Data}
 
-\par In this section, we apply the cross validation methods described in Section~\ref{Sec:methods} to data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients.
-They gathered expression profiles of \textit{22,283} genes for \textit{442} \note{is there some reason 442 is in italics? other numbers aren't} non-small-cell lung cancer (NSCLC) patients along with a number of clinical variables such as stage, age and gender. \note{Did you only adjust for stage, age, and gender, or did you adjust for smoking, etc., as well?  If not, maybe take out ``such as'', which implies that there are other variables you're not mentioning.} About 50\% of the patients died during the course of the study (236 events), with the rest censored. The clinical variables stage, age and gender were known to have a larger prognostic impact, thus they were fitted in the model without penalization. Cross-validation was again used for the selection of the penalty term, which selects the gene expressions that are associated with patients' overall survival. The results of the analysis are also listed in Table 3.
+In this section, we apply the cross validation methods described in Section~\ref{Sec:methods} to data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients.
+They gathered expression profiles of \textit{22,283} genes for \textit{442} \note{is there some reason 442 is in italics? other numbers aren't} non-small-cell lung cancer (NSCLC) patients along with a number of clinical variables such as stage, age and gender. \note{Did you only adjust for stage, age, and gender, or did you adjust for smoking, etc., as well?  If not, maybe take out ``such as'', which implies that there are other variables you're not mentioning.} About 50\% of the patients died during the course of the study (236 events), with the rest censored. The clinical variables stage, age and gender were included in the model without penalization, as it is reasonable to assume that all three have an effect on survival.
 
-\par How the CV methods perform on real data reflects what is shown in simulation studies. The standard CVE is the most liberal approach. Deviance Residual and Verweij and Van Houwelingen's CVE approaches were both really conversative, while the standard approach was the second liberal to standard CVE. In Figure 5, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. For Verweij and Van Houwelingen's cross-validated partial likelihood, there's almost no signal there.
+For this analysis, we fit elastic net models to the data in addition to lasso models, as these models often offer improvement over the lasso when many correlated genes are involved \citep{Zou2005}.  We used cross-validation to select the regularization parameter $\lam$ as well as the elastic net tuning parameter $\alpha$, where $\alpha=1$ corresponds to the lasso and $\alpha=0$ corresponds to ridge regression.  \note{More on elastic net, justify why we focus on $\alpha=0.3$}.
+
+\note{This paragraph will probably need to change based on new results.}  How the CV methods perform on real data reflects what is shown in simulation studies. The standard CVE is the most liberal approach. Deviance Residual and Verweij and Van Houwelingen's CVE approaches were both really conversative, while the standard approach was the second liberal to standard CVE. In Figure 5, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ will be selected when CVE curve reaches its lower point. The blue line, which represents the linear predictor approach, has more curvature near its lowest point. It is easier to pick out the minimum point for this blue curve. Hence this approach is better at picking out signals than the other three approaches. For Verweij and Van Houwelingen's cross-validated partial likelihood, there's almost no signal there.
 
 \begin{figure}[h]
-    \centering
-		\includegraphics[height= 8cm ]{./figures/shedden.jpg}
-    \caption{Comparing Cross-Validated Error for Different Methods on Real Data Sets}
-\end{figure}	
+  \centering
+  \includegraphics[height= 8cm ]{./figures/shedden.jpg}
+  \caption{Comparing Cross-Validated Error for Different Methods on Real Data Sets \note{Change to $\alpha=0.3$?}}
+\end{figure}
 
 \begin{table}[h]
 \centering
-\caption{Application to Real Data Sets}
+\caption{Application to Real Data Sets\note{Change to $\alpha=0.3$?}}
 \label{my-label}
 \begin{tabular}{lccccc}
-\toprule
-						& $\lambda$ & log($\lambda$) & CV C-Index & Brier Score \\ 
+  \toprule
+  & $\lambda$ & log($\lambda$) & CV C-Index & Brier Score \\ 
 						\cline{2-5} \\ 
 						V $\&$ VH& 0.123 & -2.097 & 0.640 & 0.246\\
 						standard & 0.102 & -2.278 & 0.643& 0.239\\
@@ -319,6 +321,28 @@ They gathered expression profiles of \textit{22,283} genes for \textit{442} \not
 						\bottomrule
 \end{tabular}
 \end{table}
+
+For the elastic net model with $\lam$ and $\alpha$ selected by the cross-validated linear predictor approach, 81 genes were selected.  Of those, 78 were well-annotated.  We carried out an enrichment analysis of these 78 genes using ToppGene \citep{Chen2009c}; the five most significantly enriched molecular functions are listed in Table~\ref{Tab:go}.
+
+\begin{table}[ht]
+\centering
+\caption{\label{Tab:go} Five most significantly enriched molecular functions among genes selected by the linear predictor method with the elastic net ($\alpha=0.3$).  The five terms have a false discovery rate of 3\% using the Benjamini-Hochberg method. \note{I'm not sure whether we should include Selected and Annotated or not...if we do, we'll have to describe them better.}}
+\begin{tabular}{llrrr}
+\toprule
+ID & Name & p & Selected & Annotated\\
+\midrule
+GO:0008134 & transcription factor binding & 0.00015 & 10 & 584\\
+GO:0035257 & nuclear hormone receptor binding & 0.00057 & 5 & 161\\
+GO:0019869 & chloride channel inhibitor activity & 0.00061 & 2 & 9\\
+GO:0003700 & DNA-binding transcription factor activity & 0.00068 & 14 & 1264\\
+GO:0005102 & signaling receptor binding & 0.00083 & 16 & 1601\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Overall, the results are consistent with our understanding of cancer: many of the genes selected by the elastic net model are involved in signaling and the binding of transcription factors and receptors.  These are precisely the pathways that tend to be disrupted in cancer.  Chloride channels have also recently been implicated in several cancers as well as therapeutic targets \citep{Peretti2015}.
+
+Of particular interest is the fact that three of the selected genes (PIK3R1, PDPK1, and ITGB1) are involved in the PTEN pathway.  The PTEN gene is an important tumor suppressor; mutations in PTEN are among the most common genetic changes found in human cancers and have been linked to cancers of the lung, breast, prostate, brain, and more.  Time-to-event analyses like this one of gene expression data provide valuable insights for developing gene signatures that can help to identify patients with more severe disruptions to important pathways such as PTEN.  These signatures thereby inform prognosis and impact treatment decisions.
 
 \section{Discussion}
 

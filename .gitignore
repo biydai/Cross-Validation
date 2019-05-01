@@ -6,3 +6,4 @@
 !figures/*.jpeg
 !figures/*.png
 .Rproj.user
+*concordance.tex
