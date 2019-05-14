@@ -3,7 +3,7 @@
 
 %\note{What's with all the \textbackslash par commands?  They don't seem to do anything.}
 
-This semiparametric flexibility, however, comes at a cost. The Cox regression approach can estimate relative risks, but without estimating the baseline hazard, it does not make any predictions concerning the absolute failure time for any given individual.  This poses a challenge to assessing the predictive accuracy of a given Cox regression model.  The challenge is particularly relevant for penalized Cox regression \citep{Tibshirani1997,Fan2002}, as the assessment of predictive accuracy via cross-validation is the standard method for selecting the regularization parameter and deciding upon a model.
+This semiparametric flexibility, however, comes at a cost. The Cox regression model can estimate relative risks, but without estimating the baseline hazard, it does not make any predictions concerning the absolute failure time for any given individual.  This poses a challenge to assessing the predictive accuracy of a given Cox regression model.  The challenge is particularly relevant for penalized Cox regression \citep{Tibshirani1997,Fan2002}, as the assessment of predictive accuracy via cross-validation is the standard method for selecting the regularization parameter and deciding upon a model.
 
 \par Standard cross-validation involves dividing the data into $K$ folds, then fitting the model on $K-1$ of those folds (the training set) and assessing prediction accuracy on the remaining fold (the testing set). This process is then repeated, with each fold serving as the testing set exactly once. For Cox regression, the estimated coefficients allow us to quantify the risk for each subject in the training set relative to other members of the training set, but it is not obvious how to use those estimates to quantify the model's accuracy in the testing set.
 
@@ -32,7 +32,7 @@ The linear predictor approach offers the best combination of performance and sta
 \begin{equation*}
   h_{i}(t) = h_{0}(t) \exp( X_{i}^{T} \beta),
 \end{equation*} 
-where $h_{0}$ is the baseline hazard and $e^{X_i^{T} \beta}$ is the risk for a subject with covariates $X_i$ relative to that baseline.  The estimation of the coefficients is obtained by maximizing a partial likelihood.  Letting $t_i$ denote the time on study for subject $i$ and $\delta_{i}$ indicate whether or not an event is observed for subject $i$, each subject's individual contribution to that partial likelihood is
+where $h_{0}$ is the baseline hazard and $e^{X_i^{T} \beta}$ is the risk for a subject with covariates $X_i$ relative to that baseline.  The estimation of the coefficients is obtained by maximizing a partial likelihood.  Letting $t_i$ denote the time of being in the study for subject $i$ and $\delta_{i}$ indicate whether or not an event is observed for subject $i$, each subject's individual contribution to that partial likelihood is
 \begin{equation}
   \label{eq:cox-pl-subj}
   L_{i}(\beta) = \left \{\frac{\exp ( X_{i}^{T} \beta)}{\sum_{ k \in R(t_{i})}\exp ( X_{k}^{T} \beta)}\right \}^{\delta_{i}},
@@ -81,7 +81,7 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 \label{Sec:linear-predictor}
 %%%%%%%%%%%%%%%%%%%%
 
-\par Both of the methods in Section~\ref{Sec:cox-cv-existing} consist of adding together partial likelihood measures from each fold.  An alternative method is to obtain linear predictors for each fold, then combine these linear predictors to calculate a partial likelihood. We refer to this method as the \emph{cross-validated linear predictors} approach. To be more specific, we would first obtain $\hat{\beta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
+\par Both of the methods in Section~\ref{Sec:cox-cv-existing} consist of adding together log partial likelihood measures from each fold.  An alternative method is to obtain linear predictors for each fold, then combine these linear predictors to calculate a partial likelihood. We refer to this method as the \emph{cross-validated linear predictors} approach. To be more specific, we would first obtain $\hat{\beta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
 \begin{equation}
   \label{eq:cv-lp}
   \hat{\eta}^{cv}_{i} = X_{i}\hat{\beta}^{-k}
@@ -140,14 +140,14 @@ The baseline hazard estimate we describe here differs from the one typically use
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 
-Simulation studies were conducted to compare how the methods described in Section~\ref{Sec:methods} behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. For these simulation studies, the covariate matrix $X$, consisting of $n$ observations and $p$ covariates, was generated from independent $\text{Normal}(0, 1)$ samples. Given $X$ and a coefficient vector $\beta$, survival times were generated from exponential distribution with rate parameter $\exp(X\beta)$. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation.
+Simulation studies were conducted to compare how the methods described in Section~\ref{Sec:methods} behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. For these simulation studies, the covariate matrix $X$, consisting of $n$ observations and $p$ covariates, was generated from independent $\text{Normal}(0, 1)$ samples. Given $X$ and a coefficient vector $\beta$, survival times were generated from exponential distribution with rate parameter $\exp(X\beta)$. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. 
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection {Simulations Comparing Predictive Accuracy}
 \label{Sec:accuracy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Our first simulation study concerns the accuracy of the cross-validation approaches introduces in Section~\ref{Sec:methods}.  Accuracy was assesed via several criteria.
+Our first simulation study concerns the accuracy of the cross-validation approaches introduces in Section~\ref{Sec:methods}. We varied the sample size, dimension, censoring percentage and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation. Accuracy was assesed via several criteria.
 
 Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). Suppose $\hat{\beta}(\lambda)$ is the set of coefficients estimated by a cox model with LASSO penalty at $\lambda$. Mean squared error $MSE$ is defined to be 
 %\bnote{
@@ -173,7 +173,7 @@ In our simulation study, for each data set, we generated another independent dat
 \begin{equation}
 	\text{KL}(y, \hat{S}(t_0|\lambda,x)) = -\left\{ y\log(\hat{S}(t_0|\lambda,x) + (1 - y)\log(1 - \hat{S}(t_0|\lambda,x)) \right\}.
 \end{equation}
-As for the Brier score, KL scores were computed for all CV approaches at the median survival time.  Results were then averaged over the N replications. For both Brier and KL scores, a score represents smaller prediction error, thus indicating better prediction accuracy.
+As for the Brier score, KL scores were computed for all CV approaches at the median survival time.  Results were then averaged over the N replications. For both Brier and KL scores, a smaller score represents smaller prediction error, thus indicating better prediction accuracy.
 
 \par The final metric we included in our study was Harrell's C Index \citep{HarrellJr1984}. The C Index is a rank-based statistic that measures the concordance between the linear predictor of the selected model and the observed outcome. Suppose we arbitrarily select two individuals; if the individual with the higher predicted risk also died first, then this would be considered as a concordant pair. The C Index considers all possible such pairs and estimates of proportion of those pairs that are concordant. A C Index of 0.5 means the prediction is no better than flipping a coin and C Index of 1 means perfect concordance. We computed Harrell's C Index using the independent test set of 1000 individuals described above.
 
@@ -228,7 +228,6 @@ As in Figure~\ref{Fig:mse-brier-c}, the standard and linear predictor approaches
 
 \subsection {Stability}
 \label{Sec:stability}
- \bnote{I updated the writing and figure~\ref{Fig:stability} for this section}
 
 The standard cross-validation in the partial likelihood setting is both straightforward and enjoys very good predictive accuracy, as seen in Section~\ref{Sec:accuracy}. However there are two main stability drawbacks to its widespread use. The following simulation studies illustrated those issues faced by the standard approach. 
 
@@ -246,7 +245,7 @@ One way could be used to get around the undefined partial likelihood for the sta
 
 Even if the partial likelihood could be well-defined with balanced fold assignment, there is another drawback of the standard approach: it tends to have more uncertainty in its selection. The predictive performance of the model selected by this approach has greaterr variation than the other approaches, especially when there are only a few events available to construct the partial likelihood. 
 
-The following simulation study was designed to illustrate this issue. We generated data sets with $n = 120$ observations. The censoring rate is fixed exactly at $50\%$, thus there are 60 events observed among all observations. For each data set, we conducted the balanced fold assiggment with number of folds set to be 10, 12, 15, 20, 30 and 60. When the number of folds was set to be 10, there were exactly 6 events in each fold; when the number of folds was set to be 60, there were one event in each fold. After each fold assignment, we computed the cross-validated error using all four approaches described in Section~\ref{Sec:accuracy}. We recorded the model that minimizes the cross-validated error for each approach and computed its squared error loss. We replicated the whole process for $N = 200$ time. In the end, instead of looking at the mean as in Section~\ref{Sec:accuracy}, we computed the standard deviation of the squared error loss for each approach. 
+The following simulation study was designed to illustrate this issue. We generated data sets with $n = 120$ observations. The censoring rate is fixed exactly at $50\%$, thus there are 60 events observed among all observations. For each data set, we conducted the balanced fold assignment with number of folds set to be 10, 12, 15, 20, 30 and 60. When the number of folds was set to be 10, there were exactly 6 events in each fold; when the number of folds was set to be 60, there was exactly one event in each fold. After each fold assignment, we computed the cross-validated error using all four approaches described in Section~\ref{Sec:accuracy}. We recorded the model that minimizes the cross-validated error for each approach and computed its squared error loss. We replicated the whole process for $N = 200$ time. In the end, we computed the standard deviation of the squared error loss for each approach. 
 
 The results of this simulation are illustrated in the right panel in Figure~\ref{Fig:stability}. While all other three approaches are not affected by the number of folds and number of events in each fold, the variability of the model performance has drastically changed for the standard approach. When there are sufficient number of events in each fold, the standard approach perform pretty close to the other three approaches. However, when there is only one or two events in each fold, the standard approach has much more variability in its predictive performance. Even if we can still use the standard approach when there are few number of events, there is a bigger uncertainty in terms of how well the predictive performance would be. 
 
@@ -256,8 +255,6 @@ Based on the two simulations illustrated in this section, we would make the foll
 
 \subsection {Leave-One-Out Cross Validation}
 \label{Sec:loocv}
-
-\bnote{I edited this section and the figure caption}
 
 As discussed earlier, standard cross-validation cannot be used to carry out leave-one-out cross validation (LOOCV) for Cox regression models. The other three approaches (V\&VH, linear predictor, and deviance residual), however, are not subject to the stability issues described in Section~\ref{Sec:stability}, and can be used to implement LOOCV.  Here, we compare these three approaches for carrying out LOOCV, and also compare LOOCV to 10-fold CV.
 
@@ -275,7 +272,6 @@ On the other hand, the LOOCV version of the linear predictor approach surpasses 
 
 \subsection {Cross-Validated C Index}
 \label{Sec:CIndex}
-\bnote{unified the naming of C index in this manuscript. Use Harrell's C Index or C Index instead of other alternatives. This is the default concordance statistic that the survival package would return.}
 
 \begin{figure}[h]
   \centering
@@ -292,56 +288,34 @@ Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood
 
 \section{Application to Real Data}
 
-In this section, we demonstrate the usage and performance of the aforementioned cross validation methods when fitting penalized regression models on data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients.
-They gathered expression profiles of 22,283 genes for 442 non-small-cell lung cancer (NSCLC) patients along with some additional clinical and demographic data. About $50\%$ of the patients died during the course of the study (236 events), with the rest censored. The clinical variables stage, age and gender were included in the model without penalization, as it is reasonable to assume that all three have an effect on survival. 
+In this section, we demonstrate the usage and performance of the aforementioned cross-validation methods when fitting penalized regression models on data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients. They gathered expression profiles of 22,283 genes for 442 non-small-cell lung cancer (NSCLC) patients along with some additional clinical and demographic data. About $50\%$ of the patients died during the course of the study (236 events), with the rest censored. 
 
-\begin{table}[h]
+For this analysis, we fit elastic net models to the data in addition to lasso models, as these models often offer improvement over the lasso when many correlated genes are involved \citep{Zou2005}. The clinical variables stage, age and gender were included in the model without penalization, as it is reasonable to assume that all three have an effect on survival. Besides the regularization parameter $\lam$, the elastic net model has an extra tuning parameter $\alpha$, where $\alpha=1$ corresponds to lasso and $\alpha=0$ corresponds to ridge regression. For each $\alpha = 0.3, 0.5, 0.7, 0.9 \text{ and } 1$, we selected a regularization parameter $\lam$ that has the lowest cross-validation error for each of the four cross-validation methods described in Section~\ref{Sec:methods}. We reported the cross-validated C-Index and Brier Scores of thoses models in Table~\ref{tb:shedden}. With the highest C Index and lowest Brier Score, the model selected by the linear predictor approach at $\alpha = 0.3$ has best predictive performance among all of them.
+
+\begin{table}[ht]
 \centering
-\begin{tabular}{ccccccccccc}
-\toprule
- & \multicolumn{2}{c}{$\alpha = 0.3$ } & \multicolumn{2}{c}{$\alpha = 0.5$} & \multicolumn{2}{c}{$\alpha = 0.7$} & \multicolumn{2}{c}{$\alpha = 0.9$} & \multicolumn{2}{c}{$\alpha = 1$} \\
- &      $\lambda$      &   CVE         &   $\lambda$        &     CVE       &      $\lambda$      &     CVE       &    $\lambda$        &    CVE        &     $\lambda$      &    CVE       \\ 
-
-\hline\\
-
- V$\&$VH  & 0.363 &  296.32  &  0.228   &  296.35  & 0.163 &  296.34  &  0.133  &   296.31  &  0.119  &  296.30  \\
- Standard & 0.301 & 145.17  & 0.218  &  145.38 & 0.163  & 145.37 &  0.127 &  145.35 & 0.114   & 145.34 \\
- Linear Pred & 0.288 & 10.661  & 0.181  & 10.673 & 0.163 & 10.673    & 0.127  & 10.672  &    0.114 &  10.672  \\
- Dev Resid & 0.316 & 571.40 & 0.228  &  571.96 & 0.163 & 571.95  & 0.133  &   571.79 &  0.119  &  571.70  \\
-\bottomrule
+\caption{\label{tb:shedden} The C Index and Brier Score of all elasticnet models selected by cross-validation methods }
+\begin{tabular}{lccccccccccc}
+\hline
+  & \multicolumn{5}{c}{Cross-validated C Index} & \multicolumn{5}{c}{Brier Score} \\ 
+  & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ &  
+ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-6} \cline{8-12} 
+V $\&$ VH      & 0.639 & 0.637 & 0.638 & 0.637 & 0.637 &  & 0.243 & 0.244 & 0.244 & 0.245 & 0.245 \\
+Standard       & 0.647 & 0.639 & 0.638 & 0.638 & 0.639 &  & 0.233 & 0.243 & 0.244 & 0.244 & 0.244 \\
+Linear Pred    & \textbf{0.650} & 0.647 & 0.638 & 0.638 & 0.639 &  & \textbf{0.229} & 0.232 & 0.244 & 0.244 & 0.244 \\
+Deviance Resid & 0.645 & 0.637 & 0.638 & 0.637 & 0.637 &  & 0.235 & 0.244 & 0.244 & 0.245 & 0.245 \\ \hline
 \end{tabular}
-\caption{\bnote{Not sure whether to include this table or not}}
 \end{table}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{lcccccc}
-  \toprule
-  & $\lambda$ & log($\lambda$) & $\#$ of Genes Selected & CV C-Index & Brier Score \\ 
-\cline{2-6} \\ 
-V $\&$ VH& 0.363 & -1.013 &  & 0.639 & 0.243\\
-standard & 0.301 & -1.200 &  & 0.647& 0.232\\
-Linear Pred &0.288 & -1.246 &  & 0.650&  0.229\\
-Dev Resid & 0.316 & -1.153 &  & 0.645& 0.235\\ 
-\bottomrule
-\end{tabular}
-\caption{\label{tb:shedden}Results of elasticnet model with $\alpha = 0.3$ on the Lung Cancer Data Set. The linear Predictor approach picked the smallest $\lambda$. The corresponding model yields the highest CV C-Index and smallest Brier Score evaluated at median survvial time \bnote{I got different number of genes for LP approach...}}
-\end{table}
-
-For this analysis, we fit elastic net models to the data in addition to lasso models, as these models often offer improvement over the lasso when many correlated genes are involved \citep{Zou2005}. Besides the regularization parameter $\lam$, the elastic net model has an extra tuning parameter $\alpha$, where $\alpha=1$ corresponds to lasso and $\alpha=0$ corresponds to ridge regression. For each $\alpha = 0.3, 0.5, 0.7, 0.9 \text{ and } 1$, we selected a regularization parameter $\lam$ that has the lowest cross-validation error. The standard approach, linear predictor approach and deviance approach all reach the lowest cross-validation error at $\alpha = 0.3$. 
-
-We report the predictive performance for all four models at $\alpha = 0.3$ and their corresponding $\lambda$s in Table~\ref{tb:shedden}. For each model, we computed the cross-validated C-Index and Brier Scores at predicting the median survival time. How the CV methods perform on real data reflects what is shown in simulation studies. The standard approach and the linear predictor approach, selecting smaller $\lambda$ values, were the more liberal, while Verweij and Van Houwelingen's CVE approaches were both more conversative. With the highest C Index and lowest Brier Score, the linear predictor approach has best predictive performance among all four methods. The same patterns are repeated when $\alpha$ is at different values.
-
-We compared the CVE along the solution path for different methods. In Figure~\ref{fig:CVE}, the Cross Validated Error is rescaled and plotted for all four methods. A $\lambda$ is selected when CVE curve reaches its lower point. The blue line and green line, which represent the linear predictor approach and standard approah, have more curvature near theirs lowest point, making it is easier to pick out the minimum point. 
+For each fixed $\alpha$, we compared the cross-validated errors(CVE) from the four cross-validation methods along the solution path. At $\alpha = 0.3$, CVEs are rescaled and plotted for all four met  hods at the same spectrum of $\lambda$ values In Figure~\ref{fig:CVE}. A $\lambda$ is selected when a CVE curve reaches its lower point. The blue line and the green line, which represent the CVE curves of linear predictor approach and standard approah, have more curvature near theirs lowest point, making it easier to pick out the minimum points. The selected $\lambda$ values, represented by the vertical dashed lines, and their corresponding models, reflected what is shown in simulation studies. The linear predictor approach, selecting smallest $\lambda$ values, was most liberal and selected 85 genes. While the standard approach and deviance residual approach selected 68 genes and 60 genes respectively, Verweij and Van Houwelingen's approach only selected 34 genes and performed most conservatively on this data set. Even though we only illustrated the models at $\alpha = 0.3$, same patterns are repeated when $\alpha$ is fixed at other values.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height= 8cm ]{./manuscript_figure/shedden.jpg}
-  \caption{\label{fig:CVE}Rescaled Cross Validated Errors at $\alpha = 0.3$. The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1. After the rescaling, the Cross Validated Error of four different methods can be plotted together for comparison. }
+  \includegraphics[height= 8cm ]{./manuscript_figure/shedden.png}
+  \caption{\label{fig:CVE}Rescaled Cross Validated Errors at $\alpha = 0.3$. The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1. After the rescaling, the Cross Validated Error of four different methods can be plotted together for comparison. The vertical dashed lines represent the $\lambda$ selected by a specific method. The linear predictor approach selected the smallest $\lambda$ and Verweij and Van Houwelingen's approach selected the greatest $\lambda$}
 \end{figure}
 
-
-For the elastic net model with $\lam$ and $\alpha$ selected by the cross-validated linear predictor approach, 85 genes were selected.  Of those, 78 were well-annotated.  We carried out an enrichment analysis of these 78 genes using ToppGene \citep{Chen2009c}; the five most significantly enriched molecular functions are listed in Table~\ref{Tab:go}.
+We carried out further data analysis based on the elastic net model with $\lam = 0.650$ and $\alpha = 0.3$, selected by the cross-validated linear predictor approach. Of the 85 genes that were selected by this model, 78 were well-annotated.  We carried out an enrichment analysis of these 78 genes using ToppGene \citep{Chen2009c}; the five most significantly enriched molecular functions are listed in Table~\ref{Tab:go}.
 
 \begin{table}[ht]
 \centering
@@ -363,10 +337,15 @@ Overall, the results are consistent with our understanding of cancer: many of th
 
 Of particular interest is the fact that three of the selected genes (PIK3R1, PDPK1, and ITGB1) are involved in the PTEN pathway.  The PTEN gene is an important tumor suppressor; mutations in PTEN are among the most common genetic changes found in human cancers and have been linked to cancers of the lung, breast, prostate, brain, and more.  Time-to-event analyses like this one of gene expression data provide valuable insights for developing gene signatures that can help to identify patients with more severe disruptions to important pathways such as PTEN.  These signatures thereby inform prognosis and impact treatment decisions.
 
-\bnote{(END)}
 \section{Discussion}
 
-\par Four methods of conducting cross-validation for Cox Regression were compared through simulation studies in terms of their predictive accuracy. All cross-validation methods tend to select the more conservative model: with greater value of $\lambda$, and fewer variables selected into the model. Despite of the stability issue, the standard approach is the most liberal one across all scenarios and yield the least MSE. The proposed linear predictor approach performs closely to the standard approach. Under LOOCV, the linear predictor approach out-performs the standardstandard approach. Both Verweij and Van Houwelingen's approach and the proposed Deviance Residual approach perform conservatively, hence not recommended for use in practice. Results from real data application reflects results from the simulation studies.
+Conducting cross-validation is a crutial step in fitting penalized Cox regression model. In this paper, we proposed two intuitive ways to conduct cross-validation for Cox Regression: cross-validated linear predictor and cross-validated deviance residuals. We conducted a series of simulation experiments to study and compare their performance with two existing approaches, the standard cross-validation and Verweij and Van Houwelingen's cross-validated partial likelihood, in selecting tuning parameters when fitting penalized regression models. 
+
+Despite the fact Verweij and Van Houwelingen's cross-validated partial likelihood has been widely implemented, its predictive performance seems to suffer, particularly when the dimension of the data grows and signals become weak. As is illustrated in both simulation studies and real data example, Verweij and Van Houwelingen's approach tends to perform conversatively, selecting fewer genes than all other models. In the lung cancer data example, the number of genes selected by other methods almost doubled the number of genes selected by Verweij and Van Houwelingen's approach. From an application standpoint, using Verweij and Van Houwelingen's approach in high-dimensional datasets may lead to more false negatives and miss important true findings.
+
+While the standard approach was the most liberal one across all simulation scenarios and yielded the best predictive performance, this approach limited by its stability issues which are carefully discussed in Section~\ref{Sec:stability}. The cross-validated linear predictor approach performs closely to the standard approach and demostrates an attractive balance of predictive performance and numerical stability.  We would recommend using the proposed linear predictor approach in practice for selecting regularization parameters in penalized regression.
+
+
 
 % Discussion on Deviance Residual
 
@@ -402,59 +381,59 @@ Of particular interest is the fact that three of the selected genes (PIK3R1, PDP
 %\end{table}
 
 
-\section{Appendix}
+%\section{Appendix}
 
-\begin{figure}[h]
-	\centering
-	\begin{minipage}[t]{10cm}
-	\begin{algorithm}[H]
-	\caption{Standard Method}
-	\par \For{k in 1 to K } 
-	{
-		 Fit Cox Regression on $T_{k}$: Obtain model estimates $\hat{\beta}^{-k}$\;
-		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $D_{k}$: $l^{k}(\hat{\beta}^{-k})$\;		
-	} 
-	
-	\par $ CVE_{st} = - \sum_{k = 1}^{K} l^{k}(\hat{\beta}^{-k})$
- 	\end{algorithm}
-
-	\begin{algorithm}[H]
-  	 \caption{Verweij and Van Houwelingen's Method}
-	\par \For{k in 1 to K } 
-	{
-		 Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
-		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $T_{k}$: $l^{-k}(\hat{\beta}^{-k})$\;
-		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $D$: $l(\hat{\beta}^{-k})$\;
-		 Take the difference: $ l(\hat{\beta}^{-k}) - l^{-k}(\hat{\beta}^{-k}) $\;
-	} 
-
-	\par $ CVE_{vvh} = - \sum_{k = 1}^{K} \left\{ l(\hat{\beta}^{-k}) - l^{-k}(\hat{\beta}^{-k}) \right\}$
-	\end{algorithm}
-
-	\begin{algorithm}[H]
-    	\caption{Cross-Validated Linear Predictors}
-	\par \For{k in 1 to K } 
-	{
-		 Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
-		$\forall$ $ i$ subject in $D_k$: $\hat{\eta}_{i}^{-} = X_{i}\hat{\beta}^{-k}$\;
-	} 
-
-	\par $ CVE_{lp} = - l(\hat{\eta}^{-})$
-	\end{algorithm}
-	
-	\begin{algorithm}[H]
-   	\caption{Sums of Squared Deviance Residuals}
-	\par \For{k in 1 to K } 
-	{
-		Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
-		$\forall$ $ i$ subject in $D_k$: $\hat{\eta}_{i}^{-} = X_{i}\hat{\beta}^{-k}$\;
-	} 
-	Compute baseline hazard $\hat{\Lambda}_{0}$ based on $\hat{\eta}^{-}$\;
-	$\forall$ $ i$ subject $\in \left\{1,2,...,n\right\}$, compute:
-		\par\hspace{0.5cm} $\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}^{-}_{i}}$;
-		\par\hspace{0.5cm} $d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}$;
-	\par $ CVE_{dr} = \sum_{i = 1}^{n} {d}_{i}^2$ \;
-	\end{algorithm}
-	\end{minipage}
-	\caption{Pseudo Code for Cross-validation Procedures}
-	\end{figure}
+%\begin{figure}[h]
+%	\centering
+%	\begin{minipage}[t]{10cm}
+%	\begin{algorithm}[H]
+%	\caption{Standard Method}
+%	\par \For{k in 1 to K } 
+%	{
+%		 Fit Cox Regression on $T_{k}$: Obtain model estimates $\hat{\beta}^{-k}$\;
+%		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $D_{k}$: $l^{k}(\hat{\beta}^{-k})$\;		
+%	} 
+%	
+%	\par $ CVE_{st} = - \sum_{k = 1}^{K} l^{k}(\hat{\beta}^{-k})$
+% 	\end{algorithm}
+%
+%	\begin{algorithm}[H]
+%  	 \caption{Verweij and Van Houwelingen's Method}
+%	\par \For{k in 1 to K } 
+%	{
+%		 Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
+%		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $T_{k}$: $l^{-k}(\hat{\beta}^{-k})$\;
+%		 Evaluate the partial likelihood of $\hat{\beta}^{-k}$ on $D$: $l(\hat{\beta}^{-k})$\;
+%		 Take the difference: $ l(\hat{\beta}^{-k}) - l^{-k}(\hat{\beta}^{-k}) $\;
+%	} 
+%
+%	\par $ CVE_{vvh} = - \sum_{k = 1}^{K} \left\{ l(\hat{\beta}^{-k}) - l^{-k}(\hat{\beta}^{-k}) \right\}$
+%	\end{algorithm}
+%
+%	\begin{algorithm}[H]
+%    	\caption{Cross-Validated Linear Predictors}
+%	\par \For{k in 1 to K } 
+%	{
+%		 Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
+%		$\forall$ $ i$ subject in $D_k$: $\hat{\eta}_{i}^{-} = X_{i}\hat{\beta}^{-k}$\;
+%	} 
+%
+%	\par $ CVE_{lp} = - l(\hat{\eta}^{-})$
+%	\end{algorithm}
+%	
+%	\begin{algorithm}[H]
+%   	\caption{Sums of Squared Deviance Residuals}
+%	\par \For{k in 1 to K } 
+%	{
+%		Fit Cox Regression on $T_{k}$:  Obtain model estimates $\hat{\beta}^{-k}$\;
+%		$\forall$ $ i$ subject in $D_k$: $\hat{\eta}_{i}^{-} = X_{i}\hat{\beta}^{-k}$\;
+%	} 
+%	Compute baseline hazard $\hat{\Lambda}_{0}$ based on $\hat{\eta}^{-}$\;
+%	$\forall$ $ i$ subject $\in \left\{1,2,...,n\right\}$, compute:
+%		\par\hspace{0.5cm} $\hat{M_{i}} = \delta_{i} -\hat{\Lambda}_{0}(t_{i})e^{\hat{\eta}^{-}_{i}}$;
+%		\par\hspace{0.5cm} $d_{i} = sgn(\hat{M}_{i})(-2(\hat{M}_{i} + \delta_{i}log(\delta_{i} - \hat{M}_{i})))^{1/2}$;
+%	\par $ CVE_{dr} = \sum_{i = 1}^{n} {d}_{i}^2$ \;
+%	\end{algorithm}
+%	\end{minipage}
+%	\caption{Pseudo Code for Cross-validation Procedures}
+%	\end{figure}
