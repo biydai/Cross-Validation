@@ -1,0 +1,157 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,natbib,graphicx,enumerate,subcaption,tikz,url,booktabs}
+\usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
+
+\usepackage{dsfont}
+\usepackage[ruled]{algorithm2e}
+\usepackage{algpseudocode}
+\renewcommand{\algorithmcfname}{Procedure}
+\usepackage{bbold}
+
+
+\newcommand{\ith}{i^\textrm{th}}
+\newcommand{\CVE}{\textrm{CVE}}
+\newcommand{\MSE}{\textrm{MSE}}
+\newcommand{\logit}{\mbox{logit}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\indic}[1]{\boldsymbol{1}_{\{ #1 \}}}
+\newcommand{\mvec}{\mbox{vec}}
+\newcommand{\cov}{\mbox{Cov}}
+\newcommand{\eqdist}{\overset{{\cal D}}{=}}
+\newcommand{\const}{\mbox{const}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\diag}{\mbox{{\bf diag}}}
+\newcommand{\Diag}{\mbox{Diag}}
+\providecommand{\Tr}{^{\scriptscriptstyle\top}}
+
+\newcommand{\lam}{\lambda}
+\newcommand{\bmu}{\boldsymbol\mu}
+\newcommand{\balpha}{\boldsymbol\alpha}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\beps}{\boldsymbol\epsilon}
+
+\newcommand{\cX}{{\cal X}}
+\newcommand{\cA}{{\cal A}}
+\newcommand{\cAmin}{{\cal A}^{\mathsmaller{-}}}
+
+\newcommand{\vm}[1]{\mbox{vec}^\mathsmaller{-}\hspace{-0.25pc}\left(#1\right)}
+\newcommand{\Imin}{I^\mathsmaller{-}}
+\newcommand{\Itri}{{I^\mathsmaller{\triangle}}}
+
+\newcommand{\deriv}[1]{\noindent {\it Derivation:} #1 $\hfill\square$}
+\newcommand{\pbe}[1]{{\cal P}_{\epsilon,#1}}
+\newcommand{\be}{{\cal B}_{\epsilon}}
+
+\newcommand{\adjSet}{\{A_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\abSet}{\{\alpha_{k_\ell},\bbeta_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\bZ}{{\bf Z}}
+
+\providecommand{\note}[1]{\textcolor{red}{#1}}
+\providecommand{\bnote}[1]{\textcolor{blue}{#1}}
+
+\title{Supplementary Material\\
+\textit{Cross Validation Approaches for Penalized Cox Regression}}
+
+\author{Biyue Dai\\Department of Biostatistics\\University of Iowa
+  \and
+  Patrick Breheny\\Department of Biostatistics\\University of Iowa}
+\date{\today}
+
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+\maketitle
+
+\section{Cross-Validated Deviance Residuals}
+
+The Cox model implies the following relationship between the baseline cumulative hazard and the cumulative hazard for individual $i$:
+\begin{equation}
+  \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta).
+\end{equation}
+Consider the following approach: for fold $k$, we obtain $\hat{\beta}^{-k}$ from the training set $T_k$ and then for each $i$ in the test set $D_k$, 
+\begin{equation}
+ \label{eq:cv-bhz}
+  \hat{\Lambda}^{cv}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta^{-k}).
+\end{equation}
+
+A natural candidate for incorporating the cumulative hazard into a loss function is the deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
+\begin{equation}
+  \hat{M^{cv}_{i}} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}).
+\end{equation}
+The cross-validated deviance residuals can then be derived from the Martingale residuals: 
+\begin{equation} 
+  d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}.
+\end{equation}
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+
+Deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, it is important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other possible ways of constructing cross-validated deviance residuals.  
+
+\section{Baseline Estimations}
+
+	\subsection{Nelson-Aalen Estimator}
+	 The simplest approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
+\begin{equation}
+  \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
+\end{equation}
+	The Nelson-Aalen Estimator does not involve any information from the covariates. It only depends on the failure times.
+
+	\subsection{Kalbfleisch and Prentice's Approach}					
+	\cite{Kalbfleisch2011} proposed a cumulative hazard estimator that incorporates covariates. Assuming only a single failure occurs at $t_i$, based on the fitted values of $\hat{\bbeta}$, we can first compute linear predictors $\hat{\eta}_i$ at each observed failure time. Based on $\hat{\eta}_i$, we can compute a discrete hazard component at each observed failure time):
+\begin{equation}
+1 - \hat{\alpha}_{i} = 1 - \left\{ 1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}exp (\hat{\eta}_{j}} \right\}^{exp(-\hat{\eta}_{i})},
+\end{equation}
+and aggregate them together into the cumulative hazard function:
+\begin{equation} 
+\hat{\Lambda}_0(t) = \sum(1 - \hat{\alpha}_i)\mathds{1}(t_{i} \leq t),
+\end{equation}
+
+\section{Simulation Comparison}
+The following simulation illustrates how the performance of cross-validated deviance residuals would vary based on different baseline estimation. We generated data using the same mechanism as we described in Section 3.1 in the paper. In each simulated data set, there were $n = 150$ observations, $p = 1000$ number of feature and 10 non-zero features with signal strength $s$. Censoring proportion is fixed at $10\%$. For each scenario, we varied $s$ from 0.4 to 0.9 and 200 replications were used. We compared the cross-validated deviance residuals constructed by Nelson-Aalen estimator and the cross-validated deviance residuals constructed by Kalbfleisch and Prentice's estimator. We also included cross-validated linear predictor approach (introduced in Section 2.3 in the paper) for comparison. The results of the simulation is listed in the following table:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+  & 0.4 & 0.5 & 0.6 & 0.7 & 0.8 & 0.9\\
+\midrule
+\vspace{1mm}
+ & \multicolumn{5}{c}{$\lambda$} & \\ 
+\vspace{1mm}
+CVDR - Nelson Aalen & 0.1531 & 0.1346 & 0.1251 & 0.1217 & 0.1213 & 0.1210\\
+CVDR - Kalbfleisch and Prentice& 0.2534 & 0.2275 & 0.2084 & 0.1767 & 0.1588 & 0.1414\\
+CVLP & 0.1441 & 0.1214 & 0.1078 & 0.0981 & 0.0914 & 0.0849\\
+%Oracle &  0.1090 & 0.0941 & 0.0762 & 0.0615 & 0.0567 & 0.0516\\
+\vspace{1mm}
+ & \multicolumn{5}{c}{$\log($MSE$)$} & \\ 
+\vspace{1mm}
+
+CVDR - Nelson Aalen & 2.4038 & 2.5107 & 2.8289 & 3.0084 & 3.1723 & 3.3463\\
+CVDR - Kalbfleisch and Prentice& 2.7075 & 2.9397 & 3.2592 & 3.3596 & 3.4228 & 3.4934\\
+CVLP &2.3684 & 2.4089 & 2.6595 & 2.7173 & 2.7761 & 2.8264\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Top half of the table listed different $\lambda$ values selected by the method. With the Kalbfleisch and Prentice baseline, the cross-validated deviance residual always selected larger $\lambda$ values and very conservative models. With the covariate-adjusted baseline, the deviance residuals seem to have stronger preference for models closer to the null model. This phenomenon is also observed by the original authors of the deviance residuals in classical Cox regression applications. As they attempted to use the covariate-adjusted deviance residuals and Martingale residuals to evaluate model fit, they observed that "the no-covariate model has the smallest sum of squared and the best model, the one with all five predictors, has the largest" \citep{Therneau2000modeling}.
+
+The bottom half of the table listed $\log($MSE$)$ of the models selected by cross-validation approaches compared to the oracle model. The definition of $\log($MSE$)$ is described in more details in Section 3.1 in the paper. Throughout different signal strength, CVDR with Kalbfleisch and Prentice baseline had the largest $\log($MSE$)$, indicating worst model estimation among all methods. With Nelson-Aalen estimator, the CVDR approach had better performance and performed closer to CVLP at weaker signals. As the signal strength increases, the performance of CVDR with Nelson-Aalen estimator also declined.
+
+Overall, our simulation results support the use of Nelson-Aalen estimator in estimating the baseline hazard for the cross-validated deviance residual approach.
+
+\bibliographystyle{abbrvnat}
+
+\bibliography{articles}
+
+\end{document}
