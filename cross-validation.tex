@@ -3,12 +3,10 @@
 \usepackage{color}
 
 \usepackage{alltt}
-\usepackage{amssymb,amsmath,natbib,graphicx,enumerate,subcaption,tikz,url,booktabs}
+\usepackage{amssymb,amsmath,graphicx,enumerate,subcaption,tikz,url,booktabs}
 \usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
 
-\usepackage[ruled]{algorithm2e}
-\usepackage{algpseudocode}
-\renewcommand{\algorithmcfname}{Procedure}
+\usepackage[numbers]{natbib}
 \usepackage{bbold}
 
 
@@ -74,7 +72,8 @@ Cross validation is commonly used for selecting tuning parameters in penalized r
 Our proposed approach of cross-validating the linear predictors seems to offer an attractive balance of performance and numerical stability. We illustrate these advantages using simulated data as well as using them to analyze data from a high-dimensional study of survival in lung cancer patients.
 \input{main}
 
-\bibliographystyle{abbrvnat}
+%\bibliographystyle{abbrvnat}
+\bibliographystyle{unsrtnat}
 %\setcitestyle{round} 
 \bibliography{articles}
 
