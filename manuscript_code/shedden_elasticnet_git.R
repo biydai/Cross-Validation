@@ -27,7 +27,10 @@ brierSurv_lambda <- function(data,time,fit,lambda) {
 # load data
 
 # Shedden Lung Cancer Data
-load(file = "Shedden2008.RData")
+data <- readRDS(url("https://s3.amazonaws.com/pbreheny-data-sets/Shedden2008.rds"))
+X <- data$X
+S <- data$S
+Z <- data$Z
 
 # censor S by 72 month
 plot(survfit(S ~ 1), xlab = "month", ylab = "Survival Probability")
