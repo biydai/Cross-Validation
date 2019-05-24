@@ -70,7 +70,7 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 
 \begin{figure}
   \centering
-  \includegraphics[height= 12cm ]{./manuscript_figure/figure_1_new.png}
+  \includegraphics[height= 12cm ]{figure_1_new.png}
   \caption{\label{Fig:methods} Illustration of $K$-fold cross validation methods for Cox regression.}
 \end{figure}	
 
@@ -96,7 +96,7 @@ We define the cross-validation error evaluated with cross-validated linear predi
 \subsection{Cross Validated Deviance Residuals}
 %%%%%%%%%%%%%%%%%%%%
 
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another approach to cross-validation would be to include an extra step of estimating the baseline hazard and using it to quantify the cross-validation error. The basic approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another approach to cross-validation would be to include an extra step of estimating the baseline hazard and using it to quantify the cross-validation error. The standard approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
 \begin{equation}
   \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
 \end{equation}
@@ -166,7 +166,7 @@ As for the Brier score, KL scores were computed for all CV approaches at the med
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[height= 7cm ]{./manuscript_figure/figure_2_new.png}
+  \includegraphics[height= 7cm ]{figure_2_new.png}
   \caption{\label{Fig:mse-brier-c} Simulation comparing 4 CV methods. The horizontal axis in all three plots is $s$, which represents the signal strength in the data. The value of $s$ is varied from 0.4 to 0.9.  $\log(\text{MSE ratio})$, relative to the oracle modle is plotted in the left panel. Out-of-sample Brier scores are plotted in the middle. Out-of-sample C index is plotted in the right panel. For each simulated data set, n = 120, p = 1000. Expected censoring percentage is 10$\%$.}
 \end{figure}	
 
@@ -220,19 +220,19 @@ To illustrate how common this problem is, we generated 1000 independent data set
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[height= 7cm ]{./manuscript_figure/figure_3.png}
-  \caption{\label{Fig:stability} Simulations illustrating the stability issues with the basic approach. For the figure on the left, $n = 100$, fold assignments are unbalanced, and the vertical axis is the proportion of undefined partial likelihoods. For the figure on the right, $n = 120$, fold assignments are balanced so that the number of events in each fold is the same, and the vertical axis is the basic deviation of the squared error loss. Basic cross-validation is much more variability than other approaches when there are only few events in each fold.}
+  \includegraphics[height= 7cm ]{figure_3.png}
+  \caption{\label{Fig:stability} Simulations illustrating the stability issues with the basic approach. For the figure on the left, $n = 100$, fold assignments are unbalanced, and the vertical axis is the proportion of undefined partial likelihoods. For the figure on the right, $n = 120$, fold assignments are balanced so that the number of events in each fold is the same, and the vertical axis is the standard deviation of the squared error loss. Basic cross-validation is much more variable than other approaches when the number of events in each fold is small.}
 \end{figure}
 
 One approach for alleviating this issue is to balance the censoring status across all folds when making fold assignments. That is, to ensure the number of events observed is the same (or within 1) across all folds. Unless the number of the folds exceeds the number of observed events, such as in leave-one-out cross-validation, this approach will guarantee the partial likelihood in each fold is well-defined for the basic approach, thus the overall cross-validated error is well-defined. 
 
 In this case, however, even though the partial likelihood is well-defined, basic cross-validation suffers from extreme variability.  To illustrate, we generated data sets with $n = 120$ observations and a fixed censoring rate of $50\%$, so that there are 60 observed events. For each data set, we carried out cross-validation using balanced fold assignments with the number of folds set to be 10, 12, 15, 20, 30 and 60. When the number of folds was set to be 10, there were exactly 6 events in each fold; when the number of folds was set to be 60, there was exactly one event in each fold, and so on. After each fold assignment, we computed the cross-validated error using all four approaches described in Section~\ref{Sec:accuracy}. We recorded the model that minimizes the cross-validation error for each approach and computed its squared error loss. We replicated the whole process for $N = 200$ time. In the end, we computed the standard deviation of the squared error loss for each approach. 
 
-The results of this simulation are illustrated in the right panel of Figure~\ref{Fig:stability}. While the other three approaches are not affected by the number of folds and number of events in each fold, the variability of basic cross-validation increases dramatically as the number of events per fold decreases. When there are sufficient number of events in each fold, the basic approach is similar to the other three approaches. However, when there are only one or two events in each fold, the basic approach can be up to 10 times more variable than other methods. Thus, although the approach can be used to calculate CVE, there is considerable uncertainty surrounding its choice of the best model. The same phenomenon is also observed for the mean squared error. When there are only few events in each fold, MSE of the basic approach is affected and increases with the increasing uncertainty. 
+The results of this simulation are illustrated in the right panel of Figure~\ref{Fig:stability}. While the other three approaches are not affected by the number of folds and number of events in each fold, the variability of basic cross-validation increases dramatically as the number of events per fold decreases. When there is a sufficient number of events in each fold, the basic approach is similar to the other three approaches. However, when there are only one or two events in each fold, the basic approach can be up to 10 times more variable than other methods, with a corresponding increase in the mean squared error.  In these situations, therefore, even though the basic approach is defined and CVE can be calculated, its performance is very poor.
 
 To shed some light on why the variability of basic cross-validation explodes in the 60-fold scenario, note that in this case, there is exactly one event and one censored observation in each fold. In many folds, the uncensored event happens after the other observation has been censored. In this situation, the risk set at the time immediately prior to the event contains only a single observation. Its contribution to the log partial likelihood is therefore 0, which is well-defined but not informative. This situation can happen regardless of the fold size and censoring rate, but it happens far more often as the number of events per fold decreases.
 
-Based on the simulation results illustrated in this section, we suggest that one should proceed with caution if they want to use the basic approach: i) always balance the censoring status when conducting fold assignments for the basic approach, ii) avoid using the basic approach in conjuction with high number of folds, iii) avoid using the basic approach when there are few number of events observed. Overall we would recommend using the linear predictor approach than the basic approach in practice.
+Based on the simulation results illustrated in this section, we suggest that one should proceed with caution if they want to use the basic approach: (i) it is best to balance the censoring status when creating fold assignments for the basic approach, (ii) avoid using the basic approach in conjunction with a high number of folds, and (iii) avoid using the basic approach when the number of observed events is small. Alternatively, use the linear predictor approach, which has similar performance without the stability issues.
 
 \subsection {Leave-One-Out Cross Validation}
 \label{Sec:loocv}
@@ -241,11 +241,11 @@ As discussed earlier, basic cross-validation cannot be used to carry out leave-o
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[height= 8cm ]{./manuscript_figure/figure_4.png}
+  \includegraphics[height= 8cm ]{figure_4.png}
   \caption{\label{Fig:loocv}Simulation comparing LOO and 10-fold CV across three different approaches. With $N = 200$ replications, the data sets generated have dimension $n = 120$ and $p = 1000$. The vertical axis is the $\log$(MSE ratio). In each panel, the LOO version and 10-fold version of the same approach are plotted. In all three panels, 10-fold basic cross-validation is included as a baseline for comparison (blue line).}
 \end{figure}	
 
-For this simulation experiment, we generated datasets with $n = 120$ and $p = 1000$, using the same data generating procedure as described in Section~\ref{Sec:accuracy}. For each of the V\&VH, linear predictor, and deviance residual approaches, we conducted both 10-fold CV and LOOCV. We also conducted the basic 10-fold cross-validation as a baseline for comparison. We recorded the model that minimizes the cross-validated error  for each approach. After $N = 200$ replications, $\log$ of the MSE ratio was computed using the same definition described in Section~\ref{Sec:accuracy}.
+For this simulation experiment, we generated datasets with $n = 120$ and $p = 1000$, using the same data generating procedure as described in Section~\ref{Sec:accuracy}. For each of the V\&VH, linear predictor, and deviance residual approaches, we conducted both 10-fold CV and LOOCV. We also conducted basic 10-fold cross-validation as a baseline for comparison. We recorded the model that minimizes the cross-validated error  for each approach. After $N = 200$ replications, $\log$ of the MSE ratio was computed using the same definition described in Section~\ref{Sec:accuracy}.
 
 Results of the simulation are shown in Figure~\ref{Fig:loocv}. The panels illustrate the results for each CV approach, one with the 10-fold version and one with the leave-one-out version. The 10-fold basic approach was plotted in all three panels as a baseline for comparison.  For all three approaches, the Leave-One-Out version selected models with a smaller $\log(\text{MSE ratio})$ than the 10-fold version. For the V\&VH and deviance residual approaches, however, LOOCV was still inferior to basic 10-fold CV.  As described in Section~\ref{Sec:accuracy}, these approaches tend to be conservative, selecting a larger-than-optimal value of the regularization parameter; LOOCV helps with this problem, but does not alleviate it entirely.
 
@@ -260,8 +260,8 @@ On the other hand, the LOOCV version of the linear predictor approach surpasses 
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[height= 15cm ]{./manuscript_figure/figure_auc.png}
-  \caption{\label{Fig:cvauc}Comparing Partial Likelihood and C Index both built from Cross-validated Linear Predictors. The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter$\lambda$. The mid row plots the $\log(\text{relative Squared Error Loss})$, with respect to the oracle model. The bottom row plots the Brier Scores. }
+  \includegraphics[height= 15cm ]{figure_auc.png}
+  \caption{\label{Fig:cvauc}Comparing Partial Likelihood and C Index both built from Cross-validated Linear Predictors. The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter $\lambda$. The mid row plots the $\log(\text{relative Squared Error Loss})$, with respect to the oracle model. The bottom row plots the Brier Scores. }
 \end{figure}
 
 Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood-based CV tends to select more accurate models, as judged by both mean squared error and Brier score.  Second, likelihood-based CV is also more stable than the AUC-based CV, in the sense that it tends to select a narrower range of models, with more consistent performance, than CV-AUC.  Lastly, CV-AUC is consistently more liberal than likelihood-based CV, selecting models with smaller values of the regularization parameter $\lam$, and therefore preferring models with larger coefficient values and more nonzero coefficients.
@@ -291,7 +291,7 @@ For each fixed $\alpha$, we compared the cross-validation errors (CVE) from the 
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height= 8cm ]{./manuscript_figure/shedden.png}
+  \includegraphics[height= 8cm ]{shedden.png}
   \caption{\label{fig:CVE}Rescaled Cross Validated Errors at $\alpha = 0.3$. The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1 in order to allow plotting of the four methods on a common axis. The vertical dashed lines represent the $\lambda$ selected by a specific method. The linear predictor approach selected the smallest $\lambda$ and Verweij and Van Houwelingen's approach selected the greatest $\lambda$.}
 \end{figure}
 
@@ -317,7 +317,7 @@ Of particular interest is the fact that three of the selected genes (PIK3R1, PDP
 
 \section{Discussion}
 
-Cross-validation is a crutial step in fitting penalized Cox regression models. In this paper, we propose two cross-validation methods for Cox Regression: cross-validated linear predictors and cross-validated deviance residuals. We conducted a series of simulation experiments to study and compare their performance with two existing approaches, the basic cross-validation and Verweij and Van Houwelingen's cross-validated partial likelihood, in selecting tuning parameters when fitting penalized regression models.
+Cross-validation is a crutial step in fitting penalized Cox regression models. In this paper, we propose two cross-validation methods for Cox Regression: cross-validated linear predictors and cross-validated deviance residuals. We conducted a series of simulation experiments to study and compare their performance with two existing approaches, basic cross-validation and Verweij and Van Houwelingen's cross-validated partial likelihood, in selecting tuning parameters when fitting penalized regression models.
 
 Despite the fact Verweij and Van Houwelingen's cross-validated partial likelihood has been widely implemented, its predictive performance appears suboptimal, particularly when the dimension of the data is large and/or signals are weak. As illustrated in both simulation studies and real data example, Verweij and Van Houwelingen's approach tends to perform conservatively, selecting fewer features than all other models. In the lung cancer data example, the number of genes selected by other methods almost doubled the number of genes selected by Verweij and Van Houwelingen's approach. From an application standpoint, using Verweij and Van Houwelingen's approach in high-dimensional applications may lead to more false negatives and miss important true findings.
 

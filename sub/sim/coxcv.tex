@@ -1,0 +1,101 @@
+\documentclass[AMA,STIX1COL]{WileyNJD-v2}
+\articletype{Research Article}
+\raggedbottom
+
+\usepackage{color}
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,graphicx,enumerate,subcaption,booktabs}
+%\usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
+\graphicspath{{../../manuscript_figure/}}
+\usepackage{natbib}
+\usepackage{bbold}
+\hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
+
+\newcommand{\ith}{i^\textrm{th}}
+\newcommand{\CVE}{\textrm{CVE}}
+\newcommand{\MSE}{\textrm{MSE}}
+\newcommand{\logit}{\mbox{logit}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\indic}[1]{\boldsymbol{1}_{\{ #1 \}}}
+\newcommand{\mvec}{\mbox{vec}}
+\newcommand{\cov}{\mbox{Cov}}
+\newcommand{\eqdist}{\overset{{\cal D}}{=}}
+\newcommand{\const}{\mbox{const}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\diag}{\mbox{{\bf diag}}}
+\newcommand{\Diag}{\mbox{Diag}}
+\providecommand{\Tr}{^{\scriptscriptstyle\top}}
+
+\newcommand{\lam}{\lambda}
+\newcommand{\bmu}{\boldsymbol\mu}
+\newcommand{\balpha}{\boldsymbol\alpha}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\beps}{\boldsymbol\epsilon}
+
+\newcommand{\cX}{{\cal X}}
+\newcommand{\cA}{{\cal A}}
+\newcommand{\cAmin}{{\cal A}^{\mathsmaller{-}}}
+
+\newcommand{\vm}[1]{\mbox{vec}^\mathsmaller{-}\hspace{-0.25pc}\left(#1\right)}
+\newcommand{\Imin}{I^\mathsmaller{-}}
+\newcommand{\Itri}{{I^\mathsmaller{\triangle}}}
+
+\newcommand{\deriv}[1]{\noindent {\it Derivation:} #1 $\hfill\square$}
+\newcommand{\pbe}[1]{{\cal P}_{\epsilon,#1}}
+\newcommand{\be}{{\cal B}_{\epsilon}}
+
+\newcommand{\adjSet}{\{A_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\abSet}{\{\alpha_{k_\ell},\bbeta_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\bZ}{{\bf Z}}
+
+\providecommand{\note}[1]{\textcolor{red}{#1}}
+\providecommand{\bnote}[1]{\textcolor{blue}{#1}}
+
+\begin{document}
+
+\title{Cross Validation Approaches for Penalized Cox Regression}
+
+\author[1]{Biyue Dai}
+
+\author[1]{Patrick Breheny}
+
+\authormark{Dai and Breheny}
+
+\address[1]{\orgdiv{Department of Biostatistics}, \orgname{University of Iowa}, \orgaddress{\state{Iowa}, \country{USA}}}
+
+\corres{Patrick Breheny \\ Department of Biostatistics \\ 145 N Riverside Dr, N336 CPHB \\ Iowa City, IA 52242 \\ \email{patrick-breheny@uiowa.edu}}
+
+\abstract[Summary]{Cross validation is commonly used for selecting tuning parameters in penalized regression, but its use in penalized Cox regression models has received relatively little attention in the literature. Due to its partial likelihood construction, carrying out cross validation for Cox models is not straightforward, and there are several potential approaches for implementation. Here, we propose two new cross-validation methods for Cox regression and compare them to approaches that have been proposed elsewhere.
+Our proposed approach of cross-validating the linear predictors seems to offer an attractive balance of performance and numerical stability. We illustrate these advantages using simulated data as well as using them to analyze data from a high-dimensional study of survival in lung cancer patients.}
+
+\keywords{Model selection, Cross validation, Cox regression, Lasso, Penalized regression}
+
+\jnlcitation{\cname{%
+\author{Dai B} and
+\author{Breheny P}} (\cyear{2019}),
+\ctitle{Cross Validation Approaches for Penalized Cox Regression}, \cjournal{Statistics in Medicine}, \cvol{xxxx; xx:xx-xx}.}
+
+\maketitle
+
+\input{main}
+
+\subsection*{Data and code availability}
+
+Code to reproduce all results in this manuscript, including the raw data for the gene expression analysis, is available at \url{https://github.com/biydai/Cross-Validation}.  NOTE: This repository is currently private, but will be made public upon acceptance of this manuscript.
+
+\subsection*{Supporting information}
+
+A short document supporting our approach for estimating $\Lambda_0$ in the deviance residual method is provided as supporting information.
+
+\bibliographystyle{WileyNJD-AMA}
+\bibliography{../../articles}
+
+\end{document}
