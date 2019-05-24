@@ -6,8 +6,10 @@
 \usepackage{amssymb,amsmath,graphicx,enumerate,subcaption,tikz,url,booktabs}
 \usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
 \graphicspath{{manuscript_figure/}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
 
-\usepackage[numbers]{natbib}
+\usepackage{natbib}
 \usepackage{bbold}
 
 
@@ -73,9 +75,7 @@ Cross validation is commonly used for selecting tuning parameters in penalized r
 Our proposed approach of cross-validating the linear predictors seems to offer an attractive balance of performance and numerical stability. We illustrate these advantages using simulated data as well as using them to analyze data from a high-dimensional study of survival in lung cancer patients.
 \input{main}
 
-%\bibliographystyle{abbrvnat}
-\bibliographystyle{unsrtnat}
-%\setcitestyle{round} 
+\bibliographystyle{ims-nourl}
 \bibliography{articles}
 
 \end{document}
