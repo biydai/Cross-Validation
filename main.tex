@@ -166,7 +166,7 @@ As for the Brier score, KL scores were computed for all CV approaches at the med
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[height= 7cm ]{figure_2_new.png}
+  \includegraphics[width=\textwidth]{figure_2_new.png}
   \caption{\label{Fig:mse-brier-c} Simulation comparing 4 CV methods. The horizontal axis in all three plots is $s$, which represents the signal strength in the data. The value of $s$ is varied from 0.4 to 0.9.  $\log(\text{MSE ratio})$, relative to the oracle modle is plotted in the left panel. Out-of-sample Brier scores are plotted in the middle. Out-of-sample C index is plotted in the right panel. For each simulated data set, n = 120, p = 1000. Expected censoring percentage is 10$\%$.}
 \end{figure}	
 
@@ -220,7 +220,7 @@ To illustrate how common this problem is, we generated 1000 independent data set
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[height= 7cm ]{figure_3.png}
+  \includegraphics[width=\textwidth]{figure_3.png}
   \caption{\label{Fig:stability} Simulations illustrating the stability issues with the basic approach. For the figure on the left, $n = 100$, fold assignments are unbalanced, and the vertical axis is the proportion of undefined partial likelihoods. For the figure on the right, $n = 120$, fold assignments are balanced so that the number of events in each fold is the same, and the vertical axis is the standard deviation of the squared error loss. Basic cross-validation is much more variable than other approaches when the number of events in each fold is small.}
 \end{figure}
 
@@ -241,7 +241,7 @@ As discussed earlier, basic cross-validation cannot be used to carry out leave-o
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[height= 8cm ]{figure_4.png}
+  \includegraphics[width=\textwidth]{figure_4.png}
   \caption{\label{Fig:loocv}Simulation comparing LOO and 10-fold CV across three different approaches. With $N = 200$ replications, the data sets generated have dimension $n = 120$ and $p = 1000$. The vertical axis is the $\log$(MSE ratio). In each panel, the LOO version and 10-fold version of the same approach are plotted. In all three panels, 10-fold basic cross-validation is included as a baseline for comparison (blue line).}
 \end{figure}	
 
