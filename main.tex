@@ -217,8 +217,11 @@ Table~\ref{Tab:sim} displays the results of additional simulations carried out a
 
 As in Figure~\ref{Fig:mse-brier-c}, the basic and linear predictor approaches outperform the deviance residual and V\&VH approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and V\&VH approaches perform poorly relative to basic CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and thus, selecting fewer variables.
 
-\subsection{Power}
+\bnote{Simulations with features that has more complicated correlation structures were conducted as well. Similar patterns were observed as in Figure~\ref{Fig:mse-brier-c} and Table~\ref{Tab:sim}. Results of these simulations are provided in the supporting document.}
+
+\subsection{\bnote{Power}}
 \label{Sec:power}
+
 While cross-validation is mainly a measure of the model's predictive accuracy, it is not sufficient to only compare those methods based on predictive accuracy. Another important criterion is that how many important variables are correctly selected by the model. The following simulations are conducted to compare the methods in this aspect.
 
 In Table~\ref{Tab:power}, we computed the average number of true positives selected by each cross-validation approach. True positives are features that are selected in the fitted model and their true $\beta$ coefficients are non-zero in the data-generating model. The simulation scenarios vary from low dimension, with 150 observations and 50 features, to high dimension, with 400 observations and 10000 features. We generate data with both weak signal strength and strong signal strength. Across all simulation scenarios, features are independent from each other. The results of the simulation is presented in Table~\ref{Tab:power}.
