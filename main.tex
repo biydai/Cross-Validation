@@ -86,7 +86,7 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 \end{equation} 
 After repeating this for all K folds, a complete set of cross-validated linear predictors $\hat{\eta}^{cv} = ( \hat{\eta}^{cv}_{1},  \hat{\eta}^{cv}_{2} , ...  \hat{\eta}^{cv}_{n})$ for the whole sample is obtained. A partial likelihood can then be built using this set of linear predictors to evaluate the predictive accuracy of the model: 
 	\begin{equation} 
-	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \frac{\exp (\hat{\eta}^{cv}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}^{cv}_{j})}.
+	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \left\{ \frac{\exp (\hat{\eta}^{cv}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}^{cv}_{j})} \right\} ^{\delta_i}.
 	\end{equation}
 We define the cross-validation error evaluated with cross-validated linear predictors to be $$\CVE = - 2 \log L(\hat{\eta}^{cv}).$$
   
@@ -176,31 +176,39 @@ For our first simulation study, the covariate matrix has $n = 120$ observations 
 
 \setlength{\tabcolsep}{3pt}
 
-\caption{\label{Tab:sim} Simulation comparing four cross-validation methods with varying dimension and signal strength}
+\caption{\label{Tab:sim} Comparing the predictive accuracy of four cross-validation methods under scenarios with varying dimension and signal strength}
 \centering
-\begin{tabular}[t]{cccccccccc}
+\begin{tabular}[t]{lccccc}
 \toprule
- n& p& $\#$ Non-Zero & Signal & Method & $\lambda$ & log(MSE Ratio) &Brier Score & Kullback Leibler & C Index\\
+ Method & $\lambda$ & log(MSE Ratio) &Brier Score & Kullback Leibler & C Index\\
 \midrule
-150 & 50 & 5 & weak & V\&VH  & 0.098 (0.030) & 1.561 (0.851) & 0.245 (0.014) & 0.685 (0.030) & 0.610 (0.035) \\
-    &    &   &     & Basic  & 0.088 (0.025) & 1.531 (0.838) & 0.244 (0.013) & 0.683 (0.029) & 0.614 (0.029) \\
-    &    &   &     & LinearPred  & 0.092 (0.029) & 1.543 (0.846) & 0.245 (0.014) & 0.684 (0.030) & 0.612 (0.034) \\
-    &    &   &     & DevResid  & 0.098 (0.029) & 1.547 (0.848) & 0.245 (0.014) & 0.684 (0.030) & 0.611 (0.035) \\
+&\multicolumn{5}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+\cline{2-6}
+V\&VH  & 0.098 (0.030) & 1.561 (0.851) & 0.245 (0.014) & 0.685 (0.030) & 0.610 (0.035) \\
+Basic  & 0.088 (0.025) & 1.531 (0.838) & 0.244 (0.013) & 0.683 (0.029) & 0.614 (0.029) \\
+LinearPred  & 0.092 (0.029) & 1.543 (0.846) & 0.245 (0.014) & 0.684 (0.030) & 0.612 (0.034) \\
+DevResid  & 0.098 (0.029) & 1.547 (0.848) & 0.245 (0.014) & 0.684 (0.030) & 0.611 (0.035) \\
 \addlinespace
-150 & 50 & 5 & strong & V\&VH  & 0.071 (0.010) & 1.586 (0.989) & 0.176 (0.011) & 0.526 (0.027) & 0.750 (0.012) \\
-    &    &   &     & Basic  & 0.066 (0.011) & 1.544 (0.971) & 0.176 (0.011) & 0.526 (0.028) & 0.749 (0.013) \\
-    &    &   &     & LinearPred  & 0.067 (0.010) & 1.540 (0.981) & 0.176 (0.011) & 0.525 (0.028) & 0.750 (0.012) \\
-    &    &   &     & DevResid  & 0.094 (0.011) & 1.995 (0.841) & 0.181 (0.011) & 0.539 (0.026) & 0.751 (0.013) \\
+&\multicolumn{5}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+\cline{2-6}
+V\&VH  & 0.071 (0.010) & 1.586 (0.989) & 0.176 (0.011) & 0.526 (0.027) & 0.750 (0.012) \\
+Basic  & 0.066 (0.011) & 1.544 (0.971) & 0.176 (0.011) & 0.526 (0.028) & 0.749 (0.013) \\
+LinearPred  & 0.067 (0.010) & 1.540 (0.981) & 0.176 (0.011) & 0.525 (0.028) & 0.750 (0.012) \\
+DevResid  & 0.094 (0.011) & 1.995 (0.841) & 0.181 (0.011) & 0.539 (0.026) & 0.751 (0.013) \\
 \addlinespace
-400 & 10000 & 20 & weak & V\&VH  & 0.126 (0.019) & 2.958 (0.416) & 0.251 (0.012) & 0.696 (0.026) & 0.589 (0.044) \\
-    &    &   &     & Basic  & 0.103 (0.022) & 2.880 (0.437) & 0.244 (0.015) & 0.680 (0.031) & 0.603 (0.039) \\
-    &    &   &     & LinearPred  & 0.105 (0.023) & 2.886 (0.437) & 0.244 (0.015) & 0.681 (0.031) & 0.602 (0.039) \\
-    &    &   &     & DevResid  & 0.107 (0.022) & 2.895 (0.433) & 0.245 (0.014) & 0.683 (0.03) & 0.602 (0.039) \\
+&\multicolumn{5}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+\cline{2-6}
+V\&VH  & 0.126 (0.019) & 2.958 (0.416) & 0.251 (0.012) & 0.696 (0.026) & 0.589 (0.044) \\
+Basic  & 0.103 (0.022) & 2.880 (0.437) & 0.244 (0.015) & 0.680 (0.031) & 0.603 (0.039) \\
+LinearPred  & 0.105 (0.023) & 2.886 (0.437) & 0.244 (0.015) & 0.681 (0.031) & 0.602 (0.039) \\
+DevResid  & 0.107 (0.022) & 2.895 (0.433) & 0.245 (0.014) & 0.683 (0.03) & 0.602 (0.039) \\
 \addlinespace
-400 & 10000 & 20 & strong & V\&VH  & 0.084 (0.012) & 3.799 (0.548) & 0.176 (0.03) & 0.528 (0.069) & 0.763 (0.048) \\
-    &    &   &     & Basic  & 0.059 (0.007) & 3.455 (0.578) & 0.154 (0.019) & 0.468 (0.049) & 0.780 (0.031) \\
-    &    &   &     & LinearPred  & 0.060 (0.007) & 3.479 (0.574) & 0.155 (0.019) & 0.470 (0.049) & 0.780 (0.030) \\
-    &    &   &     & DevResid  & 0.076 (0.018) & 3.708 (0.518) & 0.166 (0.024) & 0.502 (0.057) & 0.772 (0.049) \\
+&\multicolumn{5}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+\cline{2-6}
+V\&VH  & 0.084 (0.012) & 3.799 (0.548) & 0.176 (0.03) & 0.528 (0.069) & 0.763 (0.048) \\
+Basic  & 0.059 (0.007) & 3.455 (0.578) & 0.154 (0.019) & 0.468 (0.049) & 0.780 (0.031) \\
+LinearPred  & 0.060 (0.007) & 3.479 (0.574) & 0.155 (0.019) & 0.470 (0.049) & 0.780 (0.030) \\
+DevResid  & 0.076 (0.018) & 3.708 (0.518) & 0.166 (0.024) & 0.502 (0.057) & 0.772 (0.049) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -208,6 +216,32 @@ For our first simulation study, the covariate matrix has $n = 120$ observations 
 Table~\ref{Tab:sim} displays the results of additional simulations carried out as we varied the dimension of the data set along with the signal strength.  Specifically, we examined the following settings: low dimension (p = 50) with weak signal, low dimension with strong signal, high dimension (p = 10000) with weak signal, and high dimension with strong signal. In all settings, the censoring rate was 30\%. For weak cases, signal strength $s$ was set to be 0.3; for strong cases, $s$ was set to be 0.6. 
 
 As in Figure~\ref{Fig:mse-brier-c}, the basic and linear predictor approaches outperform the deviance residual and V\&VH approaches.  The improvement is particularly noticeable in the most difficult setting: high-dimensional data with weak signal.  Table~\ref{Tab:sim} also provides some insight into why the deviance residual and V\&VH approaches perform poorly relative to basic CV and the linear predictor approach: they act conservatively, consistently choosing larger $\lam$ values and thus, selecting fewer variables.
+
+\subsection{Power}
+\label{Sec:power}
+While cross-validation is mainly a measure of the model's predictive accuracy, it is not sufficient to only compare those methods based on predictive accuracy. Another important criterion is that how many important variables are correctly selected by the model. The following simulations are conducted to compare the methods in this aspect.
+
+In Table~\ref{Tab:power}, we computed the average number of true positives selected by each cross-validation approach. True positives are features that are selected in the fitted model and their true $\beta$ coefficients are non-zero in the data-generating model. The simulation scenarios vary from low dimension, with 150 observations and 50 features, to high dimension, with 400 observations and 10000 features. We generate data with both weak signal strength and strong signal strength. Across all simulation scenarios, features are independent from each other. The results of the simulation is presented in Table~\ref{Tab:power}.
+
+\begin{table}[!htb]
+\setlength{\tabcolsep}{3pt}
+\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength.}
+\centering
+\begin{tabular}[t]{l cc c cc c cc}
+\toprule
+&\multicolumn{2}{c}{n = 150, p = 50} & & \multicolumn{2}{c}{n = 300, p = 1000} & & \multicolumn{2}{c}{n = 400, p = 10000} \\
+&\multicolumn{2}{c}{$\#$ non-zero features: 5} & & \multicolumn{2}{c}{$\#$ non-zero features: 20} & & \multicolumn{2}{c}{$\#$ non-zero features: 20} \\
+\cline{2-3} \cline{5-6} \cline{8-9}
+& weak signal & strong signal & & weak signal & strong signal && weak signal & strong signal\\
+V\&VH        & 3.87 & 5& & 10.96 & 19.61 & & 6.67 & 18.38\\
+Basic          & 4.06 & 5& & 13.68 & 19.96 & & 9.58 & 19.87\\
+LinearPred  & 3.99 & 5& & 13.46 & 19.95 & & 9.40 & 19.85\\
+DevResid    & 3.90 & 5& & 12.96 & 19.38 & & 8.98 & 19.05\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+When the signal strength in the data is weak, it is more difficult to pick up the signal and identify the non-zero features. Hence there is a big difference among the numbers of true positives selected by different cross-validation approaches, as is illustrated in Table~\ref{Tab:power}. In these scenarios, the basic cross-validation approach and linear predictor approach are more powerful, while the V$\&$VH approach always has the least number of true positive features. Especially in the high dimensional cases, the V$\&$VH approach select about three features fewer than the other approaches. In practice, missing important findings is a real concern when applying those methods.
 
 \subsection {Stability}
 \label{Sec:stability}
@@ -275,15 +309,22 @@ For this analysis, we fit elastic net models to the data in addition to lasso mo
 \begin{table}[ht]
 \centering
 \caption{\label{tb:shedden} The C Index and Brier Score of all elasticnet models selected by cross-validation methods }
-\begin{tabular}{lccccccccccc}
+\begin{tabular}{lccccc}
 \hline
-  & \multicolumn{5}{c}{Cross-validated C Index} & \multicolumn{5}{c}{Brier Score} \\ 
-  & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ &  
- & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-6} \cline{8-12} 
-V $\&$ VH      & 0.639 & 0.637 & 0.638 & 0.637 & 0.637 &  & 0.243 & 0.244 & 0.244 & 0.245 & 0.245 \\
-Basic       & 0.647 & 0.639 & 0.638 & 0.638 & 0.639 &  & 0.233 & 0.243 & 0.244 & 0.244 & 0.244 \\
-Linear Pred    & \textbf{0.650} & 0.647 & 0.638 & 0.638 & 0.639 &  & \textbf{0.229} & 0.232 & 0.244 & 0.244 & 0.244 \\
-Deviance Resid & 0.645 & 0.637 & 0.638 & 0.637 & 0.637 &  & 0.235 & 0.244 & 0.244 & 0.245 & 0.245 \\ \hline
+  & \multicolumn{5}{c}{Cross-validated C Index} \\ 
+  & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-6}
+V $\&$ VH      & 0.639 & 0.637 & 0.638 & 0.637 & 0.637\\
+Basic       & 0.647 & 0.639 & 0.638 & 0.638 & 0.639 \\
+Linear Pred    & \textbf{0.650} & 0.647 & 0.638 & 0.638 & 0.639  \\
+Deviance Resid & 0.645 & 0.637 & 0.638 & 0.637 & 0.637 \\ 
+\addlinespace
+  & \multicolumn{5}{c}{Brier Score} \\ 
+  & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-6}
+V $\&$ VH  & 0.243 & 0.244 & 0.244 & 0.245 & 0.245 \\
+Basic  & 0.233 & 0.243 & 0.244 & 0.244 & 0.244 \\
+Linear Pred & \textbf{0.229} & 0.232 & 0.244 & 0.244 & 0.244 \\
+Deviance Resid & 0.235 & 0.244 & 0.244 & 0.245 & 0.245 \\ 
+\hline
 \end{tabular}
 \end{table}
 
