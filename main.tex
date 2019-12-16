@@ -96,33 +96,38 @@ We define the cross-validation error evaluated with cross-validated linear predi
 \subsection{Cross Validated Deviance Residuals}
 %%%%%%%%%%%%%%%%%%%%
 
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model. Hence, another approach to cross-validation would be to include an extra step of estimating the baseline hazard and using it to quantify the cross-validation error. The standard approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
-\begin{equation}
-  \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
-\end{equation}
-The Cox model implies the following relationship between the baseline cumulative hazard and the cumulative hazard for individual $i$:
-\begin{equation}
-  \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta).
-\end{equation}
+\note{Biyue, I commented most of this section out, rather than deleting it, because it would probably make sense to move some of this to the supplement.  Can you please handle migrating this content to the supplement so that all the relevant equations/notation are defined?}
 
-The baseline hazard could be incorporated into cross-validation in a variety of ways.  Here, we consider the following approach: for fold $k$, we obtain $\hat{\beta}^{-k}$ from the training set $T_k$ and then for each $i$ in the test set $D_k$, 
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model, which prevents us from calculating prediction errors (residuals).  However, if one takes additional steps to estimate the baseline hazard in addition to estimating the coefficients, then such residuals can be calculated.  The deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}, is a natural candidate for quantifying prediction error to use in quantifying the cross-validation error.   Originally proposed for model diagnostics, deviance residuals have also been occasionally used as a predictive accuracy measure \citep{Therneau2018}.  Given an estimate of the baseline cumulative hazard function, $\hat{\Lambda}_0(t)$, the cross-validated Martingale residual is given by
 \begin{equation}
- \label{eq:cv-bhz}
-  \hat{\Lambda}^{cv}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta^{-k}).
+  m^{cv}_{i} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}),
 \end{equation}
-Note that this uses an estimate of the baseline hazard coming from the full data under the null model, but cross-validation has been applied to the estimation of the regression coefficients $\hat{\beta}$; we will discuss the rationale for this estimator shortly.
-
-A natural candidate for incorporating the cumulative hazard into a loss function is the deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}. First proposed for model diagnostics, deviance residuals have also been occasionally used as a predictive accuracy measure \citep{Therneau2018}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
-\begin{equation}
-  \hat{M^{cv}_{i}} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}).
-\end{equation}
-The cross-validated deviance residuals can then be derived from the Martingale residuals: 
+and the cross-validated deviance residuals by
 \begin{equation} 
-  d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}.
+  d_{i} = \text{sgn}(m^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}.
 \end{equation}
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
-The baseline hazard estimate we describe here differs from the one typically used in constructing deviance residuals \citep{Therneau1990}. Instead of the Nelson-Aalen estimator, deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model \citep{breslow1972}. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, it is important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other possible ways of constructing cross-validated deviance residuals (see Supporting Information).  Note that this is not the case for the Brier Score or Kullback Leibler Score (described in Section~\ref{Sec:accuracy}), which involve absolute loss functions, not comparisons with a saturated model.
+In order to use this approach, of course, one must estimate the baseline hazard, and there are a variety of ways this may be accomplished.  We considered several approaches and found them to give more or less similar results, so in this manuscript, we present the baseline hazard estimation method that performed the best overall as the ``cross-validated deviance residuals'' approach.  Details of this method, the other methods we considered, and simulation results comparing these methods, are available in the supplemental materials.
+
+%% The standard approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
+%% \begin{equation}
+%%   \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
+%% \end{equation}
+%% The Cox model implies the following relationship between the baseline cumulative hazard and the cumulative hazard for individual $i$:
+%% \begin{equation}
+%%   \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta).
+%% \end{equation}
+
+%% The baseline hazard could be incorporated into cross-validation in a variety of ways.  Here, we consider the following approach: for fold $k$, we obtain $\hat{\beta}^{-k}$ from the training set $T_k$ and then for each $i$ in the test set $D_k$, 
+%% \begin{equation}
+%%  \label{eq:cv-bhz}
+%%   \hat{\Lambda}^{cv}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta^{-k}).
+%% \end{equation}
+%% Note that this uses an estimate of the baseline hazard coming from the full data under the null model, but cross-validation has been applied to the estimation of the regression coefficients $\hat{\beta}$; we will discuss the rationale for this estimator shortly.
+
+
+%% The baseline hazard estimate we describe here differs from the one typically used in constructing deviance residuals \citep{Therneau1990}. Instead of the Nelson-Aalen estimator, deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model \citep{breslow1972}. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, it is important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other possible ways of constructing cross-validated deviance residuals (see Supporting Information).  Note that this is not the case for the Brier Score or Kullback Leibler Score (described in Section~\ref{Sec:accuracy}), which involve absolute loss functions, not comparisons with a saturated model.
 
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
