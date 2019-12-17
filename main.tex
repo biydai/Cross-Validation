@@ -39,7 +39,7 @@ Cox regression can be extended by introducing a penalty into the partial likelih
   \label{eq:obj}
   Q(\beta) = - \frac{1}{n} \log L(\beta) + P_{\lambda}(\beta),
 \end{equation}
-where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$.
+where $P_{\lambda}(\beta)$ is a penalty function that depends on a regularization parameter $\lam$.  Throughout, we will assume without loss of generality that the covariates have been standardized such that $\sum_i x_{ij} = 0$ and $\tfrac{1}{n}\sum_i x_{ij}^2=1$.  This is standard practice in penalized regression to ensure that the penalization has the same effect for all covariates and is invariant to changes of location and scale.  The estimates are then converted back to the original scale after the model has been fit.  Centering the predictors is also standard in Cox regression to ensure that the baseline hazard is invariant to location shifts of the covariates.
 
 \par In this paper, we focus upon the LASSO penalty $P_{\lambda}(\beta) = \lambda \sum_{j} |\beta_{j}|$, although the methods we analyze can be used with any penalty as well as with model selection in unpenalized Cox regression. LASSO-penalized cox regression is particularly useful for high dimensional data where the number of covariates $p > n$, such as predicting overall survival in cancer patients based on genome-wide expression measurements. LASSO estimates yield a sparse model where some coefficients are exactly zero. This sparsity pattern changes as we vary $\lam$: at large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected. Selecting $\lambda$ is critical to LASSO estimation in the sense that the model's accuracy suffers if $\lam$ is either too large or too small.
 
@@ -86,7 +86,7 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 \end{equation} 
 After repeating this for all K folds, a complete set of cross-validated linear predictors $\hat{\eta}^{cv} = ( \hat{\eta}^{cv}_{1},  \hat{\eta}^{cv}_{2} , ...  \hat{\eta}^{cv}_{n})$ for the whole sample is obtained. A partial likelihood can then be built using this set of linear predictors to evaluate the predictive accuracy of the model: 
 	\begin{equation} 
-	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \left\{ \frac{\exp (\hat{\eta}^{cv}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}^{cv}_{j})} \right\} ^{\delta_i}.
+	L(\hat{\eta}^{cv}) = \prod_{i=1}^{n} \left\{ \frac{\exp (\hat{\eta}^{cv}_{i})}{\sum_{k \in R(t_{i})}\exp (\hat{\eta}^{cv}_k)} \right\} ^{\delta_i}.
 	\end{equation}
 We define the cross-validation error evaluated with cross-validated linear predictors to be $$\CVE = - 2 \log L(\hat{\eta}^{cv}).$$
   
