@@ -38,10 +38,10 @@ p <- 1000
 c <- 4:9/10
 rep <- 200
 
-result_lambda <- array(NA,dim = c(5,length(c),rep),dimnames = list(c("NA","Full","CV","LP","Oracle"),
+result_lambda <- array(NA,dim = c(6,length(c),rep),dimnames = list(c("NA","Full","Full_breslow","CV","LP","Oracle"),
                                                                      as.character(c),
                                                                      NULL))
-result_MSER <- array(NA,dim = c(5,length(c),rep),dimnames = list(c("NA","Full","CV","LP","Oracle"),
+result_MSER <- array(NA,dim = c(6,length(c),rep),dimnames = list(c("NA","Full","Full_breslow","CV","LP","Oracle"),
                                                                  as.character(c),
                                                                  NULL))
 set.seed(1)
@@ -115,6 +115,22 @@ for(R in 1:rep){
                                                log(d - M))))
       sum(dev^2)})
     
+    #-------------------------------------------------------
+    # with eta from full fit: KP
+    BH_full_breslow <- apply(w, 2, function(x){ 
+      r <- rev(cumsum(rev(x)))
+      h <- d/r
+      cumsum(h)
+    }
+    )
+    BH_full_breslow <- BH_full_breslow[,1:ncol(w.cv)]
+    
+    val_full_breslow <- apply(w.cv*BH_full_breslow, 2, function(x){ 
+      M <- d - x
+      dev <- sign(M) * sqrt(-2 * (M + ifelse(d == 0, 0, d * 
+                                               log(d - M))))
+      sum(dev^2)})
+    
     
     #-------------------------------------------------------
     # with cross-validated eta (old KP)
@@ -138,7 +154,7 @@ for(R in 1:rep){
 
 #-------------------------------------------------------
 # extract results
-  id <- c(which.min(val_NA), which.min(val_full), which.min(val_cv), which.min(pl),
+  id <- c(which.min(val_NA), which.min(val_full), which.min(val_full_breslow),which.min(val_cv), which.min(pl),
           which.min(log_MSE_ratio))
   result_lambda[,j,R] <- lambda[id]
     

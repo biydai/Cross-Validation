@@ -107,6 +107,8 @@ Deviance residuals are typically calculated based on a baseline hazard estimate 
 \end{equation}
 	The Nelson-Aalen Estimator does not involve any information from the covariates. It only depends on the failure times.
 
+	\subsubsection{Breslow's Approach}	
+
 	\subsubsection{Kalbfleisch and Prentice's Approach}					
 	\cite{Kalbfleisch2011} proposed a cumulative hazard estimator that incorporates covariates. Assuming only a single failure occurs at $t_i$, based on the fitted values of $\hat{\bbeta}$, we can first compute linear predictors $\hat{\eta}_i$ at each observed failure time. Based on $\hat{\eta}_i$, we can compute a discrete hazard component at each observed failure time):
 \begin{equation}
@@ -129,24 +131,25 @@ The following simulation illustrates how the performance of cross-validated devi
 \vspace{1mm}
  & \multicolumn{5}{c}{$\lambda$} & \\ 
 \vspace{1mm}
-CVDR - Nelson Aalen & 0.1531 & 0.1346 & 0.1251 & 0.1217 & 0.1213 & 0.1210\\
-CVDR - Kalbfleisch and Prentice& 0.2534 & 0.2275 & 0.2084 & 0.1767 & 0.1588 & 0.1414\\
-CVLP & 0.1441 & 0.1214 & 0.1078 & 0.0981 & 0.0914 & 0.0849\\
+Nelson Aalen & 0.152 & 0.134 & 0.127 & 0.121 & 0.121 & 0.121\\
+Breslow & 0.258 & 0.247 & 0.228 & 0.199 & 0.178 & 0.165\\
+Kalbfleisch and Prentice & 0.249 & 0.234 & 0.210 & 0.180 & 0.155 & 0.144\\
+%CVLP & 0.1441 & 0.1214 & 0.1078 & 0.0981 & 0.0914 & 0.0849\\
 %Oracle &  0.1090 & 0.0941 & 0.0762 & 0.0615 & 0.0567 & 0.0516\\
+\vspace{0.5mm}\\
+ & \multicolumn{5}{c}{$\log($MSE Ratio$)$} & \\ 
 \vspace{1mm}
- & \multicolumn{5}{c}{$\log($MSE$)$} & \\ 
-\vspace{1mm}
-
-CVDR - Nelson Aalen & 2.4038 & 2.5107 & 2.8289 & 3.0084 & 3.1723 & 3.3463\\
-CVDR - Kalbfleisch and Prentice& 2.7075 & 2.9397 & 3.2592 & 3.3596 & 3.4228 & 3.4934\\
-CVLP &2.3684 & 2.4089 & 2.6595 & 2.7173 & 2.7761 & 2.8264\\
+Nelson Aalen & 2.431 & 2.624 & 2.806 & 2.983 & 3.186 & 3.346 \\
+Breslow & 2.729 & 3.074 & 3.301 & 3.449 & 3.562 & 3.632 \\
+Kalbfleisch and Prentice & 2.712 & 3.034 & 3.232 & 3.355 & 3.427 & 3.508 \\
+%CVLP &2.3684 & 2.4089 & 2.6595 & 2.7173 & 2.7761 & 2.8264\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Top half of the table listed different $\lambda$ values selected by the method. With the Kalbfleisch and Prentice baseline, the cross-validated deviance residual always selected larger $\lambda$ values and very conservative models. With the covariate-adjusted baseline, the deviance residuals seem to have stronger preference for models closer to the null model. This phenomenon is also observed by the original authors of the deviance residuals in classical Cox regression applications. As they attempted to use the covariate-adjusted deviance residuals and Martingale residuals to evaluate model fit, they observed that "the no-covariate model has the smallest sum of squared and the best model, the one with all five predictors, has the largest" \citep{Therneau2000modeling}.
 
-The bottom half of the table listed $\log($MSE$)$ of the models selected by cross-validation approaches compared to the oracle model. The definition of $\log($MSE$)$ is described in more details in Section 3.1 in the paper. Throughout different signal strength, CVDR with Kalbfleisch and Prentice baseline had the largest $\log($MSE$)$, indicating worst model estimation among all methods. With Nelson-Aalen estimator, the CVDR approach had better performance and performed closer to CVLP at weaker signals. As the signal strength increases, the performance of CVDR with Nelson-Aalen estimator also declined.
+The bottom half of the table listed $\log($MSE Ratio$)$ of the models selected by cross-validation approaches compared to the oracle model. The definition of $\log($MSE Ratio$)$ is described in more details in Section 3.1 in the paper. Throughout different signal strength, CVDR with Kalbfleisch and Prentice baseline had the largest $\log($MSE Ratio$)$, indicating worst model estimation among all methods. With Nelson-Aalen estimator, the CVDR approach had better performance and performed closer to CVLP at weaker signals. As the signal strength increases, the performance of CVDR with Nelson-Aalen estimator also declined.
 
 Overall, our simulation results support the use of Nelson-Aalen estimator in estimating the baseline hazard for the cross-validated deviance residual approach.
 
