@@ -75,105 +75,99 @@
 \maketitle
 
 \section{Baseline Estimation for Cross-Validated Deviance Residuals}
-\subsection{Cross-Validated Deviance Residuals}
-The Cox model implies the following relationship between the baseline cumulative hazard and the cumulative hazard for individual $i$:
-\begin{equation}
-  \hat{\Lambda}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta).
-\end{equation}
-Consider the following approach: for fold $k$, we obtain $\hat{\beta}^{-k}$ from the training set $T_k$ and then for each $i$ in the test set $D_k$, 
-\begin{equation}
- \label{eq:cv-bhz}
-  \hat{\Lambda}^{cv}_{i}(t) =  \hat{\Lambda}_{0}(t)\exp(X_i\Tr\hat\beta^{-k}).
-\end{equation}
 
-A natural candidate for incorporating the cumulative hazard into a loss function is the deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}.  Given \eqref{eq:cv-bhz}, we can first obtain the cross-validated Martingale residual: 
-\begin{equation}
-  \hat{M}^{cv}_{i} = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}).
-\end{equation}
-The cross-validated deviance residuals can then be derived from the Martingale residuals: 
-\begin{equation} 
-  d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}.
-\end{equation}
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+As described in the manuscript, the Martingale residuals $\{m_i\}_{i=1}^n$ and deviance residuals $\{d_i\}_{i=1}^n$ for the Cox model are given by
+\begin{align*}
+  m_{i} &= \delta_{i} - H_{0}(t_{i})\exp(X_i\Tr\beta) \\
+  d_{i} &= \text{sign}(m_{i})\sqrt{-2(m_i + \delta_{i}\log(\delta_{i} - m_i))},
+\end{align*}
+where $H_0$ is the cumulative baseline hazard.  Our cross-validated versions of these residuals use
+\begin{align*}
+  m_{i}^{cv} &= \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}) \\
+  d_{i}^{cv} &= \text{sign}(m_{i}^{cv})\sqrt{-2(m_i^{cv} + \delta_{i}\log(\delta_{i} - m_i^{cv}))},
+\end{align*}
+for $i$ in the test set $D_k$, with $\hat{\beta}^{-k}$ obtained from the training set $T_k$.  The sum of squared cross-validated deviance residuals, $\sum_{i}(d_{i}^{cv})^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression.  In the manuscript, this method is referred to as the \emph{cross-validated deviance residuals} approach.
 
 Deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, it is important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other possible ways of constructing cross-validated deviance residuals.  
 
 \subsection{Baseline Estimations}
 
 	\subsubsection{Nelson-Aalen Estimator}
-	 The simplest approach to estimating the cumulative baseline hazard, $\Lambda_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
+	 The simplest approach to estimating the cumulative baseline hazard, $H_0$, is the Nelson-Aalen Estimator \citep{nelson1969, aalen1978}:
 \begin{equation}
-  \hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
+  \hat{H}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
 \end{equation}
-Under the assumption that there is no ties among failure times, the numerator in the summation is either 0 or 1. The Nelson-Aalen Estimator does not involve any information from the covariates. It only depends on the failure times. When we use the Nelson-Aalen Estimator for the cross-validated deviance residuals, we follow the below algorithm:
+Under the assumption that there is no ties among failure times, the numerator in the summation is either 0 or 1. The Nelson-Aalen Estimator depends only on the failure times and does not involve any information from the covariates. Procedure~\ref{alg:na} provides an explicit description of this algorithm.
+
 \begin{algorithm}
 \SetAlgoLined
-Use all observations' time and status to compute $\hat{\Lambda}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}$\;
+Use all observations' time and status to compute $\hat{H}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}$\;
 \For{each regularization parameter $\lambda$}{
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
+  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
   	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
   	}
  }
  Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
  }
- \caption{Compute Cross-validated Deviance Residuals Based on Nelson-Aalen Estimator}
+ \caption{\label{alg:na} Compute cross-validated deviance residuals based on the Nelson-Aalen estimator}
 \end{algorithm}
 	
 \subsubsection{Breslow's Approach}	
 	
 In the original proposal of the Martingale Residuals \citep{Therneau1990}, Breslow's estimator \citep{Breslow1974} was the prefered approach for estimating the cumulative baseline hazard. Under the assumption that there is no ties among the failure times, the Breslow's estimator is defined as:
 \begin{equation} 
-\hat{\Lambda}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}.
+\hat{H}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}.
 \end{equation}
-Covariates of the fitted model are incorporated in the denominator of the summation. When we use Breslow's estimator for the cross-validated deviance residuals, we follow the below algorithm:
+Covariates of the fitted model are incorporated in the denominator of the summation.
+Procedure~\ref{alg:br} provides an explicit description of this algorithm.
 \begin{algorithm}
 \SetAlgoLined
 \For{each regularization parameter $\lambda$}{
  Fit the model using all observations' time and status \;
  Obtain linear predictor $\hat{\eta}$ from the fitted model\;
- Compute $\hat{\Lambda}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}$\;
+ Compute $\hat{H}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}$\;
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
+  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
   	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
   	}
  }
  Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
  }
- \caption{Compute Cross-validated Deviance Residuals Based on Breslow's Approach}
+ \caption{\label{alg:br} Compute cross-validated deviance residuals based on the Breslow estimator}
 \end{algorithm}
 
 \subsubsection{Kalbfleisch and Prentice's Approach}					
 
-	\cite{Kalbfleisch2011} proposed a cumulative hazard estimator that incorporates covariates. Assuming only a single failure occurs at $t_i$, based on the fitted values of $\hat{\bbeta}$, we can first compute linear predictors $\hat{\eta}_i$ at each observed failure time. Based on $\hat{\eta}_i$, we can compute a discrete hazard component at each observed failure time):
+\cite{Kalbfleisch2011} proposed a cumulative hazard estimator that incorporates covariates. Assuming only a single failure occurs at $t_i$, based on the fitted values of $\hat{\bbeta}$, we can first compute linear predictors $\hat{\eta}_i$ at each observed failure time. Based on $\hat{\eta}_i$, we can compute a discrete hazard component at each observed failure time):
 \begin{equation}
 1 - \hat{\alpha}_{i} = 1 - \left( 1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})} \right)^{\exp(-\hat{\eta}_{i})},
 \end{equation}
 and aggregate them together into the cumulative hazard function:
 \begin{equation} 
-\hat{\Lambda}_0(t) = \sum_{t_{i} \leq t}(1 - \hat{\alpha}_i),
+\hat{H}_0(t) = \sum_{t_{i} \leq t}(1 - \hat{\alpha}_i),
 \end{equation}
-When we use the Kalbfleisch and Prentice's Estimator for the cross-validated deviance residuals, we follow the below algorithm:
+Procedure~\ref{alg:kp} provides an explicit description of this algorithm.
 \begin{algorithm}
 \SetAlgoLined
 \For{each regularization parameter $\lambda$}{
  Fit the model using all observations' time and status \;
  Obtain linear predictor $\hat{\eta}$ from the fitted model\;
- Compute $\hat{\Lambda}_0(t) = \sum_{t_{i} \leq t} \left\{1 -  \left(1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})} \right) ^{\exp(-\hat{\eta}_{i})}\right\}$\;
+ Compute $\hat{H}_0(t) = \sum_{t_{i} \leq t} \left\{1 -  \left(1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})} \right) ^{\exp(-\hat{\eta}_{i})}\right\}$\;
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{\Lambda}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
+  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
   	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
   	}
  }
  Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
  }
- \caption{Compute Cross-validated Deviance Residuals Based on Kalbfleisch and Prentice's Estimator}
+ \caption{\label{alg:kp} Compute cross-validated deviance residuals based on the Kalbfleisch and Prentice estimator}
 \end{algorithm}
 
 

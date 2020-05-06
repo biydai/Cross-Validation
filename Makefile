@@ -1,3 +1,5 @@
+all: cross-validation.pdf supplementary.pdf
+
 cross-validation.pdf: cross-validation.tex articles.bib main.tex
 	cleantex -be cross-validation
 
