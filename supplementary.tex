@@ -122,13 +122,17 @@ In the original proposal of the Martingale Residuals \citep{Therneau1990}, Bresl
 \hat{H}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}.
 \end{equation}
 Covariates of the fitted model are incorporated in the denominator of the summation.
-Procedure~\ref{alg:br} provides an explicit description of this algorithm.
+Procedure~\ref{alg:brkp} includes an explicit description of this algorithm.
 \begin{algorithm}
 \SetAlgoLined
 \For{each regularization parameter $\lambda$}{
  Fit the model using all observations' time and status \;
  Obtain linear predictor $\hat{\eta}$ from the fitted model\;
- Compute $\hat{H}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}$\;
+ \uIf{Use the Breslow's estimator}{
+ $\hat{H}_0(t) = \sum_{t_{i} \leq t}\frac{\delta(t_i)}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})}$;
+ }\ElseIf{Use the Kalbfleisch and Prentice estimator}{
+  $\hat{H}_0(t) = \sum_{t_{i} \leq t} \left\{1 -  \left(1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})} \right) ^{\exp(-\hat{\eta}_{i})}\right\}$\;
+ }
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
@@ -138,7 +142,7 @@ Procedure~\ref{alg:br} provides an explicit description of this algorithm.
  }
  Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
  }
- \caption{\label{alg:br} Compute cross-validated deviance residuals based on the Breslow estimator}
+ \caption{\label{alg:brkp} Compute cross-validated deviance residuals based on the Breslow estimator and the Kalbfleisch and Prentice estimator}
 \end{algorithm}
 
 \subsubsection{Kalbfleisch and Prentice's Approach}					
@@ -151,25 +155,7 @@ and aggregate them together into the cumulative hazard function:
 \begin{equation} 
 \hat{H}_0(t) = \sum_{t_{i} \leq t}(1 - \hat{\alpha}_i),
 \end{equation}
-Procedure~\ref{alg:kp} provides an explicit description of this algorithm.
-\begin{algorithm}
-\SetAlgoLined
-\For{each regularization parameter $\lambda$}{
- Fit the model using all observations' time and status \;
- Obtain linear predictor $\hat{\eta}$ from the fitted model\;
- Compute $\hat{H}_0(t) = \sum_{t_{i} \leq t} \left\{1 -  \left(1 - \frac{\exp (\hat{\eta}_{i})}{\sum_{ j \in R(t_{i})}\exp (\hat{\eta}_{j})} \right) ^{\exp(-\hat{\eta}_{i})}\right\}$\;
- \For{each fold $k = 1,2,...,K$}{
-  Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
-  	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
-  	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
-  	}
- }
- Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
- }
- \caption{\label{alg:kp} Compute cross-validated deviance residuals based on the Kalbfleisch and Prentice estimator}
-\end{algorithm}
-
+Procedure~\ref{alg:brkp} includes an explicit description of this algorithm.
 
 \subsection{Simulation Comparison}
 The following simulation illustrates how the performance of cross-validated deviance residuals would vary based on different baseline estimation. We generated data using the same mechanism as we described in Section 3.1 in the paper. In each simulated data set, there were $n = 150$ observations, $p = 1000$ number of feature and 10 non-zero features with signal strength $s$. Censoring proportion is fixed at $10\%$. For each scenario, we varied $s$ from 0.4 to 0.9 and 200 replications were used. We compared the cross-validated deviance residuals constructed by Nelson-Aalen estimator and the cross-validated deviance residuals constructed by Kalbfleisch and Prentice's estimator. We also included cross-validated linear predictor approach (introduced in Section 2.3 in the paper) for comparison. The results of the simulation is listed in the following table:
