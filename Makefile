@@ -1,7 +1,7 @@
 all: cross-validation.pdf supplementary.pdf
 
 cross-validation.pdf: cross-validation.tex articles.bib main.tex
-	cleantex -be cross-validation
+	cleantex -beq cross-validation
 
 supplementary.pdf: supplementary.tex
-	cleantex -be supplementary
+	cleantex -beq supplementary
