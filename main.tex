@@ -210,11 +210,12 @@ The patterns seen in Figure~\ref{Fig:mse-brier-c} and Table~\ref{Tab:sim} are si
 
 A significant scientific goal of survival modeling is often to identify features that are associated with increased or decreased risk. By choosing a larger value of the regularization parameter $\lam$ and stopping too early on the coefficient path, the V\&VH and deviance residual methods risk failing to identify important features. In this section, we quantify this loss.
 
-Table~\ref{Tab:power} presents the average number of true positives selected by each cross-validation approach. True positives are features with non-zero $\beta$ coefficients in the true data-generating model that were also selected by the model. The simulation scenarios vary from low dimension, with 150 observations and 50 features, to high dimension, with 400 observations and 10000 features. We generate data with both weak and strong signal strength \note{Need to be more specific here; what is $s$? Include either here or in the caption to Table 2}. Here, all features are independent.
+Table~\ref{Tab:power} presents the average number of true positives selected by each cross-validation approach. True positives are features with non-zero $\beta$ coefficients in the true data-generating model that were also selected by the model. The simulation scenarios vary from low dimension, with 150 observations and 50 features, to high dimension, with 400 observations and 10000 features. We generate data with both weak and strong signal strength, where we set $s$, the value of non-zero $\beta$ coefficients, to be 0.3 and 0.6 respectively. Here, all features are independent.
+
 
 \begin{table}[!htb]
 \setlength{\tabcolsep}{3pt}
-\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength.}
+\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength. For weak and strong signal strength, $s$ is set to be 0.3 and 0.6 respectively.}
 \centering
 \begin{tabular}[t]{l cc c cc c cc}
 \toprule
