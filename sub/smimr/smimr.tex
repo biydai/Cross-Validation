@@ -1,16 +1,16 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{color}
+\usepackage[doublespacing]{setspace}  % Required for SMIMR review
 
 \usepackage{alltt}
 \usepackage{amssymb,amsmath,graphicx,enumerate,subcaption,tikz,url,booktabs}
-\usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
-\graphicspath{{manuscript_figure/}}
+\usepackage[bmargin=5cm, tmargin=5cm, lmargin=3cm, rmargin=3cm]{geometry}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
 \usepackage{afterpage}
 
-\usepackage{natbib}
+\usepackage[numbers]{natbib}
 \usepackage{bbold}
 
 
@@ -76,7 +76,7 @@ Cross validation is commonly used for selecting tuning parameters in penalized r
 Our proposed approach of cross-validating the linear predictors seems to offer an attractive balance of performance and numerical stability. We illustrate these advantages using simulated data as well as using them to analyze data from a high-dimensional study of survival in lung cancer patients.
 \input{main}
 
-\bibliographystyle{ims-nourl}
+\bibliographystyle{SageV}
 \bibliography{articles}
 
 \end{document}

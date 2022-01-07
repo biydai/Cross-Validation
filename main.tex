@@ -208,14 +208,13 @@ The patterns seen in Figure~\ref{Fig:mse-brier-c} and Table~\ref{Tab:sim} are si
 \subsection{Power to identify important features}
 \label{Sec:power}
 
-A significant scientific goal of survival modeling is often to identify features that are associated with increased or decreased risk. By choosing a larger value of the regularization parameter $\lam$ and stopping too early on the coefficient path, the V\&VH and deviance residual methods risk failing to identify important features. In this section, we quantify this loss.
+A significant scientific goal of survival modeling is often to identify features that are associated with increased or decreased risk. By choosing a larger value of the regularization parameter $\lam$ and stopping too early on the coefficient path, the V\&VH and deviance residual methods may fail to identify important features. In this section, we quantify this loss of power.
 
-Table~\ref{Tab:power} presents the average number of true positives selected by each cross-validation approach. True positives are features with non-zero $\beta$ coefficients in the true data-generating model that were also selected by the model. The simulation scenarios vary from low dimension, with 150 observations and 50 features, to high dimension, with 400 observations and 10000 features. We generate data with both weak and strong signal strength, where we set $s$, the value of non-zero $\beta$ coefficients, to be 0.3 and 0.6 respectively. Here, all features are independent.
-
+Table~\ref{Tab:power} presents the average number of true positives identified by each cross-validation approach. True positives are features with non-zero $\beta$ coefficients in the true data-generating mechanism that were also selected by the model. The simulation scenarios vary from low dimensional, with 150 observations and 50 features, to high dimensional, with 400 observations and 10000 features. We generate data with both weak (nonzero $\beta$ coefficients equal to 0.3) and strong (nonzero $\beta$ = 0.6) signal strength. Here, all features are independent.
 
 \begin{table}[!htb]
 \setlength{\tabcolsep}{3pt}
-\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength. For weak and strong signal strength, $s$ is set to be 0.3 and 0.6 respectively.}
+\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength. For weak and strong signal strength, nonzero coefficients are set to 0.3 and 0.6 respectively.}
 \centering
 \begin{tabular}[t]{l cc c cc c cc}
 \toprule
@@ -231,7 +230,7 @@ DevResid    & 3.90 & 5& & 12.96 & 19.38 & & 8.98 & 19.05\\
 \end{tabular}
 \end{table}
 
-When the signal strength is weaker, identify the true features becomes more challenging. Thus, while all cross-validation approaches perform reasonably well with high signal, there is a meaningful difference among them when signal is lower. In these scenarios, the basic and linear predictor approach are more powerful, while the V\&VH approach selects the fewest true features. This is most apparent in the high dimensional setting, where the V\&VH approach select approximately three features fewer than the best approaches. Missing multiple important findings is an important concern when applying this method in practice.
+When the signal strength is weak, identifying the true features becomes more challenging. Thus, while all cross-validation approaches perform reasonably well with high signal, there is a meaningful difference among them when signal is lower. In these scenarios, the basic and linear predictor approach are more powerful, while the V\&VH approach selects the fewest true features. This is most apparent in the high dimensional setting, where the V\&VH approach select approximately three features fewer than the best approaches. Missing multiple important findings is an important concern when applying this method in practice.
 
 \subsection {Stability}
 \label{Sec:stability}
@@ -288,6 +287,8 @@ On the other hand, the LOOCV version of the linear predictor approach surpasses 
   \caption{\label{Fig:cvauc}Comparing Partial Likelihood and C Index both built from Cross-validated Linear Predictors. The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter $\lambda$. The mid row plots the $\log(\text{relative Squared Error Loss})$, with respect to the oracle model. The bottom row plots the Brier Scores. }
 \end{figure}
 
+\afterpage{\clearpage}
+
 Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood-based CV tends to select more accurate models, as judged by both mean squared error and Brier score.  Second, likelihood-based CV is also more stable than the AUC-based CV, in the sense that it tends to select a narrower range of models, with more consistent performance, than CV-AUC.  Lastly, CV-AUC is consistently more liberal than likelihood-based CV, selecting models with smaller values of the regularization parameter $\lam$, and therefore preferring models with larger coefficient values and more nonzero coefficients.
 
 \section{Application to Real Data}
@@ -320,7 +321,7 @@ Deviance Resid & 0.235 & 0.244 & 0.244 & 0.245 & 0.245 \\
 
 For each fixed $\alpha$, we compared the cross-validation errors (CVE) from the four cross-validation methods along the solution path. At $\alpha = 0.3$, CVEs are rescaled and plotted for all four methods along the same grid of $\lambda$ values in Figure~\ref{fig:CVE}. The selected $\lambda$ values, where a given CVE curve reaches its lowest point, are indicated with dotted lines.  The CVE curves for the basic and linear predictor approaches have greater curvature near their minima, and thus offer more clear support for the selected value of $\lam$.  In comparison, the deviance residual and V\&VH approaches are flatter near their minima, supporting a considerably wider range of $\lam$ values and leading to greater model uncertainty.   The selected $\lambda$ values, represented by the vertical dashed lines, and their corresponding models, reflect what was observed in the simulation studies. The linear predictor approach was most liberal and selected 85 genes. While the basic approach and deviance residual approach selected 68 genes and 60 genes respectively, Verweij and Van Houwelingen's approach was most conservative, selecting only 34 genes.  Similar patterns were observed for other $\alpha$ values.
 
-\begin{figure}[h]
+\begin{figure}[!htb]
   \centering
   \includegraphics[height= 8cm ]{shedden.png}
   \caption{\label{fig:CVE}Rescaled Cross Validated Errors at $\alpha = 0.3$. The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1 in order to allow plotting of the four methods on a common axis. The vertical dashed lines represent the $\lambda$ selected by a specific method. The linear predictor approach selected the smallest $\lambda$ and Verweij and Van Houwelingen's approach selected the greatest $\lambda$.}

@@ -1,5 +1,7 @@
 \documentclass{article}
+
 \usepackage{graphicx}
+\graphicspath{{manuscript_figure/}}
 \usepackage{color}
 
 \usepackage{alltt}
@@ -97,7 +99,7 @@ for $i$ in the test set $D_k$, with $\hat{\beta}^{-k}$ obtained from the trainin
 \begin{equation}
   \hat{H}_{0}(t) = \sum_{t_j \leq t}\frac{\text{number of failures at time } t_j}{\text{number at risk right before time }t_j}.
 \end{equation}
-Under the assumption that there is no ties among failure times, the numerator in the summation is either 0 or 1. The Nelson-Aalen Estimator depends only on the failure times and does not involve any information from the covariates. Procedure~\ref{alg:na} provides an explicit description of this algorithm.
+Under the assumption that there are no ties among failure times, the numerator in the summation is always either 0 or 1. The Nelson-Aalen Estimator depends only on the failure times and does not involve any information from the covariates. Procedure~\ref{alg:na} provides an explicit description of this algorithm.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -158,13 +160,17 @@ and aggregate them together into the cumulative hazard function:
 Procedure~\ref{alg:brkp} includes an explicit description of this algorithm.
 
 \subsection{Simulation Comparison}
-The following simulation illustrates how the performance of cross-validated deviance residuals would vary based on different baseline estimation. We generated data using the same mechanism as we described in Section 3.1 in the paper. In each simulated data set, there were $n = 150$ observations, $p = 1000$ number of feature and 10 non-zero features with signal strength $s$. Censoring proportion is fixed at $10\%$. For each scenario, we varied $s$ from 0.4 to 0.9 and 200 replications were used. We compared the cross-validated deviance residuals constructed by Nelson-Aalen estimator and the cross-validated deviance residuals constructed by Kalbfleisch and Prentice's estimator. We also included cross-validated linear predictor approach (introduced in Section 2.3 in the paper) for comparison. The results of the simulation is listed in the following table:
+
+The following simulation illustrates how the performance of cross-validated deviance residuals varies based on different approaches to baseline estimation. We generated data using the same mechanism as we described in Section 3.1 in the paper. In each simulated data set, there were $n = 150$ observations, $p = 1000$ number of feature and 10 non-zero features with signal strength $s$. Censoring proportion is fixed at $10\%$. For each scenario, we varied $s$ from 0.4 to 0.9 and 200 replications were used. We compared the cross-validated deviance residuals where baseline estimation used the Nelson-Aalen estimator, the Breslow estimator, and the Kalbfleisch and Prentice estimator.
+%We also included the cross-validated linear predictor approach (introduced in Section 2.3 in the paper) for comparison.
+The results of the simulation are given in the following table:
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lrrrrrr}
 \toprule
-  & 0.4 & 0.5 & 0.6 & 0.7 & 0.8 & 0.9\\
+ & \multicolumn{6}{c}{$s$} \\ 
+ & 0.4 & 0.5 & 0.6 & 0.7 & 0.8 & 0.9\\
 \midrule
 \vspace{1mm}
  & \multicolumn{5}{c}{$\lambda$} & \\ 
@@ -185,11 +191,9 @@ Kalbfleisch and Prentice & 2.712 & 3.034 & 3.232 & 3.355 & 3.427 & 3.508 \\
 \end{tabular}
 \end{table}
 
-Top half of the table listed different $\lambda$ values selected by the method. With the Kalbfleisch and Prentice baseline, the cross-validated deviance residual always selected larger $\lambda$ values and very conservative models. With the covariate-adjusted baseline, the deviance residuals seem to have stronger preference for models closer to the null model. This phenomenon is also observed by the original authors of the deviance residuals in classical Cox regression applications. As they attempted to use the covariate-adjusted deviance residuals and Martingale residuals to evaluate model fit, they observed that "the no-covariate model has the smallest sum of squared and the best model, the one with all five predictors, has the largest" \citep{Therneau2000modeling}.
+The top half of the table reports the average $\lambda$ values selected by each method. With the Breslow and Kalbfleisch-Prentice approaches, the cross-validated deviance residual always selected larger $\lambda$ values and thus, more conservative models. With the covariate-adjusted baseline, the deviance residuals seem to have stronger preference for models closer to the null model. This phenomenon was also observed by the original authors of the deviance residuals in classical Cox regression applications. As they attempted to use the covariate-adjusted deviance residuals and Martingale residuals to evaluate model fit, they observed that "the no-covariate model has the smallest sum of squares and the best model, the one with all five predictors, has the largest" \citep{Therneau2000modeling}.
 
-The bottom half of the table listed $\log($MSE Ratio$)$ of the models selected by cross-validation approaches compared to the oracle model. The definition of $\log($MSE Ratio$)$ is described in more details in Section 3.1 in the paper. Throughout different signal strength, CVDR with Kalbfleisch and Prentice baseline had the largest $\log($MSE Ratio$)$, indicating worst model estimation among all methods. With Nelson-Aalen estimator, the CVDR approach had better performance and performed closer to CVLP at weaker signals. As the signal strength increases, the performance of CVDR with Nelson-Aalen estimator also declined.
-
-Overall, our simulation results support the use of Nelson-Aalen estimator in estimating the baseline hazard for the cross-validated deviance residual approach.
+The bottom half of the table listed $\log($MSE Ratio$)$ of the models selected by cross-validation approaches compared to the oracle model. The definition of $\log($MSE Ratio$)$ is described in more details in Section 3.1 in the paper. Across all signal strengths, CVDR with Nelson-Aalen baseline estimation had the smallest $\log($MSE Ratio$)$, indicating best model estimation compared to Breslow and Kalbfleisch-Prentice. Overall, our simulation results support the use of Nelson-Aalen estimator in estimating the baseline hazard for the cross-validated deviance residual approach, and was therefore employed in the manuscript.
 
 \section{Simulation with Correlated Features}
 
@@ -199,19 +203,19 @@ The data generating mechanism is similar to simulations presented in Figure 2 in
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{manuscript_figure/figure_2_ex.png}
+  \includegraphics[width=\textwidth]{figure_2_ex.png}
   \caption{\label{Fig:ex} The horizontal axis in all three plots is the correlation among the features. The value of $s$ is varied from 0.4 to 0.9.  $\log(\text{MSE ratio})$, relative to the oracle modle is plotted in the left panel. Out-of-sample Brier scores are plotted in the middle. Out-of-sample C index is plotted in the right panel. For each simulated data set, n = 120, p = 1000. Expected censoring percentage is 10$\%$.}
 \end{figure}	
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{manuscript_figure/figure_2_auto.png}
+  \includegraphics[width=\textwidth]{figure_2_auto.png}
   \caption{\label{Fig:auto} The horizontal axis in all three plots is the correlation among the features. The value of $s$ is varied from 0.4 to 0.9.  $\log(\text{MSE ratio})$, relative to the oracle modle is plotted in the left panel. Out-of-sample Brier scores are plotted in the middle. Out-of-sample C index is plotted in the right panel. For each simulated data set, n = 120, p = 1000. Expected censoring percentage is 10$\%$.}
 \end{figure}	
 
 As is shown in the figures, across different correlation structure and strength of the correlation, the basic approach and the linear predictor appraoch had the best performance of having lower MSE, smaller Brier scores and higher C Index, whereas the V$\&$VH approach has the worst performance.
 
-\bibliographystyle{abbrvnat}
+\bibliographystyle{ims-nourl}
 \bibliography{articles}
 
 \end{document}
