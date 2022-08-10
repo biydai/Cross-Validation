@@ -1,0 +1,61 @@
+Reviewer(s)' Comments to Author: Reviewer: 1
+
+Comments to the Author
+The authors compare four different cross-validation options for the important problem of penalized Cox regression, including two new proposed methods. The methodology is nicely described, and the illustration in Figure 1 should prove helpful to readers new to this area.  The interpretations of the simulation results are helpful, and a good choice for the application dataset was made.  The take-home message of the usefulness of the linear predictor approach was clearly made based on the work performed. However, there are a number of important questions and comments to mention here that should be addressed:
+
+1.	On p.4, roughly line 34, you have the statement “although the methods we analyze can be used with any penalty”.  This statement should be further elaborated, providing some tangible examples (including beyond the straightforward elastic net approach considered in the application analysis).
+
+2.	Though you aim to make various considerations in your simulation study, the impact of this work may very well be limited given consideration of only exponential survival distribution and independent censoring. Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion. Regarding distributional form, the exponential form here is quite limiting, and even common choices for a more complex distributional form, such as Weibull and Gompertz, might be considered too limiting. See, for example, Harden and Kropko (2019). 
+
+3.	Speaking of your Discussion section, there is no mention of any limitations of the current work.  Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards.  That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure.  Some discussion on how to think about survival datasets with rare events should be commented on as well.
+
+4.	On p. 10, second sentence first paragraph of Section 3.1, should mention that the specifics of the different conditions considered (in the simulation study) are described below.
+
+5.	In Section 3.1, p. 11, first line (and in subsequent uses below), I would suggest adding a $t_0$ index to $y$, since the definition of $y$ is a direct function of $t_0$.
+
+6.	And only looking at one $t_0$ in your simulation seems limiting here (for the Brier and KL score calculations). Though if just one choice is used it makes sense to use the median, explain why only one choice of $t_0$ is considered.  This would be especially true if you consider other more complicated survival distributions.
+
+7.	Was confused on a point made in the second to final sentence on p. 12. It says “In all settings, the censoring rate was 30%”. Is this just set at 30% for the additional simulations, noting that you just described a setting in the prior paragraph with 10% expected censoring.  Please clarify, including in the text.
+
+8.	There is an interesting semantic point to raise. You comment on the approaches taking/accepting fewer variables as conservative and, thus, those accepting more variables as liberal. However, an argument can be made that a method making fewer decisions, i.e., not throwing out as many variables as another, as being more cautious/conservative.  It’s worth elaborating on this point.
+
+9.	In the application section, you mention fitting elastic net models to the gene expression dataset, since elastic net does a better job than traditional Lasso when modeling many correlated genes. However, there is evidence that newer Lasso approaches (e.g., Precision Lasso: Wang et al, 2019, Bioinformatics) outperform elastic net models in this setting, so you need to justify why only the elastic net is considered as the only alternative to traditional Lasso here.  Perhaps you can mention potential alternatives to elastic net as an improvement in Section 4, and include this as an area of future focus in the Discussion.
+
+10.	Regarding elastic net, it was not justified why other alpha values (beyond 0.3, 0.5, 0.7, and 0.9) are not considered in the analysis, such as a denser grid between 0.1 and 0.5, particularly after seeing the results (in Table 3) from the sparse selection of alpha values used. More alpha values should be considered.
+
+11.	There are several typos sprinkled throughout the paper, so a careful proofreading is required. Some examples include: (i) Section 3.1, second paragraph, where the phrase “the value of $\beta$ used the generate the data” requires editing. (ii) Table 1, Scenario 4, would seem to be for strong signal, not weak. (iii) p. 22, “more clear” should be changed to “clearer”.
+ 
+References:
+
+Harden JJ, Kropko J (2019). Simulating duration data for the Cox model, Political Science Research and Methods, 7(4): 921-928. https://doi.org/10.1017/psrm.2018.19
+
+Wang H, Lengerich BJ, Aragam B, Xing EP (2019). Precision Lasso: accounting for correlations and linear dependencies in high-dimensional genomic data. Bioinformatics, 35(7), 1181-1187.  https://doi.org/10.1093/bioinformatics/bty750
+
+
+Reviewer: 2
+
+Comments to the Author
+In this manuscript, the authors proposed two new cross-validation methods for Cox proportional hazards regression. 
+
+Comments:
+1.	Throughout the paper, the authors mainly (almost only) advocate for use of one of the proposed methods, “cross validated linear predictors”. Also based on numerical studies, I see no point in presenting the other proposed method, “cross validated deviance residual”. If the authors want to present both proposed methods, the cross validated deviance residual method should be better highlighted in numerical studies and Discussion for its advantages, which is not sufficiently illustrated in the current version of paper.
+
+2.	Presentation of simulation studies is quite confusing so should be streamlined. Specifically, data characteristics such as sample size and censoring rate are not consistent across simulation scenarios considered for each of different evaluation metrics in Section 3. 
+
+a)	I suggest presenting all the simulation scenarios varying different data characteristics at the beginning of Section 3 and discuss the comparative performance of the methods using each of model evaluation metrics in the following subsections. Addressing this comment will require additional computations for Sections 3.3-3.5
+b)	Considering the censoring rate of 50% in the application, I would consider scenarios with a higher censoring rate (say 50%) than what was considered in Sections 3.1 and 3.2 (10% and 30%). This will also help justify authors’ argument in P17L34. 
+c)	Table 2 – Why only present the number of true positives here? I suggest presenting other operating characteristics such as TPR, NPR, PPV, etc... Then the results might help better justify the findings from the application. For example, depending on the results, referring to the simulation results could strengthen the argument given at the end of the second paragraph in Discussion (which is quite speculative in my opinion).
+
+3.	Did the authors make the software available for the proposed approaches?
+
+4.	Many places require major/minor clarification and corrections:
+-	P3L33: define beta
+-	Distinguish between scalars and vectors by using bold letters for vectors. e.g. beta
+-	Figure 1: Since “Folder 1” is highlighted for each panel, I think the figure corresponds to the specific case with k=1. If so, k should be replaced by 1 in expressions.
+-	P8L5: I would not use “k” in the expression because k is used for k-th “fold” in this paper.
+-	Equation (6) and P8L10: I found the definition of eta^{CV} confusing. Do we not need some step for pooling cross-validated linear predictors over all K folds?
+-	Table 1: what are the numbers in parentheses? 
+-	Figure 4 caption: LOO is not defined
+-	Figure 4 caption: (blue line) -> (green line)?
+-	Figure 4 legend: The “Method” can mean two different things in this paper – either (four different CV methods) or (10 fold CV, LOOCV). Therefore, the legend is very confusing because “Basic” here actually means basic CV with 10 folds. Although the text in the paper clarifies this, tables and figures need to be understandable by themselves without reference to the text. 
+-	Table 4, what are “Selected” and “P” here?
