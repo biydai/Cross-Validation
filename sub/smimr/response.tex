@@ -3,9 +3,12 @@
 \usepackage[a4paper,margin = 1in]{geometry}
 \usepackage{enumitem}
 \usepackage{color}
+\usepackage{amssymb,amsmath}
 
 \newcommand{\re}{\textbf{Response: }}
 \newcommand\bd[1]{{\color{blue}#1}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\boldeta}{\boldsymbol\eta}
 
 \begin{document}
 
@@ -22,39 +25,39 @@ The authors compare four different cross-validation options for the important pr
 \begin{enumerate}[align = left]
 \item On p.4, roughly line 34, you have the statement “although the methods we analyze can be used with any penalty”.  This statement should be further elaborated, providing some tangible examples (including beyond the straightforward elastic net approach considered in the application analysis).
 
-\re \bd{should be easy to address. follow the suggestion to include a few examples of different penalties}
+\re Thank you for this comment. We provided a few examples of penalty functions, such as the elastic net penalty, smoothly clipped absolute deviations (SCAD) penalty, and minimax concave penalty (MCP) on page 4. We also included a paragraph for more general application in the Discussion section.
 
 \item Though you aim to make various considerations in your simulation study, the impact of this work may very well be limited given consideration of only exponential survival distribution and independent censoring. 
     \begin{enumerate}
         \item Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion.
         
-        \re \bd{selection among a few time-varying covariates (reviewer says one or two...) isn't really within the scope of the common application of penalized models. This could be an extension of using cross-validation methods, but doesn't really fit here... Maybe the reviewer means how the inference for the time-varying covariate would be different based on the other covariates that are selected? This is an estimation problem, also not within the scope of this work. Maybe in the application example we can look into whether we can include one time-varying covariate to illustrate?}
+        \re Thank you for making this comment. This work aims to make comparisons among cross-validation methods, which are more commonly used in the model selection context. In the Discussion section, we included a paragraph to state that the methods in this manuscript can be applied to any model selection process that involves the cox partial likelihood. While cross-validation and model selection play a key role for fitting penalized cox regression models, the process of fitting time-varying covariates and joint modeling with longitudinal covariates do not always involve model selection, therefore this extension is out of the main focus of this work. 
         
         \item Regarding distributional form, the exponential form here is quite limiting, and even common choices for a more complex distributional form, such as Weibull and Gompertz, might be considered too limiting. See, for example, Harden and Kropko (2019).
         
-        \re \bd{ for Cox models, as long as the underlying assumption for proportional hazard doesn't change, then the underlying distribution (I believe neither Weibull nor Gompertze violates proportional hazard assumption) used to simulate the data shouldn't matter}
+        \re Thank you for this comment. We included additional simulation results in the supplementary material where the baseline hazard is generated from Weibull and Gompertz distribution. The overall conclusions do not change for both of these more complex distributional form.
         
     \end{enumerate}
 
 \item Speaking of your Discussion section, there is no mention of any limitations of the current work. Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards. That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure. Some discussion on how to think about survival datasets with rare events should be commented on as well.
 
-\re \bd{Easy to address. To do: add following topics to Discussion: violation of linearity, non-proportional hazards, rare events}
+\re Thank you for the comments. The violation of linearity is usually handled via selecting or fitting a non-linear functional form for the covariates. The approaches that are discussed here are built upon Cox partial likelihood, which do not deal with non-proportional hazards and rare events, therefore those topics are out of the scope of this manuscript.  We included sentences in the Discussion section to address those points.
 
 \item On p.10, second sentence first paragraph of Section 3.1, should mention that the specifics of the different conditions considered (in the simulation study) are described below.
 
-\re \bd{Easy to address. To do: add more descriptions in that paragraph}
+\re Thank you for the suggestion. We added the sentence to the first paragraph of Section 3.1.
 
 \item In Section 3.1, p.11, first line (and in subsequent uses below), I would suggest adding a $t_0$ index to $y$, since the definition of $y$ is a direct function of $t_0$.
 
-\re \bd{Easy to address. To do: update notation in manuscript}
+\re Thank you for the suggestion. We added $t_0$ index to $y$ notation.
 
 \item And only looking at one $t_0$ in your simulation seems limiting here (for the Brier and KL score calculations). Though if just one choice is used it makes sense to use the median, explain why only one choice of $t_0$ is considered.  This would be especially true if you consider other more complicated survival distributions.
 
-\re \bd{looks like the reviewer really want to see more $t_0$ for these criteria. There is a global version for Brier and KL score that take into account all time points or look at interval of times. Maybe mention this Discussion as a supplement?}
+\re Thank you for this comment. We provided additional simulation results in the supplement with more choices of $t_0$ with Exponential, Weibull and Gompertz distributions. The overall conclusions do not change with various $t_0$.
 
 \item Was confused on a point made in the second to final sentence on p.12. It says “In all settings, the censoring rate was 30$\%$”. Is this just set at 30$\%$ for the additional simulations, noting that you just described a setting in the prior paragraph with 10$\%$ expected censoring. Please clarify, including in the text. 
 
-\re \bd{Easy to address. To do: clarify more in the writing}
+\re Thank you for catching this. We clarified in the writing that this censoring rate only applies to settings in Table 1.
 
 \item There is an interesting semantic point to raise. You comment on the approaches taking/accepting fewer variables as conservative and, thus, those accepting more variables as liberal. However, an argument can be made that a method making fewer decisions, i.e., not throwing out as many variables as another, as being more cautious/conservative. It’s worth elaborating on this point.
 
@@ -62,7 +65,7 @@ The authors compare four different cross-validation options for the important pr
 
 \item In the application section, you mention fitting elastic net models to the gene expression dataset, since elastic net does a better job than traditional Lasso when modeling many correlated genes. However, there is evidence that newer Lasso approaches (e.g., Precision Lasso: Wang et al, 2019, Bioinformatics) outperform elastic net models in this setting, so you need to justify why only the elastic net is considered as the only alternative to traditional Lasso here. Perhaps you can mention potential alternatives to elastic net as an improvement in Section 4, and include this as an area of future focus in the Discussion.
 
-\re \bd{similar to first comment. easy to address in the writing}
+\re Thank you for the suggeston. We included the precision lasso method in the discussion section.
 
 \item Regarding elastic net, it was not justified why other alpha values (beyond 0.3, 0.5, 0.7, and 0.9) are not considered in the analysis, such as a denser grid between 0.1 and 0.5, particularly after seeing the results (in Table 3) from the sparse selection of alpha values used. More alpha values should be considered.
 
@@ -71,7 +74,7 @@ The authors compare four different cross-validation options for the important pr
 \item There are several typos sprinkled throughout the paper, so a careful proofreading is required. Some examples include: (i) Section 3.1, second paragraph, where the phrase “the value of $\beta$ used the generate the data” requires editing. (ii) Table 1, Scenario 4, would seem to be for
 strong signal, not weak. (iii) p.22, “more clear” should be changed to “clearer”.
 
-\re \bd{to do: make edits as suggested}
+\re Thank you for catching those. We made edits in the manuscript.
 
 \end{enumerate}
 
@@ -92,7 +95,7 @@ In this manuscript, the authors proposed two new cross-validation methods for Co
 
     \item Considering the censoring rate of 50$\%$ in the application, I would consider scenarios with a higher censoring rate (say 50$\%$) than what was considered in Sections 3.1 and 3.2 (10$\%$ and 30$\%$). This will also help justify authors’ argument in P17L34. 
     
-    \re \bd{I remember looking at higher censorings before. the conclusion doesn't change with the censoring proportion. We can include this in the writing, rather than including more simulations}
+    \re We explored the impact of censoring in Section 3.1, varying from 40$\%$ and to 80$\%$. The censoring proportion has the greatest impact on the stability for the basic method, but does not impact the overall conclusions for the other methods.
 
     \item Table 2 - Why only present the number of true positives here? I suggest presenting other operating characteristics such as TPR, NPR, PPV, etc... Then the results might help better justify the findings from the application. For example, depending on the results, referring to the simulation results could strengthen the argument given at the end of the second paragraph in Discussion (which is quite speculative in my opinion).
     
@@ -102,50 +105,50 @@ In this manuscript, the authors proposed two new cross-validation methods for Co
 
 \item Did the authors make the software available for the proposed approaches?
 
-\re \bd{of course}
+\re The cross-validated linear predictor approach is implemented in the \texttt{ncvreg} package. The basic approach and the Verweij and Van Houwelingen's approach are available with the \texttt{glmnet} package. \bd{are we submitting the R codes as supplementary material?}
 
 \item Many places require major/minor clarification and corrections:
-\bd{To do: make those edits in the manuscript}
+\bd{the following points are all edited in the manuscript}
 \begin{itemize}[align = left]
 \item[-]  P3L33: define beta
 
-\re
+\re Thank you for the suggestion. We included definition for $\bbeta$ in this paragraph when first introducing the notation.
 
-\item[-] Distinguish between scalars and vectors by using bold letters for vectors. e.g. beta
+\item[-] Distinguish between scalars and vectors by using bold letters for vectors
 
-\re
+\re Thank you for the suggestion. We updated the manuscript by using bold betters for vectors.
 
 \item[-] Figure 1: Since “Folder 1” is highlighted for each panel, I think the figure corresponds to the specific case with k=1. If so, k should be replaced by 1 in expressions.
 
-\re
+\re Thank you for this careful observation. In the figure, we used "Folder 1" for the simplicity of drawing. However, replacing $k$ with $1$ in the expressions in the figure may cause confusion to the readers. Therefore, we added description in the caption of Figure 1 to clarify that this illustration represents $k = 1$.
 
 \item[-]  P8L5: I would not use “k” in the expression because k is used for k-th “fold” in this paper.
 
-\re
+\re Thank you for the suggestion. We replaced $k$ with $\tau$ in that formula
 
-\item[-]  Equation (6) and P8L10: I found the definition of $\eta^{CV}$ confusing. Do we not need some step for pooling cross-validated linear predictors over all K folds?
+\item[-]  Equation (6) and P8L10: I found the definition of $\hat{\eta}^{\text{cv}}$ confusing. Do we not need some step for pooling cross-validated linear predictors over all K folds?
 
-\re
-
+\re No additional steps are needed to pool the cross-validated linear predictors over all K folds. Please refer to the linear predictor diagram in Figure 1. Suppose each fold has $n_k$ number of observations and the complete data have $n = \sum_{k=1}^{K}  n_k$ observations. The cross-validated linear predictor of the $k$th folder $\hat{\boldeta}^{\text{cv}}_k$ is a vector of length $n_k$ and the complete set of cross-validated linear predictors $\hat{\boldeta}^{\text{cv}}$ has a length of $n$. We also updated the vector $\boldeta$ by using bold.
+ 
 \item[-]  Table 1: what are the numbers in parentheses? 
 
-\re
+\re The numbers in the parentheses are standard deviation across all simulated samples, which is a metric for simulation errors.
 
 \item[-] Figure 4 caption: LOO is not defined
 
-\re
+\re Thank you for the suggestion. We updated the caption to include defition for LOO.
 
-\item[-]  Figure 4 caption: (blue line) -> (green line)?
+\item[-]  Figure 4 caption: (blue line) should be (green line)?
 
-\re
+\re Thank you for catching this. We corrected this in the caption.
 
 \item[-]  Figure 4 legend: The “Method” can mean two different things in this paper – either (four different CV methods) or (10 fold CV, LOOCV). Therefore, the legend is very confusing because “Basic” here actually means basic CV with 10 folds. Although the text in the paper clarifies this, tables and figures need to be understandable by themselves without reference to the text.
 
-\re
+\re Thank you for the suggestion. We edited the caption of Figure 4 to clarify the legends.
 
 \item[-]  Table 4, what are “Selected” and “P” here?
 
-\re
+\re The column "Selected" represents the number of genes that are selected by the linear predictor cross-validation approach; each row represents the numbder of genes that fall into that function category. $p$ is the p-value. \bd{is the p-value adjusted? update $p$ with "p-value"?}
 
 \end{itemize}
 \end{enumerate}

@@ -13,7 +13,7 @@
 \usepackage{algpseudocode}
 \renewcommand{\algorithmcfname}{Procedure}
 \usepackage{bbold}
-
+\usepackage{pdflscape}
 
 \newcommand{\ith}{i^\textrm{th}}
 \newcommand{\CVE}{\textrm{CVE}}
@@ -165,8 +165,9 @@ The following simulation illustrates how the performance of cross-validated devi
 %We also included the cross-validated linear predictor approach (introduced in Section 2.3 in the paper) for comparison.
 The results of the simulation are given in the following table:
 
-\begin{table}[h]
+\begin{table}[!htb]
 \centering
+\caption{\label{Tab:base} Baseline Estimation Approaches for Deviation Residual}
 \begin{tabular}{lrrrrrr}
 \toprule
  & \multicolumn{6}{c}{$s$} \\ 
@@ -214,6 +215,236 @@ The data generating mechanism is similar to simulations presented in Figure 2 in
 \end{figure}	
 
 As is shown in the figures, across different correlation structure and strength of the correlation, the basic approach and the linear predictor appraoch had the best performance of having lower MSE, smaller Brier scores and higher C Index, whereas the V$\&$VH approach has the worst performance.
+
+\begin{landscape}
+
+\section{Simulations with Different Time Points for Brier Score and Kullbeck-Liebler Score}
+
+In the main manuscript, only median survival time was used to calcualate the Brier Score and Kullbeck-Liebler Score. Additional simulations are presented here to accomodate more time points. More specifically, the $25$ and $75$ percentile of all survival times are selected for each simulated dataset. The overall conclusion remains the same when Brier Score and Kullbeck-Liebler Score are evaluated at different time points.
+
+\begin{table}[h]
+
+\setlength{\tabcolsep}{3pt}
+
+\caption{\label{Tab:exp} Exponential Distribution}
+\centering
+\begin{tabular}[t]{lccccccccc}
+\toprule
+ Method & $\lambda$ & log(MSE Ratio) & Brier (25$\%$) & Brier(Median) & Brier(75$\%$) & KL (25$\%$)& KL (Median) & KL (75$\%$) & C Index\\
+\midrule
+&\multicolumn{9}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+\cline{2-10}
+V VH  & 0.102 (0.030) & 1.537 (0.880) & 0.184 (0.007) & 0.245 (0.014) & 0.183 (0.014) & 0.556 (0.023) & 0.683 (0.030) & 0.547 (0.034) & 0.609 (0.043) \\    
+Standard  & 0.093 (0.033) & 1.537 (0.876) & 0.184 (0.007) & 0.244 (0.014) & 0.183 (0.014) & 0.556 (0.023) & 0.683 (0.031) & 0.546 (0.035) & 0.611 (0.039) \\    
+LinearPred  & 0.095 (0.032) & 1.521 (0.877) & 0.184 (0.007) & 0.244 (0.014) & 0.182 (0.014) & 0.555 (0.023) & 0.682 (0.030) & 0.545 (0.034) & 0.610 (0.041) \\    
+DevResid  & 0.103 (0.029) & 1.534 (0.870) & 0.184 (0.007) & 0.245 (0.014) & 0.183 (0.014) & 0.556 (0.023) & 0.683 (0.029) & 0.546 (0.034) & 0.610 (0.041) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+\cline{2-10}
+ V VH  & 0.070 (0.011) & 1.754 (0.882) & 0.147 (0.010) & 0.176 (0.012) & 0.128 (0.009) & 0.454 (0.025) & 0.526 (0.030) & 0.396 (0.027) & 0.750 (0.014) \\  
+ Standard  & 0.066 (0.011) & 1.707 (0.879) & 0.147 (0.009) & 0.176 (0.012) & 0.129 (0.010) & 0.453 (0.024) & 0.525 (0.030) & 0.396 (0.028) & 0.749 (0.014) \\   
+ LinearPred  & 0.066 (0.010) & 1.709 (0.875) & 0.147 (0.009) & 0.176 (0.012) & 0.128 (0.009) & 0.453 (0.024) & 0.525 (0.029) & 0.395 (0.027) & 0.749 (0.014) \\  
+ DevResid  & 0.094 (0.011) & 2.123 (0.804) & 0.151 (0.010) & 0.180 (0.013) & 0.130 (0.010) & 0.463 (0.024) & 0.538 (0.030) & 0.406 (0.028) & 0.751 (0.016) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+\cline{2-10}
+ V VH  & 0.126 (0.019) & 2.927 (0.376) & 0.188 (0.005) & 0.252 (0.010) & 0.191 (0.011) & 0.564 (0.016) & 0.697 (0.022) & 0.569 (0.025) & 0.587 (0.042) \\
+ Standard  & 0.103 (0.021) & 2.846 (0.403) & 0.184 (0.007) & 0.243 (0.013) & 0.182 (0.012) & 0.554 (0.019) & 0.679 (0.028) & 0.547 (0.031) & 0.604 (0.037) \\
+ LinearPred  & 0.105 (0.021) & 2.853 (0.399) & 0.185 (0.006) & 0.244 (0.013) & 0.183 (0.012) & 0.555 (0.019) & 0.681 (0.028) & 0.548 (0.030) & 0.603 (0.038) \\
+ DevResid  & 0.107 (0.020) & 2.863 (0.393) & 0.185 (0.006) & 0.245 (0.012) & 0.183 (0.012) & 0.556 (0.018) & 0.682 (0.026) & 0.550 (0.029) & 0.603 (0.038) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, strong signal}\\
+\cline{2-10}
+ V VH  & 0.083 (0.011) & 3.741 (0.527) & 0.145 (0.017) & 0.173 (0.027) & 0.127 (0.019) & 0.443 (0.046) & 0.52 (0.064) & 0.395 (0.055) & 0.768 (0.043) \\
+ Standard  & 0.060 (0.008) & 3.421 (0.545) & 0.131 (0.014) & 0.154 (0.018) & 0.117 (0.013) & 0.404 (0.037) & 0.467 (0.046) & 0.365 (0.040) & 0.781 (0.027) \\
+ LinearPred  & 0.061 (0.007) & 3.444 (0.538) & 0.131 (0.014) & 0.154 (0.018) & 0.117 (0.013) & 0.405 (0.037) & 0.468 (0.046) & 0.363 (0.039) & 0.781 (0.028) \\ 
+ DevResid  & 0.077 (0.021) & 3.668 (0.512) & 0.140 (0.015) & 0.165 (0.024) & 0.123 (0.019) & 0.429 (0.040) & 0.501 (0.057) & 0.380 (0.053) & 0.772 (0.053) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\section{Simulations with Weibull and Gompertz Distribution}
+
+In the main manuscript, the baseline hazard for all simulation experiments are generated using the exponential distribution for simplicity. More simulation results are presented in the supplement for scenarios where Weibull and Gompertz distributions are used.
+
+For the Weibull distribution, the following parameterization is used for the hazard function:
+$$h(t) = \frac{a}{b}(\frac{t}{b})^{a - 1}\exp{(x^{T}\beta)}, $$
+where $a$ represents the shape parameter and $b$ represents the scale parameter. This is same as the parameterization used in R.
+
+
+
+%
+%\begin{table}[h]
+%
+%\setlength{\tabcolsep}{3pt}
+%
+%\caption{\label{Tab:wb1} Weibull Distribution, scale = 1, shape = 0.85}
+%\centering
+%\begin{tabular}[t]{lccccccccc}
+%\toprule
+% Method & $\lambda$ & log(MSE Ratio) & Brier (25$\%$) & Brier(Median) & Brier(75$\%$) & KL (25$\%$)& KL (Median) & KL (75$\%$) & C Index\\
+%\midrule
+%&\multicolumn{9}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+%\cline{2-10}
+%V VH  & 0.096 (0.026) & 1.502 (0.89) & 0.185 (0.006) & 0.244 (0.015) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.032) & 0.545 (0.034) & 0.614 (0.03) \\ 
+%Standard  & 0.089 (0.03) & 1.479 (0.873) & 0.185 (0.007) & 0.243 (0.015) & 0.182 (0.013) & 0.557 (0.021) & 0.681 (0.032) & 0.544 (0.033) & 0.615 (0.031) \\ 
+%LinearPred  & 0.09 (0.027) & 1.482 (0.871) & 0.185 (0.007) & 0.243 (0.014) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.031) & 0.544 (0.033) & 0.615 (0.03) \\  
+%DevResid  & 0.098 (0.025) & 1.503 (0.869) & 0.185 (0.006) & 0.244 (0.015) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.031) & 0.545 (0.033) & 0.615 (0.03) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+%\cline{2-10}
+% V VH  & 0.07 (0.011) & 1.733 (0.83) & 0.147 (0.009) & 0.176 (0.012) & 0.128 (0.009) & 0.453 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.75 (0.013) \\   
+%Standard  & 0.066 (0.011) & 1.693 (0.832) & 0.147 (0.009) & 0.176 (0.011) & 0.128 (0.009) & 0.452 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.749 (0.014) \\ 
+%LinearPred  & 0.067 (0.01) & 1.699 (0.834) & 0.147 (0.009) & 0.176 (0.011) & 0.128 (0.009) & 0.452 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.749 (0.014) \\    
+%DevResid  & 0.096 (0.013) & 2.14 (0.799) & 0.151 (0.009) & 0.181 (0.012) & 0.13 (0.009) & 0.463 (0.022) & 0.539 (0.028) & 0.406 (0.026) & 0.751 (0.013) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+%\cline{2-10}
+%V VH  & 0.126 (0.019) & 2.948 (0.442) & 0.188 (0.005) & 0.252 (0.011) & 0.191 (0.011) & 0.564 (0.016) & 0.696 (0.023) & 0.569 (0.026) & 0.585 (0.043) \\   
+%Standard  & 0.103 (0.024) & 2.866 (0.465) & 0.184 (0.006) & 0.243 (0.014) & 0.183 (0.012) & 0.555 (0.019) & 0.68 (0.029) & 0.548 (0.03) & 0.6 (0.041) \\  
+%LinearPred  & 0.104 (0.024) & 2.869 (0.464) & 0.185 (0.006) & 0.244 (0.014) & 0.183 (0.012) & 0.556 (0.019) & 0.68 (0.029) & 0.549 (0.03) & 0.6 (0.041) \\   
+%DevResid  & 0.107 (0.023) & 2.88 (0.458) & 0.185 (0.006) & 0.244 (0.013) & 0.184 (0.012) & 0.556 (0.019) & 0.682 (0.028) & 0.55 (0.03) & 0.599 (0.041) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, strong signal}\\
+%\cline{2-10}
+% V VH  & 0.082 (0.012) & 3.742 (0.551) & 0.146 (0.02) & 0.173 (0.029) & 0.126 (0.02) & 0.447 (0.051) & 0.519 (0.068) & 0.393 (0.058) & 0.766 (0.047) \\  
+%Standard  & 0.059 (0.009) & 3.417 (0.58) & 0.133 (0.015) & 0.154 (0.02) & 0.117 (0.014) & 0.409 (0.041) & 0.467 (0.05) & 0.366 (0.044) & 0.78 (0.03) \\   
+%LinearPred  & 0.06 (0.009) & 3.437 (0.581) & 0.133 (0.015) & 0.154 (0.02) & 0.117 (0.014) & 0.41 (0.042) & 0.468 (0.051) & 0.365 (0.043) & 0.78 (0.031) \\
+%DevResid  & 0.084 (0.034) & 3.704 (0.528) & 0.144 (0.02) & 0.17 (0.033) & 0.126 (0.026) & 0.441 (0.053) & 0.511 (0.075) & 0.39 (0.071) & 0.758 (0.079) \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
+%
+
+\begin{table}[h]
+\setlength{\tabcolsep}{3pt}
+\caption{\label{Tab:wb2} Weibull Distribution, scale = 1, shape = 1.5}
+\centering
+\begin{tabular}[t]{lccccccccc}
+\toprule
+ Method & $\lambda$ & log(MSE Ratio) & Brier (25$\%$) & Brier(Median) & Brier(75$\%$) & KL (25$\%$)& KL (Median) & KL (75$\%$) & C Index\\
+\midrule
+&\multicolumn{9}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+\cline{2-10}
+V VH  & 0.096 (0.026) & 1.502 (0.89) & 0.185 (0.006) & 0.244 (0.015) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.032) & 0.545 (0.034) & 0.614 (0.03) \\
+Standard  & 0.089 (0.03) & 1.479 (0.873) & 0.184 (0.007) & 0.243 (0.015) & 0.182 (0.013) & 0.557 (0.021) & 0.681 (0.032) & 0.544 (0.033) & 0.615 (0.031) \\
+LinearPred  & 0.09 (0.027) & 1.482 (0.871) & 0.185 (0.007) & 0.243 (0.014) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.031) & 0.544 (0.033) & 0.615 (0.03) \\
+DevResid  & 0.098 (0.025) & 1.503 (0.869) & 0.185 (0.006) & 0.244 (0.015) & 0.182 (0.014) & 0.558 (0.02) & 0.681 (0.031) & 0.545 (0.033) & 0.615 (0.03) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+\cline{2-10}
+ V VH  & 0.07 (0.011) & 1.733 (0.83) & 0.147 (0.009) & 0.176 (0.012) & 0.128 (0.009) & 0.453 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.75 (0.013) \\ 
+Standard  & 0.066 (0.011) & 1.693 (0.832) & 0.147 (0.009) & 0.176 (0.011) & 0.128 (0.009) & 0.452 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.749 (0.014) \\
+ LinearPred  & 0.067 (0.01) & 1.699 (0.834) & 0.147 (0.009) & 0.176 (0.011) & 0.128 (0.009) & 0.452 (0.023) & 0.525 (0.028) & 0.395 (0.026) & 0.749 (0.014) \\
+ DevResid  & 0.096 (0.013) & 2.14 (0.799) & 0.151 (0.009) & 0.181 (0.012) & 0.13 (0.009) & 0.463 (0.022) & 0.539 (0.028) & 0.406 (0.026) & 0.751 (0.013) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+\cline{2-10}
+V VH  & 0.126 (0.019) & 2.948 (0.442) & 0.188 (0.005) & 0.252 (0.011) & 0.191 (0.011) & 0.564 (0.016) & 0.696 (0.023) & 0.569 (0.026) & 0.585 (0.043) \\ 
+Standard  & 0.103 (0.024) & 2.866 (0.465) & 0.184 (0.006) & 0.243 (0.014) & 0.183 (0.012) & 0.555 (0.019) & 0.68 (0.029) & 0.548 (0.03) & 0.6 (0.041) \\ 
+LinearPred  & 0.104 (0.024) & 2.869 (0.464) & 0.185 (0.006) & 0.244 (0.014) & 0.183 (0.012) & 0.556 (0.019) & 0.68 (0.029) & 0.549 (0.03) & 0.6 (0.041) \\   
+ DevResid  & 0.107 (0.023) & 2.88 (0.458) & 0.185 (0.006) & 0.244 (0.013) & 0.184 (0.012) & 0.556 (0.019) & 0.682 (0.028) & 0.55 (0.03) & 0.599 (0.041) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, strong signal}\\
+\cline{2-10}
+ V VH  & 0.082 (0.012) & 3.74 (0.554) & 0.145 (0.019) & 0.173 (0.029) & 0.127 (0.02) & 0.443 (0.05) & 0.519 (0.068) & 0.395 (0.058) & 0.766 (0.047) \\  
+Standard  & 0.059 (0.009) & 3.414 (0.582) & 0.131 (0.015) & 0.154 (0.02) & 0.117 (0.014) & 0.405 (0.041) & 0.467 (0.05) & 0.367 (0.044) & 0.78 (0.03) \\   
+LinearPred  & 0.06 (0.009) & 3.435 (0.583) & 0.132 (0.015) & 0.154 (0.02) & 0.117 (0.014) & 0.406 (0.041) & 0.468 (0.051) & 0.366 (0.043) & 0.78 (0.031) \\   
+ DevResid  & 0.074 (0.008) & 3.66 (0.51) & 0.139 (0.014) & 0.163 (0.021) & 0.121 (0.015) & 0.426 (0.038) & 0.494 (0.049) & 0.375 (0.042) & 0.777 (0.036) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For the Gompertz distribution, the following parameterization is used for the hazard function:
+$$h(t) = a e^{b t}e^{x^{T}\beta}, $$
+where $a$ represents the scale parameter and $b$ represents the rate parameter. 
+
+The overall conclusions from the simulation experiments remain the same. This is no surprise as both Weibull and Gompertz distribution follow the proportional hazard assumption, which is the underlying assumption for Cox Regression.
+
+\begin{table}[h]
+
+\setlength{\tabcolsep}{3pt}
+
+\caption{\label{Tab:sim} Gompertz Distribution, rate = 2, shape = 1}
+\centering
+\begin{tabular}[t]{lccccccccc}
+\toprule
+ Method & $\lambda$ & log(MSE Ratio) & Brier (25$\%$) & Brier(Median) & Brier(75$\%$) & KL (25$\%$)& KL (Median) & KL (75$\%$) & C Index\\
+\midrule
+&\multicolumn{9}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+\cline{2-10}
+V VH  & 0.095 (0.028) & 1.464 (0.831) & 0.185 (0.007) & 0.242 (0.015) & 0.183 (0.014) & 0.558 (0.021) & 0.679 (0.032) & 0.546 (0.034) & 0.612 (0.036) \\
+Standard  & 0.089 (0.03) & 1.472 (0.817) & 0.184 (0.007) & 0.242 (0.015) & 0.183 (0.014) & 0.558 (0.022) & 0.679 (0.033) & 0.547 (0.035) & 0.612 (0.036) \\
+LinearPred  & 0.088 (0.026) & 1.444 (0.819) & 0.184 (0.007) & 0.242 (0.015) & 0.182 (0.013) & 0.557 (0.022) & 0.678 (0.032) & 0.545 (0.034) & 0.614 (0.034) \\
+DevResid  & 0.097 (0.026) & 1.449 (0.83) & 0.185 (0.007) & 0.242 (0.014) & 0.182 (0.013) & 0.557 (0.021) & 0.678 (0.031) & 0.545 (0.032) & 0.613 (0.035) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+\cline{2-10}
+V VH  & 0.071 (0.011) & 1.68 (0.895) & 0.147 (0.009) & 0.177 (0.013) & 0.129 (0.01) & 0.452 (0.024) & 0.527 (0.032) & 0.398 (0.029) & 0.749 (0.015) \\ 
+Standard  & 0.066 (0.011) & 1.65 (0.865) & 0.146 (0.009) & 0.177 (0.012) & 0.129 (0.01) & 0.451 (0.023) & 0.526 (0.031) & 0.398 (0.028) & 0.748 (0.015) \\ 
+LinearPred  & 0.067 (0.011) & 1.65 (0.875) & 0.146 (0.009) & 0.177 (0.013) & 0.129 (0.01) & 0.451 (0.024) & 0.526 (0.032) & 0.398 (0.03) & 0.748 (0.015) \\
+ DevResid  & 0.095 (0.012) & 2.049 (0.817) & 0.151 (0.009) & 0.181 (0.014) & 0.131 (0.01) & 0.461 (0.022) & 0.539 (0.031) & 0.407 (0.03) & 0.75 (0.016) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+\cline{2-10}
+V VH  & 0.127 (0.019) & 2.973 (0.441) & 0.188 (0.005) & 0.252 (0.011) & 0.191 (0.012) & 0.563 (0.015) & 0.697 (0.023) & 0.569 (0.028) & 0.585 (0.043) \\ 
+Standard  & 0.109 (0.025) & 2.91 (0.469) & 0.185 (0.007) & 0.245 (0.014) & 0.185 (0.013) & 0.556 (0.019) & 0.683 (0.029) & 0.553 (0.034) & 0.598 (0.041) \\
+LinearPred  & 0.108 (0.025) & 2.909 (0.467) & 0.185 (0.007) & 0.245 (0.014) & 0.185 (0.013) & 0.556 (0.019) & 0.683 (0.029) & 0.553 (0.034) & 0.598 (0.041) \\  
+DevResid  & 0.111 (0.024) & 2.919 (0.464) & 0.185 (0.006) & 0.246 (0.014) & 0.185 (0.013) & 0.557 (0.019) & 0.685 (0.028) & 0.554 (0.033) & 0.596 (0.041) \\
+\addlinespace
+&\multicolumn{9}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, strong signal}\\
+\cline{2-10}
+V VH  & 0.082 (0.011) & 3.78 (0.559) & 0.144 (0.018) & 0.173 (0.027) & 0.127 (0.019) & 0.442 (0.048) & 0.519 (0.064) & 0.395 (0.055) & 0.769 (0.042) \\ 
+Standard  & 0.059 (0.007) & 3.447 (0.589) & 0.13 (0.014) & 0.152 (0.017) & 0.116 (0.012) & 0.401 (0.038) & 0.464 (0.044) & 0.364 (0.037) & 0.783 (0.026) \\    
+ LinearPred  & 0.061 (0.007) & 3.473 (0.583) & 0.131 (0.014) & 0.153 (0.017) & 0.116 (0.012) & 0.403 (0.039) & 0.465 (0.045) & 0.363 (0.037) & 0.783 (0.027) \\ 
+ DevResid  & 0.075 (0.013) & 3.697 (0.535) & 0.138 (0.014) & 0.163 (0.019) & 0.121 (0.014) & 0.425 (0.036) & 0.495 (0.045) & 0.376 (0.039) & 0.778 (0.036) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%\begin{table}[!htb]
+%
+%\setlength{\tabcolsep}{3pt}
+%
+%\caption{\label{Tab:sim} Gompertz Distribution, scale = 1, shape = 1.5}
+%\centering
+%\begin{tabular}[t]{lccccccccc}
+%\toprule
+% Method & $\lambda$ & log(MSE Ratio) & Brier (25$\%$) & Brier(Median) & Brier(75$\%$) & KL (25$\%$)& KL (Median) & KL (75$\%$) & C Index\\
+%\midrule
+%&\multicolumn{9}{c}{\textbf{Scenario 1}: n = 150, p = 50, 5 non-zero features, weak signal}\\
+%\cline{2-10}
+% V VH  & 0.095 (0.028) & 1.464 (0.831) & 0.185 (0.007) & 0.242 (0.015) & 0.183 (0.014) & 0.558 (0.021) & 0.679 (0.032) & 0.546 (0.034) & 0.612 (0.036) \\ 
+% Standard  & 0.089 (0.03) & 1.472 (0.817) & 0.184 (0.007) & 0.242 (0.015) & 0.183 (0.014) & 0.558 (0.022) & 0.679 (0.033) & 0.547 (0.035) & 0.612 (0.036) \\ 
+% LinearPred  & 0.088 (0.026) & 1.444 (0.819) & 0.184 (0.007) & 0.242 (0.015) & 0.182 (0.013) & 0.557 (0.022) & 0.678 (0.032) & 0.545 (0.034) & 0.614 (0.034) \\   
+% DevResid  & 0.097 (0.026) & 1.449 (0.83) & 0.185 (0.007) & 0.242 (0.014) & 0.182 (0.013) & 0.557 (0.021) & 0.678 (0.031) & 0.545 (0.032) & 0.613 (0.035) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 2}: n = 150, p = 50, 5 non-zero features, strong signal}\\
+%\cline{2-10}
+% V VH  & 0.071 (0.011) & 1.68 (0.895) & 0.147 (0.009) & 0.177 (0.013) & 0.129 (0.01) & 0.452 (0.024) & 0.527 (0.032) & 0.398 (0.029) & 0.749 (0.015) \\ 
+%Standard  & 0.066 (0.011) & 1.65 (0.865) & 0.146 (0.009) & 0.177 (0.012) & 0.129 (0.01) & 0.451 (0.023) & 0.526 (0.031) & 0.398 (0.028) & 0.748 (0.015) \\ 
+% LinearPred  & 0.067 (0.011) & 1.65 (0.875) & 0.146 (0.009) & 0.177 (0.013) & 0.129 (0.01) & 0.451 (0.024) & 0.526 (0.032) & 0.398 (0.03) & 0.748 (0.015) \\   
+%DevResid  & 0.095 (0.012) & 2.049 (0.817) & 0.151 (0.009) & 0.181 (0.014) & 0.131 (0.01) & 0.461 (0.022) & 0.539 (0.031) & 0.407 (0.03) & 0.75 (0.016) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 3}: n = 400, p = 10000, 20 non-zero features, weak signal}\\
+%\cline{2-10}
+% V VH  & 0.127 (0.019) & 2.973 (0.441) & 0.188 (0.005) & 0.252 (0.011) & 0.191 (0.012) & 0.563 (0.015) & 0.697 (0.023) & 0.569 (0.028) & 0.585 (0.043) \\  
+%Standard  & 0.109 (0.025) & 2.91 (0.469) & 0.185 (0.007) & 0.245 (0.014) & 0.185 (0.013) & 0.556 (0.019) & 0.683 (0.029) & 0.553 (0.034) & 0.598 (0.041) \\  
+% LinearPred  & 0.108 (0.025) & 2.909 (0.467) & 0.185 (0.007) & 0.245 (0.014) & 0.185 (0.013) & 0.556 (0.019) & 0.683 (0.029) & 0.553 (0.034) & 0.598 (0.041) \\  
+% DevResid  & 0.111 (0.024) & 2.919 (0.464) & 0.185 (0.006) & 0.246 (0.014) & 0.185 (0.013) & 0.557 (0.019) & 0.685 (0.028) & 0.554 (0.033) & 0.596 (0.041) \\
+%\addlinespace
+%&\multicolumn{9}{c}{\textbf{Scenario 4}: n = 400, p = 10000, 20 non-zero features, strong signal}\\
+%\cline{2-10}
+% V VH  & 0.082 (0.011) & 3.78 (0.559) & 0.144 (0.018) & 0.173 (0.027) & 0.127 (0.019) & 0.442 (0.048) & 0.519 (0.064) & 0.395 (0.055) & 0.769 (0.042) \\  
+%Standard  & 0.059 (0.007) & 3.447 (0.589) & 0.13 (0.014) & 0.152 (0.017) & 0.116 (0.012) & 0.401 (0.038) & 0.464 (0.044) & 0.364 (0.037) & 0.783 (0.026) \\ 
+%LinearPred  & 0.061 (0.007) & 3.473 (0.583) & 0.131 (0.014) & 0.153 (0.017) & 0.116 (0.012) & 0.403 (0.039) & 0.465 (0.045) & 0.363 (0.037) & 0.783 (0.027) \\  
+%DevResid  & 0.075 (0.013) & 3.697 (0.535) & 0.138 (0.014) & 0.163 (0.019) & 0.121 (0.014) & 0.425 (0.036) & 0.495 (0.045) & 0.376 (0.039) & 0.778 (0.036) \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
+
+\end{landscape}
 
 \bibliographystyle{ims-nourl}
 \bibliography{articles}
