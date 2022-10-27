@@ -10,7 +10,7 @@ One basic approach is to simply calculate the partial likelihood based on the ob
 
 To overcome this drawback, an alternative approach was proposed by \citet{Verweij1993}.  Their approach, which we describe in detail in Section~\ref{Sec:cox-cv-existing}, stabilizes the cross-validated log likelihood, enabling its use even when the number of subjects in each fold is small.  This approach has been widely used and is the default approach to cross-validation in many software programs, such as the R package {\tt glmnet} \citep{glmnet}.  Although this approach fixes the stability issue, we demonstrate here that in practice, it tends to behave conservatively in terms of model selection (throughout, we use the term ``conservative'' to mean a tendency to select a model with few predictors, or even the null model).
 
-Another approach, more common in the random survival forest literature than the penalized regression literature, is to calculate deviance residuals \citep{Therneau1990}. As noted earlier, if we do not estimate the baseline hazard, then we cannot predict absolute failure time. However, if we combine Cox regression with an estimate of the baseline hazard, such as the Nelson-Aalen estimator \citep{nelson1969, aalen1978}, then we can obtain residuals based on deviance. These residuals can then be used like conventional residuals to estimate cross-validation error. However, we find this approach also to be rather conservative.
+Another approach, more common in the random survival forest literature than the penalized regression literature, is to calculate deviance residuals. As noted earlier, if we do not estimate the baseline hazard, then we cannot predict absolute failure time. However, if we combine Cox regression with an estimate of the baseline hazard, such as the Nelson-Aalen estimator \citep{nelson1969, aalen1978}, then we can obtain residuals based on deviance. These residuals can then be used like conventional residuals to estimate cross-validation error. However, we find this approach also to be rather conservative.
 
 In this paper, we propose an alternative way to carry out cross validation for Cox regression. Instead of applying cross-validation to the partial likelihood directly, we propose applying cross validation to the linear predictors of the regression model. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for LASSO penalized Cox regression in both low- and high-dimensional settings. We find that the linear predictor approach avoids the conservatism of the deviance residual and \citet{Verweij1993} approaches as well as the numerical instability of ordinary cross-validation. The proposed approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to a high-dimensional study of gene expression and survival in lung cancer patients.
 
@@ -76,11 +76,28 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 \end{figure}	
 
 %%%%%%%%%%%%%%%%%%%%
+\subsection{Cross validated deviance residuals}
+%%%%%%%%%%%%%%%%%%%%
+
+The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model, which prevents us from calculating prediction errors (residuals).  However, if one takes additional steps to estimate the baseline hazard in addition to estimating the regression coefficients, then such residuals can be calculated.  The deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}, is a natural candidate for quantifying prediction error to use in quantifying the cross-validation error. Originally proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure, particularly in the random survival forest literature \citep{LeBlanc1992, Ishwaran2004}. In the Cox model, the Martingale residuals $\{m_i\}_{i=1}^n$ and deviance residuals $\{d_i\}_{i=1}^n$ are given by
+\begin{align}
+  \label{eq:res-m}
+  m_{i} &= \delta_{i} - H_{0}(t_{i})\exp(X_i\Tr\bbeta), \\
+  \label{eq:res-d}
+  d_{i} &= \text{sign}(m_{i})\sqrt{-2(m_i + \delta_{i}\log(\delta_{i} - m_i))}.  
+\end{align}
+where $H_0$ is the cumulative baseline hazard.
+
+In order to obtain a cross-validated version of these residuals, we would replace $\bbeta$ in the above equations with $\hat{\bbeta}^{-k}$. Typically the Nelson-Aalen estimator is used to estimate $H_0$, although other approaches are also possible, such as the Breslow and Kalbfleisch-Prentice estimators \citep{Breslow1972, Kalbfleisch2011}. These are described in greater detail in the supplementary materials, along with the results of a simulation study comparing them. The Nelson-Aalen estimate of the baseline hazard performed best in these simulations, and also seems to be the most common choice in the literature, so we use this estimate to construct cross-validated deviance residuals throughout the rest of the paper.
+
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+
+%%%%%%%%%%%%%%%%%%%%
 \subsection{Cross validated linear predictors}
 \label{Sec:linear-predictor}
 %%%%%%%%%%%%%%%%%%%%
 
-Both of the methods in Section~\ref{Sec:cox-cv-existing} consist of adding together log partial likelihood measures from each fold.  An alternative method is to obtain linear predictors for each fold, then combine these linear predictors to calculate a partial likelihood. We refer to this method as the \emph{cross-validated linear predictors} approach. To be more specific, we would first obtain $\hat{\bbeta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
+Both of the cross-validation approaches in Section~\ref{Sec:cox-cv-existing} consist of adding together log partial likelihood measures from each fold.  An alternative method is to obtain linear predictors for each fold, then combine these linear predictors to calculate a partial likelihood. We refer to this method as the \emph{cross-validated linear predictors} approach. To be more specific, we would first obtain $\hat{\bbeta}^{-k}$ from training set $T_{k}$; then the cross-validated linear predictors can be calculated for each observation $i$ from the test set $D_k$:  
 \begin{equation}
   \label{eq:cv-lp}
   \hat{\eta}^{\text{cv}}_{i} = X_{i}\Tr\hat{\bbeta}^{-k}
@@ -92,23 +109,6 @@ After repeating this for all K folds, a complete set of cross-validated linear p
 We define the cross-validation error evaluated with cross-validated linear predictors to be $$\CVE = - 2 \log L(\hat{\boldeta}^{\text{cv}}).$$
   
 This idea of obtaining linear predictors using test sets, then constructing the partial likelihood after pooling all linear predictors together is implemented in R package \texttt{ncvreg} \citep{ncvreg}. This idea has also appeared in the cross-validation literature for quantities that cannot be evaluated on only a subset of the data, such as AUC in logistic and Cox regression models \citep{Parker2007,Simon2011a,Subramanian2011}.
-
-%%%%%%%%%%%%%%%%%%%%
-\subsection{Cross validated deviance residuals}
-%%%%%%%%%%%%%%%%%%%%
-
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model, which prevents us from calculating prediction errors (residuals).  However, if one takes additional steps to estimate the baseline hazard in addition to estimating the coefficients, then such residuals can be calculated.  The deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}, is a natural candidate for quantifying prediction error to use in quantifying the cross-validation error.   Originally proposed for model diagnostics, deviance residuals have also been occasionally used as a predictive accuracy measure \citep{Therneau2018}.  In the Cox model, the Martingale residuals $\{m_i\}_{i=1}^n$ and deviance residuals $\{d_i\}_{i=1}^n$ are given by
-\begin{align}
-  \label{eq:res-m}
-  m_{i} &= \delta_{i} - H_{0}(t_{i})\exp(X_i\Tr\bbeta), \\
-  \label{eq:res-d}
-  d_{i} &= \text{sign}(m_{i})\sqrt{-2(m_i + \delta_{i}\log(\delta_{i} - m_i))}.  
-\end{align}
-where $H_0$ is the cumulative baseline hazard.
-
-In order to obtain a cross-validated version of these residuals, we would replace $\bbeta$ in the above equations with $\hat{\bbeta}^{-k}$.  However, it is not obvious how to obtain a cross-validated version of $H_0$, or to what extent this is necessary.  We experimented with three versions of cross-validated deviance residuals, each with a different choice for $H_0$: (1) The Nelson-Aalen estimator, which does not involve the covariates and is therefore the same across cross-validation folds, (2) the Breslow estimator \citep{Breslow1972}, and (3) the Kalbfleisch-Prentice estimator \citep{Kalbfleisch2011}.  Details for the three approaches are given in the supplementary materials, along with the results of a simulation study comparing them.  Because the Nelson-Aalen baseline hazard performed best in all situations, we use this estimate to construct the cross-validated deviance residuals throughout the rest of the paper.
-
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
