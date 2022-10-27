@@ -1,4 +1,4 @@
-bib <- readLines('../../articles.bib')
+bib <- readLines('../../../articles.bib')
 bib <- bib[!grepl('eprint', bib)]
 url <- grepl("url\\s*=", bib)
 rproj <- grepl("R-project\\.org", bib)

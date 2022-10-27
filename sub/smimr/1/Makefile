@@ -1,6 +1,6 @@
-coxcv.pdf: smimr.tex ../../main.tex
-	cp ../../main.tex ./
-	cp ../../manuscript_figure/*.png ./
+coxcv.pdf: smimr.tex ../../../main.tex
+	cp ../../../main.tex ./
+	cp ../../../manuscript_figure/*.png ./
 	Rscript scrub-url.R
 	sed -i 's/\\citet{Verweij1993}/Verweij and Van Houwelingen\\citep{Verweij1993}/' main.tex
 	sed -i 's/\\citet{shedden2008gene}/Shedden et al.\\citep{shedden2008gene}/' main.tex
@@ -10,7 +10,7 @@ coxcv.pdf: smimr.tex ../../main.tex
 	grep --color includegraphics coxcv.tex
 
 supp.pdf: ../../supplementary.tex
-	cd ../../;\
+	cd ../../../;\
 	singletex supplementary.tex sub/smimr/supp.tex
 	sed -i 's/\\bibliographystyle{ims-nourl}/\\bibliographystyle{sageV}/' supp.tex
 	cleantex -beq supp

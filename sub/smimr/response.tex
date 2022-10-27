@@ -6,40 +6,33 @@
 \usepackage{amssymb,amsmath}
 
 \newcommand{\re}{\textbf{Response: }}
+\newcommand\pb[1]{{\color{red}#1}}
 \newcommand\bd[1]{{\color{blue}#1}}
 \newcommand{\bbeta}{\boldsymbol{\beta}}
 \newcommand{\boldeta}{\boldsymbol\eta}
 
 \begin{document}
 
-\section*{Response to Reviewers}
-\subsection*{Manuscript ID SMM-22-0007: Cross Validation Approaches for
-Penalized Cox Regression}
+\subsubsection*{Response to comments by Reviewer \#1}
 
-The authors wish to thank the reviewers for their careful reviews and thoughtful comments.
-
-\subsection*{Response to Reviewer 1's Comments}
-
-The authors compare four different cross-validation options for the important problem of penalized Cox regression, including two new proposed methods. The methodology is nicely described, and the illustration in Figure 1 should prove helpful to readers new to this area. The interpretations of the simulation results are helpful, and a good choice for the application dataset was made. The take-home message of the usefulness of the linear predictor approach was clearly made based on the work performed. However, there are a number of important questions and comments to mention here that should be addressed:
+Thank you very much for your careful reading of the paper and your insightful comments, particularly regarding issues relating to time-varying covariates. You raise a number of good points and we have modified the manuscript considerably based upon your feedback.  In our opinion, these revisions have very much improved upon the original submission.
 
 \begin{enumerate}[align = left]
 \item On p.4, roughly line 34, you have the statement “although the methods we analyze can be used with any penalty”.  This statement should be further elaborated, providing some tangible examples (including beyond the straightforward elastic net approach considered in the application analysis).
 
-\re Thank you for this comment. We provided a few examples of penalty functions, such as the elastic net penalty, smoothly clipped absolute deviations (SCAD) penalty, and minimax concave penalty (MCP) on page 4. We also included a paragraph for more general application in the Discussion section.
+\re Thank you for this comment. In the revision (page 4), we provide a few examples of penalty functions, such as the elastic net penalty, smoothly clipped absolute deviations (SCAD) penalty, and minimax concave penalty (MCP). We also mention this in the Discussion section.
 
-\item Though you aim to make various considerations in your simulation study, the impact of this work may very well be limited given consideration of only exponential survival distribution and independent censoring. 
-    \begin{enumerate}
-        \item Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion.
-        
-        \re Thank you for making this comment. This work aims to make comparisons among cross-validation methods, which are more commonly used in the model selection context. In the Discussion section, we included a paragraph to state that the methods in this manuscript can be applied to any model selection process that involves the cox partial likelihood. While cross-validation and model selection play a key role for fitting penalized cox regression models, the process of fitting time-varying covariates and joint modeling with longitudinal covariates do not always involve model selection, therefore this extension is out of the main focus of this work. 
-        
-        \item Regarding distributional form, the exponential form here is quite limiting, and even common choices for a more complex distributional form, such as Weibull and Gompertz, might be considered too limiting. See, for example, Harden and Kropko (2019).
-        
-        \re Thank you for this comment. We included additional simulation results in the supplementary material where the baseline hazard is generated from Weibull and Gompertz distribution. The overall conclusions do not change for both of these more complex distributional form.
-        
-    \end{enumerate}
+\item Though you aim to make various considerations in your simulation study, the impact of this work may very well be limited given consideration of only exponential survival distribution and independent censoring. Even common choices for a more complex distributional form, such as Weibull and Gompertz, might be considered too limiting. See, for example, Harden and Kropko (2019).
 
-\item Speaking of your Discussion section, there is no mention of any limitations of the current work. Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards. That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure. Some discussion on how to think about survival datasets with rare events should be commented on as well.
+\textbf{Response (distributional form):} You raise a good point -- we did not expect the results to change much depending on the distributional form, but this is something that deserves to be investigated. In the revised supplementary material, we include additional simulation results where the baseline hazard is generated from Weibull and Gompertz distributions. The overall conclusions remain fairly similar, however. This is mentioned in the revised manuscript in the text surrounding Table 1.
+
+\textbf{Response (independent censoring):} With regard to independent censoring, however, we feel that this would muddy the waters regarding whether a cross-validation method is working well or not. If the assumptions of the Cox model are not met, the partial likelihood is incorrect, and all models are wrong, which model should you choose? For example, suppose model A predicts well, but the coefficient estimates are biased, whereas model B estimates the coefficients more accurately but is worse at predicting the outcome. Is a cross-validation that favors model B better or worse than one that favors model A? These questions are interesting, but they have no clear answer and don't offer much help in terms of objectively determining which CV approach is best. See also point \ref{limitations} below.
+
+\item Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion.
+        
+\re This is an excellent point -- additional issues may certainly arise when applying cross-validation to time-varying data. Our experience with high-dimensional Cox regression has tended to involve features that were only measured once due to the cost of these experiments, but as this cost goes down, that may certainly change. We feel that addressing these issues is beyond the scope of the current manuscript, but is definitely something worth discussing. The final paragraph of our discussion now points out these issues and discusses that future work is necessary to investigate the application of the proposed approach to these settings. \pb{ADD THIS PARAGRAPH}
+
+\item \label{limitations} Speaking of your Discussion section, there is no mention of any limitations of the current work. Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards. That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure. Some discussion on how to think about survival datasets with rare events should be commented on as well.
 
 \re Thank you for the comments. The violation of linearity is usually handled via selecting or fitting a non-linear functional form for the covariates. The approaches that are discussed here are built upon Cox partial likelihood, which do not deal with non-proportional hazards and rare events, therefore those topics are out of the scope of this manuscript.  We included sentences in the Discussion section to address those points.
 
@@ -78,8 +71,9 @@ strong signal, not weak. (iii) p.22, “more clear” should be changed to “cl
 
 \end{enumerate}
 
-\subsection*{Response to Reviewer 2's Comments}
-In this manuscript, the authors proposed two new cross-validation methods for Cox proportional hazards regression.
+\newpage
+
+\subsubsection*{Response to comments by Reviewer \#2}
 
 \begin{enumerate}[align = left]
 \item Throughout the paper, the authors mainly (almost only) advocate for use of one of the proposed methods, “cross validated linear predictors”. Also based on numerical studies, I see no point in presenting the other proposed method, “cross validated deviance residual”. If the authors want to present both proposed methods, the cross validated deviance residual method should be better highlighted in numerical studies and Discussion for its advantages, which is not sufficiently illustrated in the current version of paper.
