@@ -123,9 +123,9 @@ Simulation studies were conducted to compare how the methods described in Sectio
 \label{Sec:accuracy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we consider the accuracy of the cross-validation approaches introduced in Section~\ref{Sec:methods}. We varied the sample size, dimension, censoring percentage, and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation. Accuracy was assesed via several criteria. The specifics of the different conditions considered in each simulation experiment are described below.
+In this section, we consider the accuracy of the cross-validation approaches introduced in Section~\ref{Sec:methods}. We varied the sample size, dimension, censoring percentage, and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation. The specifics of the simulation experiments are described below.
 
-Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). We define $\hat{\bbeta}(\lambda)$ as the vector of coefficients estimated by a Cox model with LASSO penalty at $\lambda$, and define $\bbeta^*$ as the value of $\bbeta$ that is used the generate the data. Mean squared error is defined to be 
+Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). We define $\hat{\bbeta}(\lambda)$ as the vector of coefficients estimated by a Cox model with LASSO penalty at $\lambda$, and define $\bbeta^*$ as the true value of $\bbeta$ (the value used to generate the data). Mean squared error is defined to be 
 \begin{equation}
 \MSE = E\| \hat{\bbeta}(\lambda) - \bbeta^* \| ^2.
 \end{equation}
