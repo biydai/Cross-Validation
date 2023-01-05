@@ -30,7 +30,7 @@ Thank you very much for your careful reading of the paper and your insightful co
 
 \item Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion.
         
-\re This is an excellent point -- additional issues may certainly arise when applying cross-validation to time-varying data. Our experience with high-dimensional Cox regression has tended to involve features that were only measured once due to the cost of these experiments, but as this cost goes down, that may certainly change. We feel that addressing these issues is beyond the scope of the current manuscript, but is definitely something worth discussing. The final paragraph of our discussion now points out these issues and discusses that future work is necessary to investigate the application of the proposed approach to these settings. \pb{ADD THIS PARAGRAPH}
+\re This is an excellent point -- additional issues may certainly arise when applying cross-validation to time-varying data. Our experience with high-dimensional Cox regression has tended to involve features that were only measured once due to the cost of these experiments, but as this cost goes down, that may certainly change. We feel that addressing these issues is beyond the scope of the current manuscript, but is definitely something worth discussing. The final paragraph of our discussion now points out these issues and discusses that future work is necessary to investigate the application of the proposed approach to these settings.
 
 \item \label{limitations} Speaking of your Discussion section, there is no mention of any limitations of the current work. Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards. That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure. Some discussion on how to think about survival datasets with rare events should be commented on as well.
 
@@ -73,6 +73,8 @@ Thank you very much for your careful reading of the paper and your insightful co
 \newpage
 
 \subsubsection*{Response to comments by Reviewer \#2}
+
+Thank you very much for your careful reading of the paper and your insightful comments, particularly regarding the cross-validated deviance residuals. This was the weakest aspect of the original submission, and by putting thought and work into addressing the issues you raised, we feel that we have significantly improved the manuscript.
 
 \begin{enumerate}[align = left]
 \item Throughout the paper, the authors mainly (almost only) advocate for use of one of the proposed methods, “cross validated linear predictors”. Also based on numerical studies, I see no point in presenting the other proposed method, “cross validated deviance residual”. If the authors want to present both proposed methods, the cross validated deviance residual method should be better highlighted in numerical studies and Discussion for its advantages, which is not sufficiently illustrated in the current version of paper.
