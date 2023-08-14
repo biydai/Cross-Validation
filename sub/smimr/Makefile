@@ -1,2 +1,2 @@
 response.pdf: response.tex
-	cleantex -q response
+	cleantex -eq response

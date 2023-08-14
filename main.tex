@@ -296,32 +296,53 @@ Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood
 
 In this section, we demonstrate the usage and performance of the aforementioned cross-validation methods when fitting penalized regression models on data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients. They gathered expression profiles of 22,283 genes for 442 non-small-cell lung cancer (NSCLC) patients along with some additional clinical and demographic data. About $50\%$ of the patients died during the course of the study (236 events), with the rest censored. 
 
-For this analysis, we fit elastic net models to the data in addition to lasso models, as these models often improve upon the lasso when many correlated genes are involved \citep{Zou2005}. The clinical variables stage, age and gender were included in the model without penalization, as it is reasonable to assume that all three have an effect on survival. In addition to the regularization parameter $\lam$, the elastic net model has an extra tuning parameter $\alpha$, where $\alpha=1$ corresponds to lasso and $\alpha=0$ corresponds to ridge regression. For $\alpha \in \{0.3, 0.5, 0.7, 0.9, 1\}$, we selected a regularization parameter $\lam$ that has the lowest cross-validation error for each of the four cross-validation methods described in Section~\ref{Sec:methods}.  Although each method can be used to select a pair of $\alpha$ and $\lam$ values, the methods are on different scales and cannot be directly compared with each other.  For this reason, Table~\ref{tb:shedden} reports the cross-validated C-Index and Brier Scores for each method's choice of $\lam$ at each value of $\alpha$.  As shown in the table, the elastic net model with $\lam$ and $\alpha=0.3$ selected by the cross-validated linear predictor approach has the best performance in terms of C Index and Brier Score.
+For this analysis, we fit elastic net models to the data in addition to lasso models, as these models often improve upon the lasso when many correlated genes are involved \citep{Zou2005}. The clinical variables stage, age and gender were included in the model without penalization, as it is reasonable to assume that all three have an effect on survival. In addition to the regularization parameter $\lam$, the elastic net model has an extra tuning parameter $\alpha$, where $\alpha=1$ corresponds to lasso and $\alpha=0$ corresponds to ridge regression. For $\alpha \in \{0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 1\}$, we selected the regularization parameter $\lam$ that has the lowest cross-validation error for each of the four cross-validation methods described in Section~\ref{Sec:methods}. As shown in Table~\ref{tb:shedden}, which reports the cross-validated C-Index and Brier Scores for each method, models with smaller values of $\alpha$ tend to perform better than models with $\alpha \approx 1$ (higher C-Index, lower Brier scores). As is typical in high-dimensional regression, there is no obvious best choice for $\alpha$, but for the sake of illustration, we focus on $\alpha=0.3$ in the remainder of this section, as it seems to consistently outperform $\alpha=1$ and there is little evidence of further gain by dropping $\alpha$ below 0.3.
 
 \begin{table}[ht]
 \centering
 \caption{\label{tb:shedden} The C Index and Brier Score of all elastic net models selected by cross-validation methods }
-\begin{tabular}{lcccccccc}
+\begin{tabular}{lccccccc}
 \hline
-  & \multicolumn{8}{c}{Cross-validated C Index} \\ 
-  & $\alpha = 0.05$ & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-9}
-V \& VH     & 0.645 &0.645 &0.643 &0.630 &0.626 &0.617 &0.617 &0.617\\
-Basic       &0.652 &0.649 &0.650 &0.650 &0.649 &0.650 &0.651 &0.651 \\
-Linear Pred    &0.649 &0.648 &0.650 &0.650 &0.649 &0.648 &0.617 &0.617  \\
-Deviance Resid &0.648 &0.645 &0.647 &0.646 &0.626 &0.617 &0.617 &0.617 \\ 
+  & \multicolumn{7}{c}{Cross-validated C Index} \\ 
+  & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-8}
+V \& VH        & 0.645 &0.643 &0.630 &0.626 &0.617 &0.617 &0.617 \\
+Basic          & 0.649 &0.650 &0.650 &0.649 &0.650 &0.651 &0.651 \\
+Linear Pred    & 0.648 &0.650 &0.650 &0.649 &0.648 &0.617 &0.617 \\
+Deviance Resid & 0.645 &0.647 &0.646 &0.626 &0.617 &0.617 &0.617 \\ 
 \addlinespace
-  & \multicolumn{8}{c}{Brier Score} \\ 
-  & $\alpha = 0.05$ & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-9}
-V \& VH &0.232 &0.231 &0.232 &0.243 &0.245 &0.249 &0.249 &0.249 \\
-Basic  &0.221 &0.226 &0.226 &0.225 &0.224 &0.221 &0.221 &0.221 \\
-Linear Pred & 0.220 &0.228 &0.226 &0.225 &0.224 &0.224 &0.249 &0.249 \\
-Deviance Resid &0.229 &0.231 &0.229 &0.228 &0.245 &0.249 &0.249 &0.249 \\ 
+  & \multicolumn{7}{c}{Brier Score} \\ 
+  & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-8}
+V \& VH        &0.231 &0.232 &0.243 &0.245 &0.249 &0.249 &0.249 \\
+Basic          &0.226 &0.226 &0.225 &0.224 &0.221 &0.221 &0.221 \\
+Linear Pred    &0.228 &0.226 &0.225 &0.224 &0.224 &0.249 &0.249 \\
+Deviance Resid &0.231 &0.229 &0.228 &0.245 &0.249 &0.249 &0.249 \\ 
 \hline
 \end{tabular}
 \end{table}
 
+%% \begin{table}[ht]
+%% \centering
+%% \caption{\label{tb:shedden} The C Index and Brier Score of all elastic net models selected by cross-validation methods }
+%% \begin{tabular}{lcccccccc}
+%% \hline
+%%   & \multicolumn{8}{c}{Cross-validated C Index} \\ 
+%%   & $\alpha = 0.05$ & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-9}
+%% V \& VH     & 0.645 &0.645 &0.643 &0.630 &0.626 &0.617 &0.617 &0.617\\
+%% Basic       &0.652 &0.649 &0.650 &0.650 &0.649 &0.650 &0.651 &0.651 \\
+%% Linear Pred    &0.649 &0.648 &0.650 &0.650 &0.649 &0.648 &0.617 &0.617  \\
+%% Deviance Resid &0.648 &0.645 &0.647 &0.646 &0.626 &0.617 &0.617 &0.617 \\ 
+%% \addlinespace
+%%   & \multicolumn{8}{c}{Brier Score} \\ 
+%%   & $\alpha = 0.05$ & $\alpha = 0.1$ & $\alpha = 0.2$ & $\alpha = 0.3$ & $\alpha = 0.5$ & $\alpha = 0.7$ & $\alpha = 0.9$ & $\alpha = 1$ \\ \cline{2-9}
+%% V \& VH &0.232 &0.231 &0.232 &0.243 &0.245 &0.249 &0.249 &0.249 \\
+%% Basic  &0.221 &0.226 &0.226 &0.225 &0.224 &0.221 &0.221 &0.221 \\
+%% Linear Pred & 0.220 &0.228 &0.226 &0.225 &0.224 &0.224 &0.249 &0.249 \\
+%% Deviance Resid &0.229 &0.231 &0.229 &0.228 &0.245 &0.249 &0.249 &0.249 \\ 
+%% \hline
+%% \end{tabular}
+%% \end{table}
 
-For each fixed $\alpha$, we compared the cross-validation errors (CVE) from the four cross-validation methods along the solution path. At $\alpha = 0.3$, CVEs are rescaled and plotted for all four methods along the same grid of $\lambda$ values in Figure~\ref{fig:CVE}. The selected $\lambda$ values, where a given CVE curve reaches its lowest point, are indicated with dotted lines.  The CVE curves for the basic and linear predictor approaches have greater curvature near their minima, and thus offer clearer support for the selected value of $\lam$.  In comparison, the deviance residual and V\&VH approaches are flatter near their minima, supporting a considerably wider range of $\lam$ values and leading to greater model uncertainty.   The selected $\lambda$ values, represented by the vertical dashed lines, and their corresponding models, reflect what was observed in the simulation studies. The linear predictor approach was most liberal and selected 85 genes. While the basic approach and deviance residual approach selected 68 genes and 60 genes respectively, Verweij and Van Houwelingen's approach was most conservative, selecting only 34 genes.  Similar patterns were observed for other $\alpha$ values.
+For each fixed $\alpha$, we compared the cross-validation errors (CVE) from the four cross-validation methods along the solution path. At $\alpha = 0.3$, CVEs are normalized so that they can be compared on the same scale and plotted for all four methods along the same grid of $\lambda$ values in Figure~\ref{fig:CVE}. The selected $\lambda$ values, where a given CVE curve reaches its lowest point, are indicated with dotted lines.  The CVE curves for the basic and linear predictor approaches have greater curvature near their minima, and thus offer clearer support for the selected value of $\lam$.  In comparison, the deviance residual and V\&VH approaches are flatter near their minima, supporting a considerably wider range of $\lam$ values and leading to greater model uncertainty.   The selected $\lambda$ values, represented by the vertical dashed lines, and their corresponding models, reflect what was observed in the simulation studies. The linear predictor approach was most liberal and selected 85 genes. While the basic approach and deviance residual approach selected 68 genes and 60 genes respectively, Verweij and Van Houwelingen's approach was most conservative, selecting only 34 genes.  Similar patterns were observed for other $\alpha$ values.
 
 \begin{figure}[!htb]
   \centering
@@ -351,7 +372,7 @@ Of particular interest is the fact that three of the selected genes (PIK3R1, PDP
 
 \section{Discussion}
 
-Cross-validation is a crutial step in fitting penalized Cox regression models. In this paper, we propose two cross-validation methods for Cox Regression: cross-validated linear predictors and cross-validated deviance residuals. We conducted a series of simulation experiments to study and compare their performance with two existing approaches, basic cross-validation and Verweij and Van Houwelingen's cross-validated partial likelihood, in selecting tuning parameters when fitting penalized regression models.
+Cross-validation is a crucial step in fitting penalized Cox regression models. In this paper, we propose two cross-validation methods for Cox Regression: cross-validated linear predictors and cross-validated deviance residuals. We conducted a series of simulation experiments to study and compare their performance with two existing approaches, basic cross-validation and Verweij and Van Houwelingen's cross-validated partial likelihood, in selecting tuning parameters when fitting penalized regression models.
 
 Despite the fact Verweij and Van Houwelingen's cross-validated partial likelihood has been widely implemented, its predictive performance appears suboptimal, particularly when the dimension of the data is large and/or signals are weak. As illustrated in both simulation studies and real data example, Verweij and Van Houwelingen's approach tends to perform conservatively, selecting fewer features than all other models. In the lung cancer data example, the number of genes selected by other methods almost doubled the number of genes selected by Verweij and Van Houwelingen's approach. From an application standpoint, using Verweij and Van Houwelingen's approach in high-dimensional applications may lead to more false negatives and miss important true findings.
 

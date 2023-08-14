@@ -1,4 +1,4 @@
-\documentclass[12]{article}
+\documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper,margin = 1in]{geometry}
 \usepackage{enumitem}
@@ -29,12 +29,12 @@ Thank you very much for your careful reading of the paper and your insightful co
 \textbf{Response (independent censoring):} With regard to independent censoring, however, we feel that this would muddy the waters regarding whether a cross-validation method is working well or not. If the assumptions of the Cox model are not met, the partial likelihood is incorrect, and all models are wrong, which model should you choose? For example, suppose model A predicts well, but the coefficient estimates are biased, whereas model B estimates the coefficients more accurately but is worse at predicting the outcome. Is a cross-validation that favors model B better or worse than one that favors model A? These questions are potentially interesting, but they have no clear answer and don't offer much help in terms of objectively determining which CV approach is best. See also point \ref{limitations} below.
 
 \item Extensions into time-varying covariates, and, preferably, joint modeling, would be useful as well. At least the first two items (more flexible survival distributions, and dependent censoring) should be explored in your work, while perhaps extensions into joint modeling to accommodate one or more longitudinal predictors could be discussed as future work in your Discussion.
-        
+  
 \re This is an excellent point -- additional issues may certainly arise when applying cross-validation to time-varying data. Our experience with high-dimensional Cox regression has tended to involve features that were only measured once due to the cost of these experiments, but as this cost goes down, that may certainly change. We feel that addressing these issues is beyond the scope of the current manuscript, but is definitely something worth discussing. The final paragraph of our discussion now points out these issues and discusses that future work is necessary to investigate the application of the proposed approach to these settings.
 
 \item \label{limitations} Speaking of your Discussion section, there is no mention of any limitations of the current work. Aside from the joint modeling comment above, you should also talk about violations of linearity, and of non-proportional hazards. That is, you need to provide a number of additional sentences, and references, as warranted, to talk about how the current contributions could ultimately be made more generalizable to various survival dataset characteristics, and not just those with a very simplifying structure. Some discussion on how to think about survival datasets with rare events should be commented on as well.
 
-  \re Our point of view in this manuscript is that you have decided to fit a Cox proportional hazard model, but aren't sure what the best way to carry out cross-validation is. Certainly, if the Cox model is wrong in the first place, then it may be best to take a completely different approach to modeling, and this manuscript is not likely to be relevant. We don't really see the point of discussing issues like non-proportional hazards and non-linear effects, as they have already been covered in hundreds, if not thousands, of other works.
+  \re Our point of view in this manuscript is that you have decided to fit a Cox proportional hazard model, but aren't sure what the best way to carry out cross-validation is. Certainly, if the Cox model is wrong in the first place, then it may be best to take a completely different approach to modeling, and this manuscript is not likely to be relevant. We don't really see the need to discuss issues like non-proportional hazards and non-linear effects, as they have already been covered in hundreds, if not thousands, of other manuscripts and textbooks.
 
 \item On p.10, second sentence first paragraph of Section 3.1, should mention that the specifics of the different conditions considered (in the simulation study) are described below.
 
@@ -62,7 +62,7 @@ Thank you very much for your careful reading of the paper and your insightful co
 
 \item Regarding elastic net, it was not justified why other alpha values (beyond 0.3, 0.5, 0.7, and 0.9) are not considered in the analysis, such as a denser grid between 0.1 and 0.5, particularly after seeing the results (in Table 3) from the sparse selection of alpha values used. More alpha values should be considered.
 
-  \re \pb{Need Biyue to edit Table 3 before I can reply here.}
+  \re This is certainly a fair point. In the revised manuscript, we include $\alpha=0.1$ and $\alpha=0.2$ in the comparison as well. In our experience (for all kinds of high-dimensional regression, not just survival models), there is rarely an obvious choice for $\alpha$: many choices of $\alpha$ perform similarly. For the case study presented in Section 4, it seems clear that lower values of $\alpha$ consistently outperform values near 1, but honestly, you could make a case for any value of $\alpha$ below 0.5. We focus on $\alpha=0.3$ for the sake of illustration, but the patterns (in terms of how the CV methods compare to each other) are similar for other choices of $\alpha$. In addition to modifying Table 3 itself, we have modified the text surrounding it to point out these issues, rather than the overly simplistic remark in the original submission that ``$\alpha=0.3$ is best.''
 
 \item There are several typos sprinkled throughout the paper, so a careful proofreading is required. Some examples include: (i) Section 3.1, second paragraph, where the phrase ``the value of $\beta$ used the generate the data'' requires editing. (ii) Table 1, Scenario 4, would seem to be for strong signal, not weak. (iii) p.22, ``more clear'' should be changed to ``clearer''.
 
@@ -107,7 +107,7 @@ Thank you very much for your careful reading of the paper and your insightful co
 
 \item Many places require major/minor clarification and corrections.
 
-  \re Thank you very much for catching and pointing out all of these issues! All of them have been fixed in the revised version of the manuscript.
+  \re Thank you very much for catching and pointing out all of these issues! We truly appreciate your attention to detail in reading our work. All of them have been fixed in the revised version of the manuscript.
 
 \begin{itemize}[align = left]
 \item[-]  P3L33: define beta
