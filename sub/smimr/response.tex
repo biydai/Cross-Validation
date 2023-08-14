@@ -4,6 +4,8 @@
 \usepackage{enumitem}
 \usepackage{color}
 \usepackage{amssymb,amsmath}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
 
 \newcommand{\re}{\textbf{Response: }}
 \newcommand\pb[1]{{\color{red}#1}}
@@ -103,62 +105,11 @@ Thank you very much for your careful reading of the paper and your insightful co
   
 \item Did the authors make the software available for the proposed approaches?
 
-\re Yes; the proposed cross-validated linear predictor approach is implemented in the \textbf{ncvreg} package. The basic approach and the Verweij and Van Houwelingen's approach are implemented in the \textbf{glmnet} package. The code to reproduce our simulations and analyses are available as a GitHub repository.
+  \re Yes; the proposed cross-validated linear predictor approach is implemented in the \textbf{ncvreg} package. The basic approach and the Verweij and Van Houwelingen's approach are implemented in the \textbf{glmnet} package. The code to reproduce our simulations and analyses are available at \url{https://github.com/biydai/Cross-Validation}; this repository is currently private, with the expectation of making it public once the paper is accepted.
 
 \item Many places require major/minor clarification and corrections.
 
-  \re Thank you very much for catching and pointing out all of these issues! We truly appreciate your attention to detail in reading our work. All of them have been fixed in the revised version of the manuscript.
+  \re Thank you very much for catching and pointing out all of these issues! We truly appreciate your attention to detail in reading our work. All of them have been fixed in the revised version of the manuscript. Most of these points don't need any comment (we simply adopted your recommendation). The only exception is your comment ``Equation (6) and P8L10: I found the definition of $\hat{\eta}^{\text{cv}}$ confusing. Do we not need some step for pooling cross-validated linear predictors over all K folds?'' To which our reply is that no additional steps are needed; the linear predictors are simply concatenated in order to obtain the vector of cross-validated linear predictors, as shown in Figure 1. Each fold produces $n/K$ entries; at the end of all $K$ folds, we have all $n$ elements of the cross-validated linear predictor. We have made this more explicit in the text after equation (8).
 
-\begin{itemize}[align = left]
-\item[-]  P3L33: define beta
-
-%\re Thank you for the suggestion. We included definition for $\bbeta$ in this paragraph when first introducing the notation.
-
-\item[-] Distinguish between scalars and vectors by using bold letters for vectors
-
-%\re Thank you for the suggestion. We updated the manuscript by using bold betters for vectors.
-
-\item[-] Figure 1: Since “Folder 1” is highlighted for each panel, I think the figure corresponds to the specific case with k=1. If so, k should be replaced by 1 in expressions.
-
-%\re Thank you for this careful observation. In the figure, we used "Folder 1" for the simplicity of drawing. However, replacing $k$ with $1$ in the expressions in the figure may cause confusion to the readers. Therefore, we added description in the caption of Figure 1 to clarify that this illustration represents $k = 1$.
-
-\item[-]  P8L5: I would not use “k” in the expression because k is used for k-th “fold” in this paper.
-
-%\re Thank you for the suggestion. We replaced $k$ with $\tau$ in that formula
-
-\item[-]  Equation (6) and P8L10: I found the definition of $\hat{\eta}^{\text{cv}}$ confusing. Do we not need some step for pooling cross-validated linear predictors over all K folds?
-
-%\re No additional steps are needed to pool the cross-validated linear predictors over all K folds. Please refer to the linear predictor diagram in Figure 1. Suppose each fold has $n_k$ number of observations and the complete data have $n = \sum_{k=1}^{K}  n_k$ observations. The cross-validated linear predictor of the $k$th folder $\hat{\boldeta}^{\text{cv}}_k$ is a vector of length $n_k$ and the complete set of cross-validated linear predictors $\hat{\boldeta}^{\text{cv}}$ has a length of $n$. We also updated the vector $\boldeta$ by using bold.
- 
-\item[-]  Table 1: what are the numbers in parentheses? 
-
-%\re The numbers in the parentheses are standard deviation across all simulated samples, which is a metric for simulation errors.
-
-\item[-] Figure 4 caption: LOO is not defined
-
-%\re Thank you for the suggestion. We updated the caption to include defition for LOO.
-
-\item[-]  Figure 4 caption: (blue line) should be (green line)?
-
-%\re Thank you for catching this. We corrected this in the caption.
-
-\item[-]  Figure 4 legend: The “Method” can mean two different things in this paper – either (four different CV methods) or (10 fold CV, LOOCV). Therefore, the legend is very confusing because “Basic” here actually means basic CV with 10 folds. Although the text in the paper clarifies this, tables and figures need to be understandable by themselves without reference to the text.
-
-%\re Thank you for the suggestion. We edited the caption of Figure 4 to clarify the legends.
-
-\item[-]  Table 4, what are “Selected” and “P” here?
-
-%\re The column "Selected" represents the number of genes that are selected by the linear predictor cross-validation approach; each row represents the numbder of genes that fall into that function category. $p$ is the p-value. \bd{is the p-value adjusted? update $p$ with "p-value"?}
-
-\end{itemize}
 \end{enumerate}
-
-
-
-%% \subsection*{References}
-
-%% Harden JJ, Kropko J (2019). Simulating duration data for the Cox model, Political Science Research and Methods, 7(4): 921-928. https://doi.org/10.1017/psrm.2018.19
-
-%% Wang H, Lengerich BJ, Aragam B, Xing EP (2019). Precision Lasso: accounting for correlations and linear dependencies in high-dimensional genomic data. Bioinformatics, 35(7), 1181-1187. https://doi.org/10.1093/bioinformatics/bty750
-
 \end{document}
