@@ -7,6 +7,13 @@
 # in n = 120, p = 1000
 #------------------------------
 
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("cor_exchange.RData")
+}else{
+
+
 library(survival)
 library(ncvreg)
 
@@ -262,40 +269,14 @@ for(i in 1:N){
     #print(c(i,j))
   }
 }
-
-#-------------------------------------------------------------------------
-# printing and saving results
-results <- list()
-for(i in 1:5){
-  results[[i]] <- rbind(
-    apply(gp[i,,],2,mean),
-    apply(ncv[i,,],2,mean),
-    apply(ug[i,,],2,mean),
-    apply(dvr[i,,],2,mean)
-  )
-  rownames(results[[i]]) <- c("VVH","LP","ST","DVR")
-  colnames(results[[i]]) <- rho_all
 }
-names(results) <- c("lambda",
-                    "MSE",
-                    "Brier",
-                    "KL",
-                    "CIndex")
-results$lambda
-results$MSE
-results$Brier
-results$KL
-results$CIndex
 
-save(gp,ncv,dvr,ug,oracle.mse,
-      file = "cor_exchange.RData")
 
 #-------------------------------------------------------------------------
 # making Figure 2
 library(ggplot2)
 library(cowplot)
 
-load("A:\\cv_manuscript_code\\correlated\\cor_exchange.RData")
 results <- list()
 for(i in 1:5){
   results[[i]] <- c(
@@ -320,7 +301,7 @@ mse <- log(c(apply(gp[2,,]/oracle.mse,2,mean),
 Brier <- (results$Brier)
 KL <- (results$KL)
 CIndex <- results$CIndex
-coef <- rho_all
+coef <- c(0,0.2,0.4,0.6,0.8)
 Method <- c(rep("V & VH",5),
             rep("Basic",5),rep("LinearPred",5),
             rep("DevResid",5))

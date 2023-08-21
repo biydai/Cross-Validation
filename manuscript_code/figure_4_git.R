@@ -6,6 +6,13 @@
 # in n = 120, p = 1000
 #------------------------------
 
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_loo.RData")
+}else{
+
+
 library(survival)
 library(ncvreg)
 
@@ -223,10 +230,10 @@ for(i in 1:N){
     ncv.loo[2,i,j] <- norm[ncv.loo[1,i,j] == lambda]
     dvr.loo[2,i,j] <- norm[dvr.loo[1,i,j] == lambda]
     
-    print(c(i,j))
   }
 }
 
+}
 
 #-----------------------------------------------------------------------------------
 # load saved results and make plots

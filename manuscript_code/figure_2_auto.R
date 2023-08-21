@@ -7,8 +7,16 @@
 # in n = 120, p = 1000
 #------------------------------
 
-library(survival)
-library(ncvreg)
+
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("cor_auto.RData")
+}else{
+  
+  library(survival)
+  library(ncvreg)
+
 
 #-------------------------------------------------------------------------
 # functions
@@ -264,39 +272,15 @@ for(i in 1:N){
   }
 }
 
-#-------------------------------------------------------------------------
-# printing and saving results
-results <- list()
-for(i in 1:5){
-  results[[i]] <- rbind(
-    apply(gp[i,,],2,mean),
-    apply(ncv[i,,],2,mean),
-    apply(ug[i,,],2,mean),
-    apply(dvr[i,,],2,mean)
-  )
-  rownames(results[[i]]) <- c("VVH","LP","ST","DVR")
-  colnames(results[[i]]) <- rho_all
 }
-names(results) <- c("lambda",
-                    "MSE",
-                    "Brier",
-                    "KL",
-                    "CIndex")
-results$lambda
-results$MSE
-results$Brier
-results$KL
-results$CIndex
 
-save(gp,ncv,dvr,ug,oracle.mse,
-      file = "cor_auto.RData")
+
 
 #-------------------------------------------------------------------------
 # making Figure 2
 library(ggplot2)
 library(cowplot)
 
-load("A:\\cv_manuscript_code\\correlated\\cor_auto.RData")
 results <- list()
 for(i in 1:5){
   results[[i]] <- c(
@@ -321,7 +305,7 @@ mse <- log(c(apply(gp[2,,]/oracle.mse,2,mean),
 Brier <- (results$Brier)
 KL <- (results$KL)
 CIndex <- results$CIndex
-coef <- rho_all
+coef <- c(0,0.2,0.4,0.6,0.8)
 Method <- c(rep("V & VH",5),
             rep("Basic",5),rep("LinearPred",5),
             rep("DevResid",5))
@@ -369,14 +353,14 @@ CIndex <- ggplot(data = df, aes(x = coef,y = CIndex,group = Method))+
   theme(legend.position = "right")
 
 
-png(filename="figure_2_auto.png",
-   units="px",
-   width=1000*1.5,
-   height=350*1.5,
-   pointsize=12,
-   res = 120*1.3)
+#png(filename="figure_2_auto.png",
+#   units="px",
+#   width=1000*1.5,
+#   height=350*1.5,
+#   pointsize=12,
+#   res = 120*1.3)
 plot_grid(mse_p,Brier_p,CIndex, ncol = 3,align = "h",axis = "b",rel_widths = c(1, 1, 1.5))
-dev.off()
+#dev.off()
 
 # tiff(filename="figure_2_new.tiff",
 #     units="px",

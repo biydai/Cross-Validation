@@ -65,6 +65,13 @@ AUC_lambda <- function(data,fit,lambda){
 
 #-------------------------------------------------------------------------
 # scenarios: 
+
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_low.RData")
+}else{
+
 N <- 200
 p <- 50
 n <- 150
@@ -219,6 +226,7 @@ for(i in 1:N){
     
   }
 }
+}
 
 digit <- 3
 results_mean <- list()
@@ -286,6 +294,13 @@ cbind(
 
 #-------------------------------------------------------------------------
 # scenarios: 
+
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_high.RData")
+}else{
+
 N <- 200
 p <- 10000
 n <- 400
@@ -442,7 +457,7 @@ for(i in 1:N){
     
   }
 }
-
+}
 
 digit <- 3
 results_mean <- list()

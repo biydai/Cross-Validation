@@ -3,8 +3,9 @@
 # to reproduce part of the simulations
 # in Figure 5 of the Cross Validation 
 # Manuscript:
-# Explored low dimension p =50
+# Explored low dimension p =50, p = 1000
 #------------------------------
+
 
 library(survival)
 library(ncvreg)
@@ -45,7 +46,16 @@ brierSurv_lambda <- function(data,time,fit,lambda) {
 }
 
 
-#-------------------------------------------------------------
+#------------------------------
+# Explored low dimension p =50
+#------------------------------
+
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_CVAUC_low.RData")
+}else{
+
 N <- 200
 n <- 150
 p <- 50
@@ -120,6 +130,7 @@ for(i in 1:N){
     
   }
 }
+}
 
 # store results
 # lambda
@@ -153,7 +164,12 @@ df$Type <- c(rep("lambda",2400),rep("log(MSE Ratio)",2400),rep("Brier Score",240
 # Explored high dimension p =1000
 #------------------------------
 
-#-------------------------------------------------------------
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_CVAUC_high.RData")
+}else{
+
 N <- 200
 n <- 120
 p <- 1000
@@ -228,7 +244,7 @@ for(i in 1:N){
     
   }
 }
-
+}
 
 # store results
 

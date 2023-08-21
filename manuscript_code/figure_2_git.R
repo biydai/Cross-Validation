@@ -7,6 +7,12 @@
 # in n = 120, p = 1000
 #------------------------------
 
+rerun <- FALSE
+
+if (rerun == FALSE){
+  load("sim_midd.RData")
+}else{
+
 library(survival)
 library(ncvreg)
 
@@ -217,6 +223,9 @@ for(i in 1:N){
   }
 }
 
+}
+
+
 #-------------------------------------------------------------------------
 # making Figure 2
 library(ggplot2)
@@ -252,6 +261,9 @@ method <- c(rep("V & VH",6),
             rep("DevResid",6))
 df <- data.frame(lambda,mse,Brier,KL,CIndex,coef,method)
 df$method <- factor(df$method,levels = c("V & VH","Standard","LinearPred","DevResid"))
+
+
+
 
 
 lambda_p <- ggplot(data = df, aes(x = coef,y = lambda,group = method))+
