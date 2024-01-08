@@ -1,4 +1,6 @@
-Reviewer(s)' Comments to Author: Reviewer: 1
+Reviewer(s)' Comments to Author
+
+Reviewer: 1
 
 Comments to the Author
 The authors compare four different cross-validation options for the important problem of penalized Cox regression, including two new proposed methods. The methodology is nicely described, and the illustration in Figure 1 should prove helpful to readers new to this area.  The interpretations of the simulation results are helpful, and a good choice for the application dataset was made.  The take-home message of the usefulness of the linear predictor approach was clearly made based on the work performed. However, there are a number of important questions and comments to mention here that should be addressed:

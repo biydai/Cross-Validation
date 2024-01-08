@@ -1,0 +1,19 @@
+# Reviewer(s)' Comments to Author
+
+### Reviewer: 2
+
+The authors have sufficiently addressed my comments.
+
+### Reviewer: 1
+
+Good to see the effort taken by the authors to address most of the issues raised from the review of the original submission.  My concerns have been addressed sufficiently well overall, but there are a few remaining points to raise:
+
+1. On the point of dependent censoring, I agree that this may cause some issues regarding the evaluation of how well a cross-validation approach that depends on the partial likelihood is doing. But this does not mean you should avoid mentioning this as a shortcoming of the method in the Discussion.  One of the key points of a Discussion section is to convey to the reader guidelines on when your proposed method will work and when it may not. Figuring out a way to conduct cross-validation for penalized Cox regression under dependent censoring would be a great gap to point out for future work.  And dependent censoring happens far more than many papers take for granted. Please include some comments in the Discussion on why dependent censoring is an issue with this cross-validation approach and a gap that should be pursued in future research.
+
+2. On p. 12, just above Figure 1, I do not understand the sentence “We computed the C Index using the independent test set of 1000 individuals described above.”. I see where you mention the 1000 individuals for the independent test data for this simulation example, but this is an unusual scenario when n=120 (as in the first simulation, with results in Figure 1, or even sample sizes as large as 400 in the second simulation, with results in Table 1).  Please provide justification for this, as we would normally not be able to afford a hold-out sample so large (relative to the "observed" sample size) in typical analyses of data, and it would actually be a bad use of resources, as a larger percentage of the original data is needed to help more reliably develop the models and tune parameters. And this hold-out sample is also uncensored, which is also not realistic. Please justify all this. Feel free to mention external model validation as one setting where a larger holdout sample might be utilized, but this is really not portrayed to be the setting in your simulations.
+
+3. Related to the simulation studies, please disregard casual mentioning of the first simulation, and so on, and clearly label the different simulations throughout Section 3 as Simulation 1, Simulation 2, and so on, with clear mentioning of this in both the text and the tables and figures in which the results of those simulations are displayed. This will make for much more straightforward reading/referencing.
+
+4. Across all your simulation studies, please provide details so that others can reproduce your simulation results. If this will take up too much text, you can point them to a GitHub site where they can find sufficient details to allow for such reproducibility. 
+
+5. Still a few typos remain (e.g., “such fitting penalized Cox regression” on p. 25), so some additional proofreading is required, but it reads much more smoothly in the revision.  I would suggest finding consistency with how you display cross-validation (displayed both with and without a hyphen many times, or as CV).  And cross-validated as an adjective should always have a hyphen.  Another inconsistency is with LASSO vs. lasso, the latter used a few times in Section 4 and at least once in Section 5.
