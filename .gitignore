@@ -7,3 +7,11 @@
 !figures/*.png
 .Rproj.user
 *concordance.tex
+
+sub/smimr/*/*.pdf
+sub/smimr/*/*.png
+sub/smimr/*/main.tex
+sub/smimr/*/coxcv.tex
+sub/smimr/*/supp.tex
+sub/smimr/*/articles.bib
+sub/smimr/*/supplementary.tex

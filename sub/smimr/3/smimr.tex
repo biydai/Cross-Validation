@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[doublespacing]{setspace}  % Required for SMIMR review
+
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,graphicx,enumerate,subcaption,tikz,url,booktabs}
+\usepackage[bmargin=5cm, tmargin=5cm, lmargin=3cm, rmargin=3cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
+\usepackage{afterpage}
+
+\usepackage[numbers]{natbib}
+\usepackage{bbold}
+
+
+\newcommand{\ith}{i^\textrm{th}}
+\newcommand{\CVE}{\textrm{CVE}}
+\newcommand{\MSE}{\textrm{MSE}}
+\newcommand{\logit}{\mbox{logit}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\indic}[1]{\boldsymbol{1}_{\{ #1 \}}}
+\newcommand{\mvec}{\mbox{vec}}
+\newcommand{\cov}{\mbox{Cov}}
+\newcommand{\eqdist}{\overset{{\cal D}}{=}}
+\newcommand{\const}{\mbox{const}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\diag}{\mbox{{\bf diag}}}
+\newcommand{\Diag}{\mbox{Diag}}
+\providecommand{\Tr}{^{\scriptscriptstyle\top}}
+
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\lam}{\lambda}
+\newcommand{\bmu}{\boldsymbol\mu}
+\newcommand{\balpha}{\boldsymbol\alpha}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bbh}{\hat{\boldsymbol{\beta}}\phantom{}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\beps}{\boldsymbol\epsilon}
+\newcommand{\boldeta}{\boldsymbol\eta}
+
+\newcommand{\cX}{{\cal X}}
+\newcommand{\cA}{{\cal A}}
+\newcommand{\cAmin}{{\cal A}^{\mathsmaller{-}}}
+
+\newcommand{\vm}[1]{\mbox{vec}^\mathsmaller{-}\hspace{-0.25pc}\left(#1\right)}
+\newcommand{\Imin}{I^\mathsmaller{-}}
+\newcommand{\Itri}{{I^\mathsmaller{\triangle}}}
+
+\newcommand{\deriv}[1]{\noindent {\it Derivation:} #1 $\hfill\square$}
+\newcommand{\pbe}[1]{{\cal P}_{\epsilon,#1}}
+\newcommand{\be}{{\cal B}_{\epsilon}}
+
+\newcommand{\adjSet}{\{A_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\abSet}{\{\alpha_{k_\ell},\bbeta_{k_\ell}\}_{\ell=1}^K}
+\newcommand{\bZ}{{\bf Z}}
+
+\providecommand{\note}[1]{\textcolor{red}{#1}}
+\providecommand{\bnote}[1]{\textcolor{blue}{#1}}
+
+\title{Cross Validation Approaches for Penalized Cox Regression}
+\author{Biyue Dai\\Division of Biostatistics\\University of Minnesota
+  \and
+  Patrick Breheny\\Department of Biostatistics\\University of Iowa}
+\date{\today}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+Cross validation is the most common way of selecting tuning parameters in penalized regression, but its use in penalized Cox regression models has received relatively little attention in the literature. Due to its partial likelihood construction, carrying out cross validation for Cox models is not straightforward, and there are several potential approaches for implementation. Here, we propose a new approach based on cross-validating the linear predictors of the Cox model and compare it to approaches that have been proposed elsewhere. We show that the proposed approach offers an attractive balance of performance and numerical stability, and illustrate these advantages using simulated data as well as analyzing a high-dimensional study of gene expression and survival in lung cancer patients.
+
+\input{main}
+
+\bibliographystyle{SageV}
+\bibliography{articles}
+
+\end{document}
