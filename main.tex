@@ -12,7 +12,7 @@ To overcome this drawback, an alternative approach was proposed by \citet{Verwei
 
 Another approach, more common in the random survival forest literature than the penalized regression literature, is to calculate deviance residuals. As noted earlier, if we do not estimate the baseline hazard, then we cannot predict absolute failure time. However, if we combine Cox regression with an estimate of the baseline hazard, such as the Nelson-Aalen estimator \citep{nelson1969, aalen1978}, then we can obtain residuals based on deviance. These residuals can then be used like conventional residuals to estimate cross-validation error. However, we find this approach also to be rather conservative.
 
-In this paper, we propose an alternative way to carry out cross validation for Cox regression. Instead of applying cross-validation to the partial likelihood directly, we propose applying cross validation to the linear predictors of the regression model. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for LASSO penalized Cox regression in both low- and high-dimensional settings. We find that the linear predictor approach avoids the conservatism of the deviance residual and \citet{Verweij1993} approaches as well as the numerical instability of ordinary cross-validation. The proposed approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to a high-dimensional study of gene expression and survival in lung cancer patients.
+In this paper, we propose an alternative way to carry out cross-validation for Cox regression. Instead of applying cross-validation to the partial likelihood directly, we propose applying cross-validation to the linear predictors of the regression model. Through simulation studies, we compare these proposed methods with existing cross-validation approaches for lasso-penalized Cox regression in both low- and high-dimensional settings. We find that the linear predictor approach avoids the conservatism of the deviance residual and \citet{Verweij1993} approaches as well as the numerical instability of ordinary cross-validation. The proposed approach offers the best combination of performance and stability, and we recommend using it for regularization parameter selection in penalized Cox models.  We conclude by applying both proposed and existing approaches to a high-dimensional study of gene expression and survival in lung cancer patients.
 
 %%%%%%%%%%%%%
 %%%%%%%%%%%%%
@@ -42,11 +42,11 @@ Cox regression can be extended by introducing a penalty into the partial likelih
 \end{equation}
 where $P_{\lambda}(\bbeta)$ is a penalty function that depends on a regularization parameter $\lam$.  Throughout, we will assume without loss of generality that the covariates have been standardized such that $\sum_i x_{ij} = 0$ and $\tfrac{1}{n}\sum_i x_{ij}^2=1$.  This is standard practice in penalized regression to ensure that the penalization has the same effect for all covariates and is invariant to changes of location and scale.  The estimates are then converted back to the original scale after the model has been fit.  Centering the predictors is also standard in Cox regression to ensure that the baseline hazard is invariant to location shifts of the covariates.
 
-In this paper, we focus upon the LASSO penalty $P_{\lambda}(\bbeta) = \lambda \sum_{j} |\beta_{j}|$ as it is most common, although the need to select regularization parameters arises in all penalized regression models, such as elastic net \citep{Zou2005}, smoothly clipped absolute deviations (SCAD) penalty \citep{FanLi2001}, and minimax concave penalty (MCP) \citep{Zhang2010}. Indeed, cross-validation can be used for model selection in Cox regression even without the presence of a penalty, so the relevance of this question is wide-ranging. LASSO-penalized Cox regression is particularly useful for high dimensional data where the number of covariates $p > n$, such as predicting overall survival in cancer patients based on genome-wide expression measurements. LASSO estimates yield a sparse model where some coefficients are exactly zero. This sparsity pattern changes as we vary $\lam$: at large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected. Selecting $\lambda$ is critical to LASSO estimation in the sense that the model's accuracy suffers if $\lam$ is either too large or too small. 
+In this paper, we focus upon the lasso penalty $P_{\lambda}(\bbeta) = \lambda \sum_{j} |\beta_{j}|$ as it is most common, although the need to select regularization parameters arises in all penalized regression models, such as elastic net \citep{Zou2005}, smoothly clipped absolute deviations (SCAD) penalty \citep{FanLi2001}, and minimax concave penalty (MCP) \citep{Zhang2010}. Indeed, cross-validation can be used for model selection in Cox regression even without the presence of a penalty, so the relevance of this question is wide-ranging. Lasso-penalized Cox regression is particularly useful for high dimensional data where the number of covariates $p > n$, such as predicting overall survival in cancer patients based on genome-wide expression measurements. Lasso estimates yield a sparse model where some coefficients are exactly zero. This sparsity pattern changes as we vary $\lam$: at large values of $\lambda$, most or all of the coefficients are 0, but as $\lam$ decreases, more covariates are selected. Selecting $\lambda$ is critical to lasso estimation in the sense that the model's accuracy suffers if $\lam$ is either too large or too small. 
 
 Cross-validation is the most common method for selecting $\lambda$ in penalized regression models. Suppose a data set $D$ of n observations is partitioned into $K$ folds: $D_{1}, D_{2}, \ldots, D_{K}$. For a given $k \in \left\{1,2,\ldots, K\right\}$, let $T_{k} = D - D_{k}$ denote the training set. This manuscript is concerned with the question: how should one use the $k$th fold $D_{k}$ to measure predictive accuracy based on partial likelihood? In particular, the partial likelihood \eqref{eq:cox-pl-subj} involves a risk set -- which observations should be used to form that risk set?  In the following sections, let $L^{-k}$ denote the partial likelihood built using data in $T_k$, let $L^{k}$ denote the partial likelihood built using data in $D_k$, and $L$ denote the partial likelihood built using the entire data set $D$.  The log partial likelihood is denoted by $\ell$, with $\ell^k$ and $\ell^{-k}$ defined similarly. Finally, let $\bbh^{-k}$ denote the penalized estimates that are obtained by using $L^{-k}(\bbeta)$ in \eqref{eq:obj}.  Figure~\ref{Fig:methods} diagrams the relationships between the four cross-validation methods we will describe in this section.
 
-\subsection{Cross validated partial likelihood} 
+\subsection{Cross-validated partial likelihood} 
 \label{Sec:cox-cv-existing}
 
 A direct approach to measure a model's predictive accuracy in $D_k$ is to evaluate the log partial likelihood at $\bbh^{-k}$ using the data in $D_k$. Cross-validation error (CVE) is then measured by the total deviance across all $K$ folds, which (up to a constant) is given by:
@@ -71,14 +71,14 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 \begin{figure}
   \centering
   \includegraphics[height= 12cm ]{figure_1_new.png}
-  \caption{\label{Fig:methods} Illustration of $K$-fold cross validation methods for Cox regression when $k = 1$}
+  \caption{\label{Fig:methods} Illustration of $K$-fold cross-validation methods for Cox regression when $k = 1$}
 \end{figure}	
 
 %%%%%%%%%%%%%%%%%%%%
-\subsection{Cross validated deviance residuals}
+\subsection{Cross-validated deviance residuals}
 %%%%%%%%%%%%%%%%%%%%
 
-The fundamental challenge of conducting cross validation for Cox regression is that the baseline hazard is not estimated from the model, which prevents us from calculating prediction errors (residuals).  However, if one takes additional steps to estimate the baseline hazard in addition to estimating the regression coefficients, then such residuals can be calculated.  The deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}, is a natural candidate for quantifying prediction error to use in quantifying the cross-validation error. Originally proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure, particularly in the random survival forest literature \citep{LeBlanc1992, Ishwaran2004}. In the Cox model, the Martingale residuals $\{m_i\}_{i=1}^n$ and deviance residuals $\{d_i\}_{i=1}^n$ are given by
+The fundamental challenge of conducting cross-validation for Cox regression is that the baseline hazard is not estimated from the model, which prevents us from calculating prediction errors (residuals).  However, if one takes additional steps to estimate the baseline hazard in addition to estimating the regression coefficients, then such residuals can be calculated.  The deviance residual, a normalized form of the Martingale residual \citep{Therneau1990}, is a natural candidate for quantifying prediction error to use in quantifying the cross-validation error. Originally proposed for model diagnostics, deviance residuals have also been used as a predictive accuracy measure, particularly in the random survival forest literature \citep{LeBlanc1992, Ishwaran2004}. In the Cox model, the Martingale residuals $\{m_i\}_{i=1}^n$ and deviance residuals $\{d_i\}_{i=1}^n$ are given by
 \begin{align}
   \label{eq:res-m}
   m_{i} &= \delta_{i} - H_{0}(t_{i})\exp(\x_i\Tr\bbeta), \\
@@ -89,10 +89,10 @@ where $H_0$ is the cumulative baseline hazard.
 
 In order to obtain a cross-validated version of these residuals, we would replace $\bbeta$ in the above equations with $\bbh^{-k}$. Typically the Nelson-Aalen estimator is used to estimate $H_0$, although other approaches are also possible, such as the Breslow and Kalbfleisch-Prentice estimators \citep{Breslow1972, Kalbfleisch2011}. These are described in greater detail in the supplementary materials, along with the results of a simulation study comparing them. The Nelson-Aalen estimate of the baseline hazard performed best in these simulations, and also seems to be the most common choice in the literature, so we use this estimate to construct cross-validated deviance residuals throughout the rest of the paper.
 
-The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+The sum of squared cross-validated deviance residuals, $\sum_{i}\hat{d}_{i}^2$, are then used as the cross-validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
 %%%%%%%%%%%%%%%%%%%%
-\subsection{Cross validated linear predictors}
+\subsection{Cross-validated linear predictors}
 \label{Sec:linear-predictor}
 %%%%%%%%%%%%%%%%%%%%
 
@@ -115,7 +115,7 @@ This idea of obtaining linear predictors using test sets, then constructing the 
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 
-Simulation studies were conducted to compare how the methods described in Section~\ref{Sec:methods} behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for LASSO penalized regression. For these simulation studies, the covariate matrix $X$, consisting of $n$ observations and $p$ covariates, was generated from independent $\text{Normal}(0, 1)$ samples. Given $\x_i$ and a coefficient vector $\bbeta$, survival times were generated from an exponential distribution with rate parameter $\exp(\x_i \Tr \bbeta)$. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. 
+Simulation studies were conducted to compare how the methods described in Section~\ref{Sec:methods} behave relative to each other in selecting the tuning parameter $\lambda$ and the corresponding model for lasso penalized regression. For these simulation studies, the covariate matrix $X$, consisting of $n$ observations and $p$ covariates, was generated from independent $\text{Normal}(0, 1)$ samples. Given $\x_i$ and a coefficient vector $\bbeta$, survival times were generated from an exponential distribution with rate parameter $\exp(\x_i \Tr \bbeta)$. Censoring status indicators were drawn independently from the binomial distribution. All simulations were implemented in R \citep{R}. 
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulations comparing predictive accuracy}
@@ -124,7 +124,7 @@ Simulation studies were conducted to compare how the methods described in Sectio
 
 In this section, we consider the accuracy of the cross-validation approaches introduced in Section~\ref{Sec:methods}. We varied the sample size, dimension, censoring percentage, and signal strength of the simulated data sets to examine how these factors affect the performance of cross-validation. The specifics of the simulation experiments are described below.
 
-Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). We define $\bbh(\lambda)$ as the vector of coefficients estimated by a Cox model with LASSO penalty at $\lambda$, and define $\bbeta^*$ as the true value of $\bbeta$ (the value used to generate the data). Mean squared error is defined to be 
+Estimation accuracy was measured using the mean squared error of the coefficients ($\MSE$). We define $\bbh(\lambda)$ as the vector of coefficients estimated by a Cox model with lasso penalty at $\lambda$, and define $\bbeta^*$ as the true value of $\bbeta$ (the value used to generate the data). Mean squared error is defined to be 
 \begin{equation}
 \MSE = E\| \bbh(\lambda) - \bbeta^* \| ^2.
 \end{equation}
@@ -140,13 +140,13 @@ We also measure the predictive accuracy via the mean squared prediction error, o
 \begin{equation}
 \text{Brier}(y(t_0), \hat{S}(t_0|\lambda, \x)) = \{ y(t_0) - \hat{S}(t_0|\lambda, \x) \}^2.
 \end{equation}
-In our simulation study, for each data set, we generated another independent data set with 1000 uncensored observations. We computed Brier scores for all of the cross-validation methods for all individuals in this test set, setting $t_0$ to the median survival time.
+In our simulation study, for each data set, we generated another independent data set with 1000 uncensored observations to assess prediction accuracy. We computed Brier scores for all of the cross-validation methods for all individuals in this test set, setting $t_0$ to the median survival time.
 
 The third measure we used is the Kullback-Leibler score, which measures the log-likelihood of the prediction model evaluated at the observations \citep{VanHouwelingen2011}. With the same notation defined in the previous paragraph, the Kullback-Leibler score is defined to be
 $$ \text{KL}(y(t_0), \hat{S}(t_0|\lambda, \x)) = -\left\{ y(t_0)\log(\hat{S}(t_0|\lambda, \x) + (1 - y(t_0))\log(1 - \hat{S}(t_0|\lambda, \x)) \right\}. $$
 As for the Brier score, KL scores were computed for all CV approaches at the median survival time.  Results were then averaged over the N replications. For both Brier and KL scores, a smaller score represents smaller prediction error, thus indicating better prediction accuracy.
 
-The final metric we included in our study was Harrell's C Index \citep{HarrellJr1984}. The C Index is a rank-based statistic that measures the concordance between the linear predictor of the selected model and the observed outcome. Suppose we arbitrarily select two individuals; if the individual with the higher predicted risk also died first, then this would be considered as a concordant pair. The C Index considers all possible such pairs and estimates of proportion of those pairs that are concordant. A C Index of 0.5 means the prediction is no better than flipping a coin and C Index of 1 means perfect concordance. We computed the C Index using the independent test set of 1000 individuals described above.
+The final metric we included in our study was Harrell's C Index \citep{HarrellJr1984}. The C Index is a rank-based statistic that measures the concordance between the linear predictor of the selected model and the observed outcome. Suppose we arbitrarily select two individuals; if the individual with the higher predicted risk also died first, then this would be considered as a concordant pair. The C Index considers all possible such pairs and estimates of proportion of those pairs that are concordant. A C Index of 0.5 means the prediction is no better than flipping a coin and C Index of 1 means perfect concordance. We computed the C Index using the same set of 1000 independent observations as the Brier score.
 
 \begin{figure}[ht]
   \centering
@@ -160,7 +160,7 @@ Figure~\ref{Fig:mse-brier-c} illustrates the results when the data contains $n =
 
 \setlength{\tabcolsep}{3pt}
 
-\caption{\label{Tab:sim} Predictive accuracy of four cross-validation methods under scenarios with varying dimension and signal strength (standard deviations given in parentheses).}
+\caption{\label{Tab:sim} Predictive accuracy of four cross-validation methods under scenarios with varying dimension and signal strength (standard deviations given in parentheses; Section~\ref{Sec:accuracy}.}
 \centering
 \begin{tabular}[t]{lccccc}
 \toprule
@@ -212,7 +212,7 @@ Table~\ref{Tab:power} presents the average number of true positives identified b
 
 \begin{table}[!htb]
 \setlength{\tabcolsep}{3pt}
-\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength. For weak and strong signal strength, nonzero coefficients are set to 0.3 and 0.6 respectively.}
+\caption{\label{Tab:power} Number of non-zero features (true positives) selected by each cross-validation method, under scenarios with varying dimension and signal strength (Section~\ref{Sec:power}). For weak and strong signal strength, nonzero coefficients are set to 0.3 and 0.6 respectively.}
 \centering
 \begin{tabular}[t]{l cc c cc c cc}
 \toprule
@@ -242,7 +242,7 @@ To illustrate how common this problem is, we generated 1000 independent data set
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=\textwidth]{figure_3.png}
-  \caption{\label{Fig:stability} Simulations illustrating the stability issues with the basic approach. For the figure on the left, $n = 100$, fold assignments are unbalanced, and the vertical axis is the proportion of undefined partial likelihoods. For the figure on the right, $n = 120$, fold assignments are balanced so that the number of events in each fold is the same, and the vertical axis is the standard deviation of the squared error loss. Basic cross-validation is much more variable than other approaches when the number of events in each fold is small.}
+  \caption{\label{Fig:stability} Simulations illustrating the stability issues with the basic approach (Section~\ref{Sec:stability}). For the figure on the left, $n = 100$, fold assignments are unbalanced, and the vertical axis is the proportion of undefined partial likelihoods. For the figure on the right, $n = 120$, fold assignments are balanced so that the number of events in each fold is the same, and the vertical axis is the standard deviation of the squared error loss. Basic cross-validation is much more variable than other approaches when the number of events in each fold is small.}
 \end{figure}
 
 One approach for alleviating this issue is to balance the censoring status across all folds when making fold assignments. That is, to ensure the number of events observed is the same (or within 1) across all folds. Unless the number of the folds exceeds the number of observed events, such as in leave-one-out cross-validation, this approach will guarantee the partial likelihood in each fold is well-defined for the basic approach, thus the overall cross-validated error is well-defined. 
@@ -255,15 +255,15 @@ To shed some light on why the variability of basic cross-validation explodes in 
 
 Based on the simulation results illustrated in this section, we suggest that one should proceed with caution if they want to use the basic approach: (i) it is best to balance the censoring status when creating fold assignments for the basic approach, (ii) avoid using the basic approach in conjunction with a high number of folds, and (iii) avoid using the basic approach when the number of observed events is small. Alternatively, use the linear predictor approach, which has similar performance without the stability issues.
 
-\subsection {Leave-One-Out Cross Validation}
+\subsection {Leave-One-Out Cross-Validation}
 \label{Sec:loocv}
 
-As discussed earlier, basic cross-validation cannot be used to carry out leave-one-out cross validation (LOOCV) for Cox regression models. The other three approaches (V\&VH, linear predictor, and deviance residual), however, are not subject to the stability issues described in Section~\ref{Sec:stability}, and can be used to implement LOOCV.  Here, we compare these three approaches for carrying out LOOCV, and also compare LOOCV to 10-fold CV.
+As discussed earlier, basic cross-validation cannot be used to carry out leave-one-out cross-validation (LOOCV) for Cox regression models. The other three approaches (V\&VH, linear predictor, and deviance residual), however, are not subject to the stability issues described in Section~\ref{Sec:stability}, and can be used to implement LOOCV.  Here, we compare these three approaches for carrying out LOOCV, and also compare LOOCV to 10-fold CV.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=\textwidth]{figure_4.png}
-  \caption{\label{Fig:loocv}Simulation comparing LOO (Leave-One-Out) and 10-fold CV across three approaches (V\&VH, linear predictor, and deviance residual). With $N = 200$ replications, the data sets generated have dimension $n = 120$ and $p = 1000$. The vertical axis is the $\log$(MSE ratio). Each panel represents one approach. In each panel, the LOO version and 10-fold version of the same approach are plotted. In all three panels, the 10-fold basic cross-validation is included as a baseline for comparison (green line).}
+  \caption{\label{Fig:loocv} Simulation comparing LOO (Leave-One-Out) and 10-fold CV across three approaches (V\&VH, linear predictor, and deviance residual) as described in Section~\ref{Sec:loocv}. With $N = 200$ replications, the data sets generated have dimension $n = 120$ and $p = 1000$. The vertical axis is the $\log$(MSE ratio). Each panel represents one approach. In each panel, the LOO version and 10-fold version of the same approach are plotted. In all three panels, the 10-fold basic cross-validation is included as a baseline for comparison (green line).}
 \end{figure}	
 
 For this simulation experiment, we generated datasets with $n = 120$ and $p = 1000$, using the same data generating procedure as described in Section~\ref{Sec:accuracy}. For each of the V\&VH, linear predictor, and deviance residual approaches, we conducted both 10-fold CV and LOOCV. We also conducted basic 10-fold cross-validation as a baseline for comparison. We recorded the model that minimizes the cross-validated error  for each approach. After $N = 200$ replications, $\log$ of the MSE ratio was computed using the same definition described in Section~\ref{Sec:accuracy}.
@@ -275,14 +275,14 @@ On the other hand, the LOOCV version of the linear predictor approach surpasses 
 \subsection {Cross-Validated C Index}
 \label{Sec:CIndex}
 
-All of the cross-validation approaches described in Section~\ref{Sec:methods} use the Cox partial likelihood, in one way or another, as the criterion upon which model selection is based.  In this section, we compare these likelihood-based approaches against an alternative approach of cross validation using concordance, also known as the cross-validated C Index.  This is a widely used approach for conducting cross-validation with time-to-event outcomes, particularly for machine learning models \citep{Subramanian2011,Simon2011a}, and was recently added as an option in the \texttt{glmnet} package (\texttt{type.measure="C"}). This approach typically proceeds by constructing cross-validated linear predictors, as in Section~\ref{Sec:linear-predictor}, but then using those predictors to calculate concordance as opposed to partial likelihood.
+All of the cross-validation approaches described in Section~\ref{Sec:methods} use the Cox partial likelihood, in one way or another, as the criterion upon which model selection is based.  In this section, we compare these likelihood-based approaches against an alternative approach of cross-validation using concordance, also known as the cross-validated C Index.  This is a widely used approach for conducting cross-validation with time-to-event outcomes, particularly for machine learning models \citep{Subramanian2011,Simon2011a}, and was recently added as an option in the \texttt{glmnet} package (\texttt{type.measure="C"}). This approach typically proceeds by constructing cross-validated linear predictors, as in Section~\ref{Sec:linear-predictor}, but then using those predictors to calculate concordance as opposed to partial likelihood.
 
 We conducted simulations in both low dimensional ($p = 50$, $n = 150$) and high dimensional ($p = 1000$, $n = 120$) settings. For each scenario, we generated data from a spectrum of signal strength as in Section~\ref{Sec:accuracy}. Results of the simulations are illustrated in Figure~\ref{Fig:cvauc}.  We used the linear predictor approach (CV-LP) here as the representative approach for likelihood-based cross-validation.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[height= 15cm ]{figure_auc.png}
-  \caption{\label{Fig:cvauc}Comparing Partial Likelihood and C Index both built from Cross-validated Linear Predictors. The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter $\lambda$. The mid row plots the $\log(\text{relative Squared Error Loss})$, with respect to the oracle model. The bottom row plots the Brier Scores. }
+  \caption{\label{Fig:cvauc} Comparing Partial Likelihood and C Index both built from cross-validated Linear Predictors (Section~\ref{Sec:CIndex}). The horizontal axis represents the strength of signal $s$ in the data. The left figures are under the low dimension scenarios where p = 50 and n = 150. The right figures are under the high dimension scenarios where p = 1000 and n = 120. The expected percentages of censoring for both scenarios are 30 $\%$. The top row are box plots of the selected tuning parameter $\lambda$. The mid row plots the $\log(\text{relative Squared Error Loss})$, with respect to the oracle model. The bottom row plots the Brier Scores. }
 \end{figure}
 
 \afterpage{\clearpage}
@@ -290,6 +290,7 @@ We conducted simulations in both low dimensional ($p = 50$, $n = 150$) and high 
 Several observations can be drawn from Figure~\ref{Fig:cvauc}. First, likelihood-based CV tends to select more accurate models, as judged by both mean squared error and Brier score.  Second, likelihood-based CV is also more stable than the AUC-based CV, in the sense that it tends to select a narrower range of models, with more consistent performance, than CV-AUC.  Lastly, CV-AUC is consistently more liberal than likelihood-based CV, selecting models with smaller values of the regularization parameter $\lam$, and therefore preferring models with larger coefficient values and more nonzero coefficients.
 
 \section{Application to Real Data}
+\label{Sec:real}
 
 In this section, we demonstrate the usage and performance of the aforementioned cross-validation methods when fitting penalized regression models on data from a study of gene expression and survival in patients with lung cancer. \citet{shedden2008gene} conducted a large, retrospective study to validate prognostic gene expression signatures as predictors of overall survival in lung cancer patients. They gathered expression profiles of 22,283 genes for 442 non-small-cell lung cancer (NSCLC) patients along with some additional clinical and demographic data. About $50\%$ of the patients died during the course of the study (236 events), with the rest censored. 
 
@@ -297,7 +298,7 @@ For this analysis, we fit elastic net models to the data in addition to lasso mo
 
 \begin{table}[ht]
 \centering
-\caption{\label{tb:shedden} The C Index and Brier Score of all elastic net models selected by cross-validation methods }
+\caption{\label{tb:shedden} The C Index and Brier Score of all elastic net models selected by cross-validation methods (Section~\ref{Sec:real})}
 \begin{tabular}{lccccccc}
 \hline
   & \multicolumn{7}{c}{Cross-validated C Index} \\ 
@@ -344,14 +345,14 @@ For each fixed $\alpha$, we compared the cross-validation errors (CVE) from the 
 \begin{figure}[!htb]
   \centering
   \includegraphics[height= 8cm ]{shedden.png}
-  \caption{\label{fig:CVE}Rescaled Cross Validated Errors at $\alpha = 0.3$. The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1 in order to allow plotting of the four methods on a common axis. The vertical dashed lines represent the $\lambda$ selected by a specific method. The linear predictor approach selected the smallest $\lambda$ and Verweij and Van Houwelingen's approach selected the greatest $\lambda$.}
+  \caption{\label{fig:CVE} Rescaled cross-validated errors at $\alpha = 0.3$ (Section~\ref{Sec:real}). The horizonal axis is $\log(\lambda)$. The vertical axis is the cross-validated error rescaled to a range from 0 to 1 in order to allow plotting of the four methods on a common axis. The vertical dashed lines represent the $\lambda$ selected by a specific method. The linear predictor approach selected the smallest $\lambda$ and Verweij and Van Houwelingen's approach selected the greatest $\lambda$.}
 \end{figure}
 
 As mentioned earlier, for the elastic net model with tuning parameters chosen by cross-validated linear predictors ($\lam = 0.650$, $\alpha = 0.3$), 85 genes were selected, of which 78 were well-annotated.  We carried out an enrichment analysis of these 78 genes using ToppGene \citep{Chen2009c}; the five most significantly enriched molecular functions are listed in Table~\ref{Tab:go}.  Overall, the results are consistent with our understanding of cancer: many of the genes selected by the elastic net model are involved in signaling and the binding of transcription factors and receptors.  These are precisely the pathways that tend to be disrupted in cancer.  Chloride channels have also recently been implicated in several cancers as therapeutic targets \citep{Peretti2015}.
 
 \begin{table}[ht]
 \centering
-\caption{\label{Tab:go} Five most significantly enriched molecular functions among genes selected by the linear predictor method with the elastic net ($\alpha=0.3$).  The five terms have a false discovery rate of 3\% using the Benjamini-Hochberg method. Enrichment: frequency of the annotation among the selected genes divided by its frequency in the genome as a whole.}
+\caption{\label{Tab:go} Five most significantly enriched molecular functions among genes selected by the linear predictor method with the elastic net ($\alpha=0.3$) for the data described in Section~\ref{Sec:real}.  The five terms have a false discovery rate of 3\% using the Benjamini-Hochberg method. Enrichment: frequency of the annotation among the selected genes divided by its frequency in the genome as a whole.}
 \begin{tabular}{llrrr}
 \toprule
 ID & Name & Selected & Enrichment & $p$-value \\
@@ -375,7 +376,7 @@ Despite the fact Verweij and Van Houwelingen's cross-validated partial likelihoo
 
 While the basic approach performed well in terms of predictive performance, this approach suffers from a lack of numerical stability as discussed in Section~\ref{Sec:stability}. The cross-validated linear predictor approach performed very similarly to the basic approach in terms of predictive performance, but without any problems due to numerical stability.  We recommend using the proposed linear predictor approach in practice for selecting regularization parameters in penalized Cox regression.
 
-Although we focused upon the penalized Cox regression with a LASSO penalty in this work, the methods that we analyzed are applicable in any context that involves conducting model selection for survival models that are built upon the Cox partial likelihood, such as fitting penalized Cox regression with other penalty functions (elastic net \citep{Zou2005}, SCAD \citep{FanLi2001}, MCP \citep{Zhang2010}, precision lasso \citep{Wang2018}), other penalty structures (group selection, bi-level selection), and selecting functional forms of covariates in unpenalized Cox regression.
+Although we focused upon the penalized Cox regression with a lasso penalty in this work, the methods that we analyzed are applicable in any context that involves conducting model selection for survival models that are built upon the Cox partial likelihood, such as fitting penalized Cox regression with other penalty functions (elastic net \citep{Zou2005}, SCAD \citep{FanLi2001}, MCP \citep{Zhang2010}, precision lasso \citep{Wang2018}), other penalty structures (group selection, bi-level selection), and selecting functional forms of covariates in unpenalized Cox regression.
 
 We note, however, that the focus of this article is restricted to fixed covariates. How best to carry out cross-validation for model selection in the presence of time-varying covariates, or in joint modeling of time-to-event and longitudinal outcomes, remains an open question worthy of additional future study. In addition, we have assumed throughout that the Cox model and its assumptions regarding independent censoring are correct. If these assumptions are not met, then it is unclear which Cox model should be chosen (or indeed, whether Cox regression should be used at all).
 

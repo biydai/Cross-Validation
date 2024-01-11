@@ -7,7 +7,7 @@
 \usepackage[bmargin=0.75in, tmargin =0.75in,lmargin = 0.5in,rmargin = 0.5in]{geometry}
 \graphicspath{{manuscript_figure/}}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true, citecolor=black, urlcolor=cyan}
+\hypersetup{colorlinks=true, citecolor=black, linkcolor=., urlcolor=cyan}
 \usepackage{afterpage}
 
 \usepackage{natbib}
@@ -64,17 +64,17 @@
 \providecommand{\note}[1]{\textcolor{red}{#1}}
 \providecommand{\bnote}[1]{\textcolor{blue}{#1}}
 
-\title{Cross Validation Approaches for Penalized Cox Regression}
-\author{Biyue Dai\\Division of Biostatistics\\University of Minnesota
+\title{Cross-Validation Approaches for Penalized Cox Regression}
+\author{Biyue Dai \\ Division of Biostatistics \\ University of Minnesota
   \and
-  Patrick Breheny\\Department of Biostatistics\\University of Iowa}
+  Patrick Breheny \\ Department of Biostatistics \\ University of Iowa}
 \date{\today}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 
 \section*{Abstract}
-Cross validation is the most common way of selecting tuning parameters in penalized regression, but its use in penalized Cox regression models has received relatively little attention in the literature. Due to its partial likelihood construction, carrying out cross validation for Cox models is not straightforward, and there are several potential approaches for implementation. Here, we propose a new approach based on cross-validating the linear predictors of the Cox model and compare it to approaches that have been proposed elsewhere. We show that the proposed approach offers an attractive balance of performance and numerical stability, and illustrate these advantages using simulated data as well as analyzing a high-dimensional study of gene expression and survival in lung cancer patients.
+Cross-validation is the most common way of selecting tuning parameters in penalized regression, but its use in penalized Cox regression models has received relatively little attention in the literature. Due to its partial likelihood construction, carrying out cross-validation for Cox models is not straightforward, and there are several potential approaches for implementation. Here, we propose a new approach based on cross-validating the linear predictors of the Cox model and compare it to approaches that have been proposed elsewhere. We show that the proposed approach offers an attractive balance of performance and numerical stability, and illustrate these advantages using simulated data as well as analyzing a high-dimensional study of gene expression and survival in lung cancer patients.
 
 \input{main}
 
