@@ -70,7 +70,7 @@ the training set $T_k$. By avoiding the construction of a partial likelihood on 
 
 \begin{figure}
   \centering
-  \includegraphics[height= 12cm ]{figure_1_new.png}
+  \includegraphics[height= 12cm ]{figure_1_HD.png}
   \caption{\label{Fig:methods} Illustration of $K$-fold cross-validation methods for Cox regression when $k = 1$}
 \end{figure}	
 
@@ -89,7 +89,7 @@ where $H_0$ is the cumulative baseline hazard.
 
 In order to obtain a cross-validated version of these residuals, we would replace $\bbeta$ in the above equations with $\bbh^{-k}$. Typically the Nelson-Aalen estimator is used to estimate $H_0$, although other approaches are also possible, such as the Breslow and Kalbfleisch-Prentice estimators \citep{Breslow1972, Kalbfleisch2011}. These are described in greater detail in the supplementary materials, along with the results of a simulation study comparing them. The Nelson-Aalen estimate of the baseline hazard performed best in these simulations, and also seems to be the most common choice in the literature, so we use this estimate to construct cross-validated deviance residuals throughout the rest of the paper.
 
-The sum of squared cross-validated deviance residuals, $\sum_{i}{d}^{\text{cv}}_{i}^2$, are then used as the cross-validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
+The sum of squared cross-validated deviance residuals, $\sum_{i} (d^{\text{cv}}_{i})^2$, are then used as the cross-validated error, analogous to using the residual sum of squares in linear regression. We refer to this method as the \emph{cross-validated deviance residuals} approach.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsection{Cross-validated linear predictors}

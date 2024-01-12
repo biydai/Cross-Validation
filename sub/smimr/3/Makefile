@@ -15,7 +15,7 @@ supp.pdf: ../../../supplementary.tex
 	cp ../../../supplementary.tex ./
 	singletex supplementary.tex supp.tex
 	sed -i 's/\\bibliographystyle{ims-nourl}/\\bibliographystyle{sageV}/' supp.tex
-	cleantex -beq supp
+	cleantex -eq supp
 	grep --color includegraphics supp.tex
 
 cover.pdf: cover.tex
