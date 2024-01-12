@@ -85,10 +85,10 @@ As described in the manuscript, the Martingale residuals $\{m_i\}_{i=1}^n$ and d
 \end{align*}
 where $H_0$ is the cumulative baseline hazard.  Our cross-validated versions of these residuals use
 \begin{align*}
-  m_{i}^{cv} &= \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}) \\
-  d_{i}^{cv} &= \text{sign}(m_{i}^{cv})\sqrt{-2(m_i^{cv} + \delta_{i}\log(\delta_{i} - m_i^{cv}))},
+  m_{i}^{\text{cv}} &= \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k}) \\
+  d_{i}^{\text{cv}} &= \text{sign}(m_{i}^{\text{cv}})\sqrt{-2(m_i^{\text{cv}} + \delta_{i}\log(\delta_{i} - m_i^{\text{cv}}))},
 \end{align*}
-for $i$ in the test set $D_k$, with $\hat{\beta}^{-k}$ obtained from the training set $T_k$.  The sum of squared cross-validated deviance residuals, $\sum_{i}(d_{i}^{cv})^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression.  In the manuscript, this method is referred to as the \emph{cross-validated deviance residuals} approach.
+for $i$ in the test set $D_k$, with $\hat{\beta}^{-k}$ obtained from the training set $T_k$.  The sum of squared cross-validated deviance residuals, $\sum_{i}(d_{i}^{\text{cv}})^2$, are then used as the cross validated error, analogously to using the residual sum of squares in linear regression.  In the manuscript, this method is referred to as the \emph{cross-validated deviance residuals} approach.
 
 %Deviance residuals are typically calculated based on a baseline hazard estimate that has been adjusted for the covariates in the model. In the context of cross-validation, however, this approach is problematic. Deviance residuals measure the difference between the fitted model and a saturated model; in Cox regression, this saturated model depends on the baseline hazard. Thus, a covariate-adjusted baseline hazard would mean that each fold is compared to a different saturated model. For this reason, it is important that the baseline hazard remains constant across folds when calculating cross-validated deviance residuals; this intuition is borne out by simulations involving various other possible ways of constructing cross-validated deviance residuals.  
 
@@ -108,11 +108,11 @@ Use all observations' time and status to compute $\hat{H}_{0}(t) = \sum_{t_j \le
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
-  	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
+  	Compute the Cross-validated Martingale Residual: $m^{\text{cv}}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(x_i\Tr\hat\bbeta^{-k})$\;
+  	Compute the Deviance Residual: $ d^{\text{cv}}_{i} = \text{sgn}(m^{\text{cv}}_{i})\sqrt{-2(m^{\text{cv}}_{i} + \delta_{i}\log(\delta_{i} - m^{\text{cv}}_{i}))}$\;
   	}
  }
- Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
+ Compute the sum of squares: $\sum_{i}({d}^{\text{cv}}_{i})^2$
  }
  \caption{\label{alg:na} Compute cross-validated deviance residuals based on the Nelson-Aalen estimator}
 \end{algorithm}
@@ -138,11 +138,11 @@ Procedure~\ref{alg:brkp} includes an explicit description of this algorithm.
  \For{each fold $k = 1,2,...,K$}{
   Use the training set $T_k$ to obtain $\hat{\beta}^{-k}$\;
   	\For{each obervation $i$ in the $k$th fold}{
-  	Compute the Cross-validated Martingale Residual: $\hat{M}^{cv}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(X_i\Tr\hat\beta^{-k})$\;
-  	Compute the Deviance Residual: $ d_{i} = \text{sgn}(\hat{M}^{cv}_{i})\sqrt{-2(\hat{M}^{cv}_{i} + \delta_{i}\log(\delta_{i} - \hat{M}^{cv}_{i}))}$\;
+  	Compute the Cross-validated Martingale Residual: $m^{\text{cv}}_{i}  = \delta_{i} - \hat{H}_{0}(t_{i})\exp(x_i\Tr\hat\bbeta^{-k})$\;
+  	Compute the Deviance Residual: $ d^{\text{cv}}_{i} = \text{sgn}(m^{\text{cv}}_{i})\sqrt{-2(m^{\text{cv}}_{i} + \delta_{i}\log(\delta_{i} - m^{\text{cv}}_{i}))}$\;
   	}
  }
- Compute the sum of squares: $\sum_{i}\hat{d}_{i}^2$
+ Compute the sum of squares: $\sum_{i}({d}^{\text{cv}}_{i})^2$
  }
  \caption{\label{alg:brkp} Compute cross-validated deviance residuals based on the Breslow estimator and the Kalbfleisch and Prentice estimator}
 \end{algorithm}
